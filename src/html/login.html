@@ -4,11 +4,25 @@
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Document</title>
+   <link rel="stylesheet" href="../css/style_login.css">
+   <title>registration</title>
 </head>
 
 <body>
 
+   <div class="registration">
+
+      <h1>registration</h1><br>
+
+      <form action="/submit-form" method="post">
+         <label for="name">Nickname</label><br>
+         <input type="text" id="name" name="name" required><br>
+         <label for="password">password</label><br>
+         <input type="password" id="password" name="password" required><br>
+
+         <button type="submit">Login/Submit</button><br>
+      </form>
+   </div>
 </body>
 
 </html>
