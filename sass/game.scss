@@ -4,19 +4,35 @@ body {
    padding: 0;
    margin: 0;
    display: flex;
+   justify-content: center;
 }
 
-.timers {
-   margin-top: 30px;
-   font-size: 60px;
-   text-align: center;
+.content {}
+
+.inform {
+
+   .timers {
+      font-size: 30px;
+      text-align: center;
+   }
+
+   .inform_user {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+
+      h2 {
+         margin: 0;
+         font-size: 30px;
+      }
+
+
+   }
 }
+
 
 table {
-   position: absolute;
-   top: 50%;
-   left: 50%;
-   transform: translate(-50%, -50%);
    width: 500px;
    height: 500px;
    padding: 0;
