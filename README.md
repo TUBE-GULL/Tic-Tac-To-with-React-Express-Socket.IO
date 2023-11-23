@@ -9,6 +9,9 @@ started development
 
 timer development
 
+0.0.4
+
+refactoring the location of files and folders
 
 
 ! development plans
