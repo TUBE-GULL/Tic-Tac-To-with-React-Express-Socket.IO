@@ -1,3 +1,4 @@
+___________________________________________________________________________
 project development
 
 0.0.2
@@ -13,6 +14,13 @@ timer development
 
 refactoring the location of files and folders
 
+0.0.5
+
+writing server logic 
+
+(there are also inaccuracies in the game logic)
+
+___________________________________________________________________________
 
 ! development plans
 

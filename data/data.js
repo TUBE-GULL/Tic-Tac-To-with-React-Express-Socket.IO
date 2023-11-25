@@ -1,7 +1,7 @@
-const users = [
-   { name: 'name', password: 123, tim: 0, },
+const data = [
+   { name: 'Oleg', password: 123, tim: 0, },
 
    //push new users
 ]
 
-module.exports = users
+module.exports = data

@@ -1,19 +1,22 @@
 const fs = require('fs')
 
-const getHome = (req, res) => {
-   fs.readFile('../views/login.html', (error, data) => {
-      if (error) {
-         res.statusCode = 500
-         res.setHeader('Content-Type', 'text/plain')
-         res.end('Server error while loading HTML file')
-      } else {
-         res.statusCode = 200
-         res.setHeader('Content-Type', 'text/html')
-         res.end(data)
-      }
-   })
-}
+// const userSearch = (user, password, array) => {
+//    array.forEach(el => {
+
+//       console.log(typeof (+password))
+//       console.log(typeof (el.password))
+//       if (el.name === user && el.password === +password) {
+//          return true
+//       }
+//    });
+//    return false
+// }
+const userSearch = (user, password, array) => {
+   return array.some(el => el.name === user && el.password === +password);
+};
+
+
 
 module.exports = {
-   getHome
+   userSearch,
 }
