@@ -14,25 +14,20 @@
 
       <h1>Login</h1><br>
 
-      <form id="form" method="post">
+      <form id="form" action="/submit" method="post">
          <label for="login">Nickname</label><br>
          <input id="name" type="text" name="name" placeholder="name" required><br>
          <label for="password">password</label><br>
          <input id="password" type="password" name="password" placeholder="password" required><br>
          <label for="new user">
             New user
-            <input id="checkbox" type="checkbox" name="registration" value="1">
+            <input id="registration" type="checkbox" name="registration" value="1">
          </label><br>
 
          <button type="submit">Login</button>
       </form>
    </div>
 </body>
-<script>
-
-
-
-
-</script>
+<script src="/script/login.js"></script>
 
 </html>
