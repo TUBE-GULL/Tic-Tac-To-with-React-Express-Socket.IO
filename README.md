@@ -1,6 +1,9 @@
 ___________________________________________________________________________
 project development
 
+0.0.8 
+
+division into different pages registration and login
 
 0.0.7
 
