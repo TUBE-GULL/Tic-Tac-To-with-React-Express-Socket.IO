@@ -6,16 +6,13 @@ myForm.addEventListener('submit', (event) => {
    const formData = new FormData(myForm);
    const name = formData.get('name');
    const password = formData.get('password');
-   const registration = formData.get('registration')
 
-
-   console.log(registration)
-   registrationForm({ name, password, registration });
+   registrationForm({ name, password });
 });
 
 const registrationForm = async (formData) => {
    try {
-      const response = await fetch('/submit', {
+      const response = await fetch('/submit_singin', {
          method: 'POST',
          headers: {
             'Content-Type': 'application/json'
@@ -28,7 +25,7 @@ const registrationForm = async (formData) => {
       if (result.error) {
          throw new Error(result.error);
       } else {
-         window.location.href = "./users.html";
+         window.location.href = "/users";
       }
    } catch (error) {
       alert(error.message || 'Произошла ошибка при отправке данных');

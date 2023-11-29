@@ -5,8 +5,15 @@ module.exports = [
     "tim": "0"
   },
   {
-    "name": "Oleg",
-    "password": "1221",
-    "registration": "1"
+    "name": "Oleg123",
+    "password": "123"
+  },
+  {
+    "name": "Oleg1",
+    "password": "1"
+  },
+  {
+    "name": "Oleg11",
+    "password": "1231"
   }
 ]

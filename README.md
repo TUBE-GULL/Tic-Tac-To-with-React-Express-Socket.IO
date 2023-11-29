@@ -1,11 +1,19 @@
 ___________________________________________________________________________
 project development
 
+
+0.0.7
+
+the main logic is written register login
++ refactoring
+
 0.0.6
+
 the main logic is written sign up
 
 
 0.0.5+
+
 (there are also inaccuracies in the game logic)
 
 0.0.5
