@@ -1,6 +1,12 @@
 ___________________________________________________________________________
 project development
 
+0.0.9
+
+a function for encrypting a user's password has been written
+
+and added socket.IO
+
 0.0.8 
 
 division into different pages registration and login
