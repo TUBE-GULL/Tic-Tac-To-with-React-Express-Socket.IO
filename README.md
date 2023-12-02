@@ -1,6 +1,14 @@
 ___________________________________________________________________________
 project development
 
+0.0.10 
+
+I'm trying to figure out Socket io
+
+did password caching via bcrypt
+
+Right now I need to figure out how to pass the token I created to the socket.
+
 0.0.9
 
 a function for encrypting a user's password has been written

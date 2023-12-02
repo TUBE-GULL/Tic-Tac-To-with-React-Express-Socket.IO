@@ -4,6 +4,8 @@ const path = require('path');
 const fs = require('fs');
 const dataFilePath = path.join(__dirname, '../../data/data.js')
 const existingData = require(dataFilePath)
+const tokenGeneration = require('./tokenGeneration')
+
 
 const checkDoubleUserName = (formData) => {
    return existingData.some(el => el.name == formData.name);
@@ -26,6 +28,7 @@ const singUp = async (req, res) => {
       existingData.push({
          name: formData.name,
          password: hashedPassword,
+         token: tokenGeneration(15),
          tim: 0,
       });
 
@@ -52,7 +55,8 @@ const singIn = async (req, res) => {
          if (el.name == formData.name) {
             req.session.user = {
                name: el.name,
-               time: el.time
+               time: el.time,
+               token: el.token
             };
          }
       });
