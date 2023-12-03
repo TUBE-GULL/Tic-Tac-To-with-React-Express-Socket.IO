@@ -9,6 +9,7 @@ const io = require('socket.io')(server)
 
 // out module
 const tokenGeneration = require('./node/components/tokenGeneration.js')
+const { searchToken, } = require('./node/components/function.js')
 const { singUp, singIn } = require('./node/components/singInUp.js')
 
 const userSecretKey = tokenGeneration(20)
@@ -44,85 +45,46 @@ app.post('/submit_singin', (req, res) => {
 
 //users online ======================================
 
-const users = {};
+const activeUsers = [];
 
 const user = {}
 
 app.get('/users', (req, res) => {
-   const user = req.session.user; // получаем данные пользователя из сессии
-   const userToken = user ? user.Token : null;
+   // получаем данные пользователя из сессии
+   user.name = req.session.user.name
+   user.token = req.session.user.token
+   user.timer = req.session.user.time
 
-
-
-   if (userToken) {
+   if (user.token) {
+      // res.cookie('authToken', user.token, { httpOnly: true });
       res.sendFile(path.join(__dirname, '/views/users.html'));
    } else {
       res.status(401).json({ success: false, error: 'Пользователь не аутентифицирован' });
    }
 });
 
+io.on('connection', (socket) => {
 
-// io.on('connection', (socket) => {
-//    // Отправляем текущий список пользователей при подключении
-//    io.to(socket.id).emit('updateUsers', users);
+   const userToken = user.token;
+   console.log(`User connected with token: '${userToken}'`);
 
-//    users[socket.id] = {
-//       name: user.name,
-//       time: user.userTime,
-//       socket: user.userToken
-//    };
-//    // Оповещаем клиентов о подключении нового пользователя
-//    io.emit('userConnected', users[socket.id]);
+   // activeUsers[userId] = {
+   //    socket.id;
+   // }
 
-//    socket.on('disconnect', () => {
-//       // Удаляем пользователя из объекта пользователей и оповещаем об отключении
-//       io.emit('userDisconnected', socket.id);
-//       delete users[socket.id];
-//       socket.emit('redirect', '/views/login.html'); // Отправляем сообщение клиенту о перенаправлении
-//    });
+   socket.emit('token', userToken);
+
+
+});
+
+// socket.on('disconnect', () => {
+//    // Дополнительная логика при отключении пользователя, например, удаление его из списка активных пользователей
+//    delete activeUsers[socket.id];
+//    console.log(`User disconnected with token: '${userToken}'`);
 // });
-
-
 //=======================================================
 
 // app.listen(8080, () => console.log('Start sever on port 8080'))
 server.listen(8080, () => {
    console.log('Socket.IO + Start sever on port 8080');
 });
-
-// app.get('/data', (req, res) => {
-//    res.sendFile(`${__dirname}/data/data.js`) 
-// })
- 
- 
-// io.use((socket, next) => {
-//    // Промежуточное ПО для обработки аутентификации перед установлением соединения
-//    const token = socket.handshake.auth.token; // Предполагается, что токен передается как 'token' в объекте auth
-
-//    // Ваша логика для проверки токена и связывания его с пользователем
-//    const user = validateToken(token); // Замените своей логикой валидации
-
-//    if (user) {
-//       // Если токен действителен, добавляем пользователя в сокет
-//       socket.user = user;
-//       return next();
-//    } else {
-//       // Если токен недействителен, отклоняем соединение
-//       return next(new Error('Аутентификация не удалась'));
-//    }
-// });
-
-// io.on('connection', (socket) => {
-//    // Доступ к информации о пользователе, связанной с сокетом
-//    const user = socket.user;
-
-//    // Ваша логика для обработки подключенного пользователя
-//    console.log(`Пользователь ${user.name} подключен`);
-
-//    // Отправка событий и т.д.
-
-//    socket.on('disconnect', () => {
-//       // Ваша логика для обработки отключения
-//       console.log(`Пользователь ${user.name} отключен`);
-//    });
-// });

@@ -29,7 +29,7 @@ const singUp = async (req, res) => {
          name: formData.name,
          password: hashedPassword,
          token: tokenGeneration(15),
-         tim: 0,
+         time: 0,
       });
 
       fs.writeFile(dataFilePath, `module.exports = ${JSON.stringify(existingData, null, 2)}`, (err) => {
@@ -55,8 +55,8 @@ const singIn = async (req, res) => {
          if (el.name == formData.name) {
             req.session.user = {
                name: el.name,
+               token: el.token,
                time: el.time,
-               token: el.token
             };
          }
       });
