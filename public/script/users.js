@@ -1,30 +1,32 @@
 const socket = io('http://localhost:8080');
-const column = document.querySelector('user-column')
-// const use = document.('userList')
+const $events = document.getElementById('events');
+const $userList = document.getElementById('userList')
 
+// const newItem = (content) => {
+//    const item = document.createElement('li');
+//    item.innerText = content;
+//    return item;
+// }
+
+const displayUserList = (users) => {
+   $userList.innerHTML = ''; // очищаем предыдущий список
+   users.forEach(user => {
+      const item = document.createElement('li');
+      item.innerText = `${user.name} ${user.time}`;
+      $userList.appendChild(item);
+   });
+}
 
 socket.on('connect', () => {
-   console.log('Connected to server');
+   $events.appendChild(newItem('Подключение установлено'));
 });
 
-socket.on('token', (serverToken) => {
-   console.log(`Received token from server: ${serverToken}`);
-   // Дополнительная логика на стороне клиента, связанная с токеном, если необходимо
-});
-socket.on('userConnected', ({ userId }) => {
-   console.log(`User with ID ${userId} connected`);
-   // Добавьте логику обновления вашего интерфейса с новым пользователем
-   // addUserToUI(userId);
+socket.on('hello', (counter) => {
+   $events.appendChild(newItem(`Привет - ${counter}`));
 });
 
-socket.on('userDisconnected', ({ userId }) => {
-   console.log(`User with ID ${userId} disconnected`);
-   // Добавьте логику обновления вашего интерфейса при отключении пользователя
-   // removeUserFromUI(userId);
-});
-
+// Получение списка активных пользователей от сервера
 socket.on('activeUsers', (users) => {
-   console.log('Active users:', users);
-   // Добавьте логику для обновления вашего интерфейса с новым списком пользователей
-   // updateUsersList(users);
+   displayUserList(users);
 });
+

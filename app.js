@@ -64,24 +64,40 @@ app.get('/users', (req, res) => {
 });
 
 io.on('connection', (socket) => {
+   activeUsers.push({
+      name: user.name,
+      time: user.time,
+      socketId: socket.id // добавляем идентификатор сокета пользователя
+   });
 
    const userToken = user.token;
    console.log(`User connected with token: '${userToken}'`);
 
-   // activeUsers[userId] = {
-   //    socket.id;
-   // }
-
    socket.emit('token', userToken);
+   io.emit('activeUsers', activeUsers);
 
+   let counter = 0;
+   // setInterval(() => {
+   //    socket.emit('hello', ++counter);
+   // }, 1000);
 
+   socket.on('hi', data => {
+      console.log('hi', data);
+   });
+
+   socket.on('disconnect', () => {
+      // Логика при отключении пользователя, например, удаление из списка активных пользователей
+      let indexToRemove = activeUsers.findIndex((u) => u.socketId === socket.id);
+      if (indexToRemove !== -1) {
+         activeUsers.splice(indexToRemove, 1);
+         console.log("Пользователь удален успешно.");
+      } else {
+         console.log("Пользователь не найден.");
+      }
+      io.emit('activeUsers', activeUsers);
+   });
 });
 
-// socket.on('disconnect', () => {
-//    // Дополнительная логика при отключении пользователя, например, удаление его из списка активных пользователей
-//    delete activeUsers[socket.id];
-//    console.log(`User disconnected with token: '${userToken}'`);
-// });
 //=======================================================
 
 // app.listen(8080, () => console.log('Start sever on port 8080'))

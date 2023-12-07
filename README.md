@@ -1,6 +1,10 @@
 ___________________________________________________________________________
 project development
 
+0.0.12
+
+
+
 0.0.11 
 
 I made it so that when updating the page the user would not be thrown out
