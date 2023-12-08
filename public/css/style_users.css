@@ -19,12 +19,17 @@ h2 {
   color: #333; }
 
 ul {
+  width: 100%;
   list-style-type: none;
   padding: 0; }
 
 li {
   padding: 8px;
   border-bottom: 1px solid #eee; }
+
+button {
+  margin-top: 10px;
+  width: 100%; }
 
 li:last-child {
   border-bottom: none; }

@@ -1,9 +1,13 @@
 ___________________________________________________________________________
 project development
 
+0.0.13
+
+I send notifications, but so far everything is not going according to plan
+
 0.0.12
 
-
+you are active user inputs
 
 0.0.11 
 

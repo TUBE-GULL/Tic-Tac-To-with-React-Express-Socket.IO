@@ -64,22 +64,35 @@ app.get('/users', (req, res) => {
 });
 
 io.on('connection', (socket) => {
-   activeUsers.push({
-      name: user.name,
-      time: user.time,
-      socketId: socket.id // добавляем идентификатор сокета пользователя
+   // проверяет на наличия похожего профеля в сети 
+   const existingUser = activeUsers.find((user) => user.socketId === socket.id);
+
+   if (!existingUser) {
+      activeUsers.push({
+         name: user.name,
+         time: user.timer,
+         socketId: socket.id // добавляем идентификатор сокета пользователя
+      });
+
+      const userToken = user.token;
+      console.log(`User connected with token: '${userToken}'`);
+
+      socket.emit('token', userToken);
+      io.emit('activeUsers', activeUsers);
+      socket.emit('userData', user.name);
+   }
+
+   socket.on('buttonClick', ({ sender, receiverSocketId }) => {
+      const receiverUser = activeUsers.find((user) => user.socketId === receiverSocketId);
+      if (receiverUser) {
+         const receiverName = receiverUser.name;
+         console.log(`${sender} отправил сообщение пользователю ${receiverName}`);
+         // Отправляем событие 'confirm' с информацией о отправителе и получателе
+         io.to(receiverSocketId).emit('confirm', { sender, receiver: receiverName });
+      } else {
+         console.log(`Пользователь с идентификатором сокета ${receiverSocketId} не найден.`);
+      }
    });
-
-   const userToken = user.token;
-   console.log(`User connected with token: '${userToken}'`);
-
-   socket.emit('token', userToken);
-   io.emit('activeUsers', activeUsers);
-
-   let counter = 0;
-   // setInterval(() => {
-   //    socket.emit('hello', ++counter);
-   // }, 1000);
 
    socket.on('hi', data => {
       console.log('hi', data);
