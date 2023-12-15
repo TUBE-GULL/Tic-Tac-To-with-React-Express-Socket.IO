@@ -2,42 +2,49 @@ const socket = io('http://localhost:8080');
 const $events = document.getElementById('events');
 const $userList = document.getElementById('userList')
 
-let activeUser;
+const thisUser = {}
 
 socket.on('userData', (userData) => {
-   activeUser = userData
-   console.log(`Получено имя пользователя: ${activeUser}`);
-   // Делайте что-то с именем пользователя, если это необходимо
+   thisUser.name = userData.user.name
+   thisUser.time = userData.user.timer
+   thisUser.socketId = userData.socketId
+   console.log(`Successful authentication ${userData.user.name} ${userData.user.timer}`)
 });
 
-const displayUserList = (users) => {
-   $userList.innerHTML = ''; // очищаем предыдущий список
-   users.forEach(user => {
-      const item = document.createElement('button');
-      item.innerText = `${user.name} ${user.time}`;
-      $userList.appendChild(item);
+socket.on('activeUsers', users => {
+   $userList.innerHTML = ''
+   for (const userId in users) {
+      const user = users[userId]
+      const item = document.createElement('button')
+      item.innerText = `${user.name} ${user.time}`
+      $userList.appendChild(item)
 
-      // Создаем функцию-обертку с использованием замыкания
-      const handleClick = (senderName, receiverSocketId) => {
-         return () => {
-            // Отправляем сообщение серверу о клике на кнопку и передаем информацию о себе
-            socket.emit('buttonClick', { sender: senderName, receiverSocketId });
-         };
-      };
-
-      // Добавляем обработчик события click
-      item.addEventListener('click', handleClick(user.name, user.socketId));
-
-      $userList.appendChild(item);
-   });
-}
-
-socket.on('confirm', ({ receiver }) => {
-   confirm(`${activeUser} отправил сообщение пользователю ${receiver}`);
+      item.addEventListener('click', () => {
+         const senderTime = thisUser.time
+         console.log(`Button clicked for user: ${thisUser.name} ${user.name}`)
+         socket.emit('buttonClick', { senderName: thisUser.name, senderSocketId: thisUser.socketId, receiverName: user.name, receiverSocketId: user.socketId, senderTime })
+      })
+      $userList.appendChild(item)
+   }
 });
 
-socket.on('activeUsers', (users) => {
-   console.log(users)
-   displayUserList(users);
+socket.on('confirm', ({ senderName, senderSocketId, receiverName, receiverSocketId, senderTime }) => {
+   const confirmed = confirm(`${senderName} отправил сообщение пользователю ${receiverName}`);
+
+   if (confirmed) {
+      const receiverTime = thisUser.time
+      socket.emit('confirmTrue', { senderName, senderSocketId, receiverName, receiverSocketId, senderTime, receiverTime })
+   } else {
+      socket.emit('reject', { senderSocketId, receiverName });
+   }
 });
 
+socket.on('confirmed', ({ senderName, senderSocketId, receiverName, receiverSocketId }) => {
+   alert(`Подтверждено: ${senderName} и ${receiverName}`)
+   window.location.href = '/game'
+});
+
+
+socket.on('refusalAlert', ({ receiverName }) => {
+   alert(`${receiverName} отказался принять сообщение`);
+});

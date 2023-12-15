@@ -1,18 +1,21 @@
-const session = require('express-session')
-const socketIo = require('socket.io')
-const express = require('express')
-const http = require('http')
-const path = require('path')
-const app = require('express')()
-const server = require('http').createServer(app)
-const io = require('socket.io')(server)
+const express = require('express');
+const session = require('express-session');
+const http = require('http');
+const socketIo = require('socket.io');
+const path = require('path');
+
+const app = express();
+const server = http.createServer(app);
+const io = socketIo(server);
+const PORT = process.env.PORT || 8080;
 
 // out module
-const tokenGeneration = require('./node/components/tokenGeneration.js')
-const { searchToken, } = require('./node/components/function.js')
-const { singUp, singIn } = require('./node/components/singInUp.js')
+const tokenGeneration = require('./node/components/tokenGeneration.js');
+const { searchToken } = require('./node/components/function.js');
+const { singUp, singIn } = require('./node/components/singInUp.js');
 
-const userSecretKey = tokenGeneration(20)
+// Generate a secret key for sessions
+const userSecretKey = tokenGeneration(20);
 
 app.use(express.static('public'))
 app.use(express.urlencoded({ extended: true }))
@@ -43,11 +46,16 @@ app.post('/submit_singin', (req, res) => {
    singIn(req, res)
 })
 
+//game online ======================================
+
+app.get('/game', (req, res) => {
+   res.sendFile(`${__dirname}/views/game.html`);
+});
+
 //users online ======================================
-
-const activeUsers = [];
-
-const user = {}
+const activeRooms = {}; // объект для хранения данных комнат
+const activeUsers = {} // обьект  пользователей в сети 
+const user = {}        // данные пользователя при входе 
 
 app.get('/users', (req, res) => {
    // получаем данные пользователя из сессии
@@ -65,55 +73,86 @@ app.get('/users', (req, res) => {
 
 io.on('connection', (socket) => {
    // проверяет на наличия похожего профеля в сети 
-   const existingUser = activeUsers.find((user) => user.socketId === socket.id);
+   const existingUser = activeUsers[socket.id];
 
    if (!existingUser) {
-      activeUsers.push({
+      activeUsers[socket.id] = {
          name: user.name,
          time: user.timer,
-         socketId: socket.id // добавляем идентификатор сокета пользователя
-      });
+         socketId: socket.id
+      };
 
-      const userToken = user.token;
-      console.log(`User connected with token: '${userToken}'`);
-
-      socket.emit('token', userToken);
+      socket.emit('userData', { user, socketId: socket.id });
       io.emit('activeUsers', activeUsers);
-      socket.emit('userData', user.name);
    }
+   socket.on('buttonClick', ({ senderName, senderSocketId, receiverName, receiverSocketId, senderTime }) => {
+      // console.log({ senderName, senderSocketId, receiverName, receiverSocketId })
+      if (senderSocketId !== receiverSocketId) {
+         // && senderSocketId !== undefined
+         io.to(receiverSocketId).emit('confirm', { senderName, senderSocketId, receiverName, receiverSocketId, senderTime })
+      }
+   })
 
-   socket.on('buttonClick', ({ sender, receiverSocketId }) => {
-      const receiverUser = activeUsers.find((user) => user.socketId === receiverSocketId);
-      if (receiverUser) {
-         const receiverName = receiverUser.name;
-         console.log(`${sender} отправил сообщение пользователю ${receiverName}`);
-         // Отправляем событие 'confirm' с информацией о отправителе и получателе
-         io.to(receiverSocketId).emit('confirm', { sender, receiver: receiverName });
+   socket.on('reject', ({ senderSocketId, receiverName }) => {
+      io.to(senderSocketId).emit('refusalAlert', { receiverName });
+   });
+
+   socket.on('confirmTrue', ({ senderName, senderSocketId, receiverName, receiverSocketId, senderTime, receiverTime }) => {
+      // Проверка валидности сокетов
+      const validSockets = senderSocketId && receiverSocketId &&
+         io.sockets.sockets.has(senderSocketId) &&
+         io.sockets.sockets.has(receiverSocketId);
+
+      if (validSockets) {
+
+         const roomName = `room_${senderSocketId}_${receiverSocketId}`;
+
+         // Присоединяем обоих пользователей к комнате
+         io.sockets.sockets.get(senderSocketId).join(roomName);
+         io.sockets.sockets.get(receiverSocketId).join(roomName);
+
+         // Сохраняем данные комнаты
+         activeRooms[roomName] = {
+            senderName,
+            senderSocketId,
+            receiverName,
+            receiverSocketId,
+            senderTime,
+            receiverTime
+         };
+
+         // Отправляем сообщение об успешном подтверждении и переход в новую страничку 
+         io.to(senderSocketId).emit('confirmed', { senderName, senderSocketId, receiverName, receiverSocketId });
+         io.to(receiverSocketId).emit('confirmed', { senderName, senderSocketId, receiverName, receiverSocketId });
+
+         console.log(`Пользователи ${senderName} и ${receiverName} переведены в комнату ${roomName}`);
       } else {
-         console.log(`Пользователь с идентификатором сокета ${receiverSocketId} не найден.`);
+         console.log('Невалидные сокеты');
       }
    });
 
-   socket.on('hi', data => {
-      console.log('hi', data);
-   });
+
+
 
    socket.on('disconnect', () => {
-      // Логика при отключении пользователя, например, удаление из списка активных пользователей
-      let indexToRemove = activeUsers.findIndex((u) => u.socketId === socket.id);
-      if (indexToRemove !== -1) {
-         activeUsers.splice(indexToRemove, 1);
-         console.log("Пользователь удален успешно.");
-      } else {
-         console.log("Пользователь не найден.");
-      }
-      io.emit('activeUsers', activeUsers);
-   });
-});
+      console.log(`User disconnected: ${socket.id}`)
+      delete activeUsers[socket.id]
+      io.emit('activeUsers', activeUsers)
+   })
+})
+//задача создать 
+// 1) проверка вхожа чтобы пользователь не задублировался
+// 2) сделать отображения всех пользователь онлайн на клиенте
+// 3) взаимодействия с пользователями нажатия на иконку с user 
+//    у пользователя к которому отправили уведомления вы берает 
+//    зайти ему в сесию или нет
+// 4) синхранизация 2 пользователей в сети в одной комнате
+// 5) синхранизация работы игры и подстройка ее под двух users
+// 6) сбор данных и вывод  в имя пользователя
+
 
 //=======================================================
 
-// app.listen(8080, () => console.log('Start sever on port 8080'))
 server.listen(8080, () => {
-   console.log('Socket.IO + Start sever on port 8080');
+   console.log(`Socket.IO + Start sever on port ${PORT}...`);
 });

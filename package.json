@@ -23,7 +23,8 @@
     "install": "^0.13.0",
     "npm": "^10.2.4",
     "socket.io": "^4.7.2",
-    "socket.io-client": "^4.7.2"
+    "socket.io-client": "^4.7.2",
+    "type": "^2.7.2"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

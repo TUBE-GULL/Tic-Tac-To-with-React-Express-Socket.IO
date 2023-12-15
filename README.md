@@ -1,6 +1,11 @@
 ___________________________________________________________________________
 project development
 
+0.0.14
+
+implemented connections between two users and combining them into one room
+
+
 0.0.13
 
 I send notifications, but so far everything is not going according to plan
