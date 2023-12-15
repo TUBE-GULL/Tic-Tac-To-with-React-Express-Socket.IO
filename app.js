@@ -107,11 +107,9 @@ io.on('connection', (socket) => {
 
          const roomName = `room_${senderSocketId}_${receiverSocketId}`;
 
-         // Присоединяем обоих пользователей к комнате
          io.sockets.sockets.get(senderSocketId).join(roomName);
          io.sockets.sockets.get(receiverSocketId).join(roomName);
 
-         // Сохраняем данные комнаты
          activeRooms[roomName] = {
             senderName,
             senderSocketId,
@@ -121,7 +119,6 @@ io.on('connection', (socket) => {
             receiverTime
          };
 
-         // Отправляем сообщение об успешном подтверждении и переход в новую страничку 
          io.to(senderSocketId).emit('confirmed', { senderName, senderSocketId, receiverName, receiverSocketId });
          io.to(receiverSocketId).emit('confirmed', { senderName, senderSocketId, receiverName, receiverSocketId });
 
