@@ -1,4 +1,4 @@
-const usersData = [
+[
   {
     "name": "Oleg",
     "password": "$2b$10$atxs0Gq4dQxij1.yA8C.ie7xJJW17W2GLdw.v1sa51lJ3QipdFjA6",
@@ -17,6 +17,10 @@ const usersData = [
     "token": "fc20a754089ffa99c767ed15545313",
     "time": "1:00"
   },
-];
-
-export default usersData;
+  {
+    "name": "Oleg1",
+    "password": "$2b$10$4l/dFnNpGITzD80mIb1NbeSzyEpLa3tWcKXSabVao3ZnrhMd/OSpq",
+    "token": "8fe943e54992bb4dc57bbf46f72600",
+    "time": "0:00"
+  }
+]

@@ -11,12 +11,10 @@ const PORT = process.env.PORT || 8080;
 
 // out module
 import tokenGeneration from './node/components/tokenGeneration.js';
-// import { searchToken } from './node/components/function.js';
 import { singUp, singIn } from './node/components/singInUp.js';
 
-
 // Generate a secret key for sessions
-const userSecretKey = tokenGeneration(20);
+const userSecretKey = await tokenGeneration(20);
 
 app.use(express.static('public'))
 app.use(express.urlencoded({ extended: true }))

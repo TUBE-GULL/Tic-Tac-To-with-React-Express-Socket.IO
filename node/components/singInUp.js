@@ -1,25 +1,21 @@
-// const bcrypt = require('bcrypt');
-// const session = require('express-session');
-// const path = require('path');
-// const fs = require('fs');
-// const dataFilePath = path.join(__dirname, '../../data/data.js')
-// const existingData = require(dataFilePath)
-// const tokenGeneration = require('./tokenGeneration')
 import bcrypt from 'bcrypt';
 import session from 'express-session';
 import path from 'path';
-import { fileURLToPath } from 'url'; // Добавляем этот модуль для работы с URL
+import { fileURLToPath } from 'url';
 import fs from 'fs/promises';
+// import * as fs from 'node:fs/promises';
 import tokenGeneration from './tokenGeneration.js';
-import usersData from '../../data/data.js';
+import readFileData from './readFileData.js';
+import writeFileData from './writeFileData.js';
 
+const userData = await readFileData()
 
 const checkDoubleUserName = (formData) => {
-   return usersData.some(el => el.name == formData.name);
+   return userData.some(el => el.name == formData.name);
 }
 
 const checkDoubleUsersNamePs = async (formData) => {
-   const user = usersData.find(el => el.name === formData.name);
+   const user = userData.find(el => el.name === formData.name);
    if (user && await bcrypt.compare(formData.password, user.password)) {
       return true;
    }
@@ -31,26 +27,17 @@ const singUp = async (req, res) => {
 
    if (!checkDoubleUserName(formData)) {
       const hashedPassword = await bcrypt.hash(formData.password, 10);
-      usersData.push({
+      const newUser = {
          name: formData.name,
          password: hashedPassword,
-         token: tokenGeneration(15),
+         token: await tokenGeneration(15),
          time: "0:00",
-      })
+      };
 
-      console.log('Добавлены новые данные:', usersData);
+      userData.push(newUser);
 
-      const jsonData = JSON.stringify(usersData, null, 2);
-
-      // Запись в файл
-      fs.writeFile('./data/data.js', jsonData, 'utf8', (error) => {
-         if (error) {
-            console.error(error);
-         } else {
-            console.log('Данные успешно записаны в файл.');
-         }
-      });
-
+      await writeFileData(userData);
+      res.json({ success: true });
    } else {
       console.log('Неудачная регистрация');
       res.status(401).json({ success: false, error: 'данный пользователь занят' });
@@ -62,7 +49,7 @@ const singIn = async (req, res) => {
 
    if (await checkDoubleUsersNamePs(formData)) {
       console.log('Successful authentication');
-      usersData.forEach(el => {
+      userData.forEach(el => {
          if (el.name == formData.name) {
             req.session.user = {
                name: el.name,

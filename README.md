@@ -1,7 +1,17 @@
 ___________________________________________________________________________
 project development
 
+0.0.18
+
+fixed the code, completely converted it to import
+also added
+converted the data to json
+added 2 functions
+writeFileData and readFileData
+
+0.0.17
 0.0.16
+
 
 rewrote from (require) to (import)
 

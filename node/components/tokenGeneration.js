@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import data from '../../data/data.js';
+import readFileData from './readFileData.js';
 
 // const tokenGeneration = (bit) => { // ушел в бесконечный цикл когда data 0
 //    // let token = crypto.randomBytes(bit).toString('hex')
@@ -12,9 +12,10 @@ import data from '../../data/data.js';
 //    return token;
 // }
 
-const tokenGeneration = (bit) => {
+const tokenGeneration = async (bit) => {
+   const data = await readFileData()
    let token = crypto.randomBytes(bit).toString('hex')
-
+   // console.log(data)
    if (data.every(el => el.token == token)) {
       token = crypto.randomBytes(bit).toString('hex')
    }
