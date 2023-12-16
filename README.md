@@ -1,6 +1,10 @@
 ___________________________________________________________________________
 project development
 
+0.0.19
+
+edited README
+
 0.0.18
 
 fixed the code, completely converted it to import
@@ -10,6 +14,9 @@ added 2 functions
 writeFileData and readFileData
 
 0.0.17
+
+a couple of minor edits
+
 0.0.16
 
 
