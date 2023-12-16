@@ -1,5 +1,5 @@
-const crypto = require('crypto')
-const data = require('../../data/data')
+import crypto from 'crypto';
+import data from '../../data/data.js';
 
 // const tokenGeneration = (bit) => { // ушел в бесконечный цикл когда data 0
 //    // let token = crypto.randomBytes(bit).toString('hex')
@@ -21,4 +21,4 @@ const tokenGeneration = (bit) => {
    return token
 }
 
-module.exports = tokenGeneration
+export default tokenGeneration;

@@ -18,6 +18,7 @@ const myForm = document.getElementById('form');
 //       alert('Error hashing password')
 //    }
 // });
+
 myForm.addEventListener('submit', (event) => {
    event.preventDefault();
 

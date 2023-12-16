@@ -1,18 +1,19 @@
-const express = require('express');
-const session = require('express-session');
-const http = require('http');
-const socketIo = require('socket.io');
-const path = require('path');
+import express from 'express';
+import session from 'express-session';
+import http from 'http';
+import { Server } from 'socket.io'; // Correct import
+import path from 'path';
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server);
+const io = new Server(server); // Correct usage
 const PORT = process.env.PORT || 8080;
 
 // out module
-const tokenGeneration = require('./node/components/tokenGeneration.js');
-const { searchToken } = require('./node/components/function.js');
-const { singUp, singIn } = require('./node/components/singInUp.js');
+import tokenGeneration from './node/components/tokenGeneration.js';
+// import { searchToken } from './node/components/function.js';
+import { singUp, singIn } from './node/components/singInUp.js';
+
 
 // Generate a secret key for sessions
 const userSecretKey = tokenGeneration(20);
@@ -27,10 +28,14 @@ app.use(session({
    // cookie: { secure: false } // Задайте secure на true при использовании HTTPS
 }))
 
+
+function getAbsolutePath(relativePath) {
+   return path.join(new URL(relativePath, import.meta.url).pathname);
+}
 //SING UP=========================================
 
 app.get('/', (req, res) => {
-   res.sendFile(`${__dirname}/views/registration.html`)
+   res.sendFile(getAbsolutePath('./views/registration.html'))
 })
 
 app.post('/submit_singup', (req, res) => {
@@ -39,7 +44,7 @@ app.post('/submit_singup', (req, res) => {
 
 //SING IN=========================================
 app.get('/singin', (req, res) => {
-   res.sendFile(`${__dirname}/views/login.html`)
+   res.sendFile(getAbsolutePath('./views/login.html'))
 })
 
 app.post('/submit_singin', (req, res) => {
@@ -48,9 +53,16 @@ app.post('/submit_singin', (req, res) => {
 
 //game online ======================================
 
-app.get('/game', (req, res) => {
-   res.sendFile(`${__dirname}/views/game.html`);
-});
+// app.get('/game', (req, res) => {
+//    // res.sendFile(`${__dirname}/views/game.html`);
+
+
+//    // Пример: передача данных в шаблонизатор (предполагается, что у вас есть шаблонизатор, например, EJS)
+//    res.render('game', {
+//       senderSocketId: req.query.senderSocketId,
+//       receiverSocketId: req.query.receiverSocketId
+//    });
+// });
 
 //users online ======================================
 const activeRooms = {}; // объект для хранения данных комнат
@@ -65,7 +77,8 @@ app.get('/users', (req, res) => {
 
    if (user.token) {
       // res.cookie('authToken', user.token, { httpOnly: true });
-      res.sendFile(path.join(__dirname, '/views/users.html'));
+      res.sendFile(getAbsolutePath('./views/users.html'))
+      // res.sendFile(path.join(__dirname, '/views/users.html')); (getAbsolutePath('/views/login.html'))
    } else {
       res.status(401).json({ success: false, error: 'Пользователь не аутентифицирован' });
    }
@@ -127,9 +140,6 @@ io.on('connection', (socket) => {
          console.log('Невалидные сокеты');
       }
    });
-
-
-
 
    socket.on('disconnect', () => {
       console.log(`User disconnected: ${socket.id}`)
