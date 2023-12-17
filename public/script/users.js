@@ -1,6 +1,6 @@
 // import React from 'react';
 // import ReactDOM from 'react-dom';
-import GamePage from '../script/GamePage'
+import GamePage from './module/GamePage'
 
 const socket = io('http://localhost:8080');
 const $events = document.getElementById('events');

@@ -10,7 +10,7 @@ const io = new Server(server);
 const PORT = process.env.PORT || 8080;
 
 // out module
-import tokenGeneration from './node/components/tokenGeneration.js';
+import tokenGeneration from './node/components/function/tokenGeneration.js';
 import { singUp, singIn } from './node/components/singInUp.js';
 
 // Generate a secret key for sessions

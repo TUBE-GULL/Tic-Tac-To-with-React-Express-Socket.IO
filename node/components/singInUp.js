@@ -1,12 +1,7 @@
 import bcrypt from 'bcrypt';
-import session from 'express-session';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import fs from 'fs/promises';
-// import * as fs from 'node:fs/promises';
-import tokenGeneration from './tokenGeneration.js';
-import readFileData from './readFileData.js';
-import writeFileData from './writeFileData.js';
+import tokenGeneration from './function/tokenGeneration.js';
+import readFileData from './function/readFileData.js';
+import writeFileData from './function/writeFileData.js';
 
 const userData = await readFileData()
 
@@ -14,7 +9,7 @@ const checkDoubleUserName = (formData) => {
    return userData.some(el => el.name == formData.name);
 }
 
-const checkDoubleUsersNamePs = async (formData) => {
+const checkDoubleUserNamePassword = async (formData) => {
    const user = userData.find(el => el.name === formData.name);
    if (user && await bcrypt.compare(formData.password, user.password)) {
       return true;
@@ -37,7 +32,7 @@ const singUp = async (req, res) => {
       userData.push(newUser);
 
       await writeFileData(userData);
-      res.json({ success: true });
+      res.json({ success: true });//отправляет ответ клиенту ! 
    } else {
       console.log('Неудачная регистрация');
       res.status(401).json({ success: false, error: 'данный пользователь занят' });
@@ -47,7 +42,7 @@ const singUp = async (req, res) => {
 const singIn = async (req, res) => {
    const formData = req.body
 
-   if (await checkDoubleUsersNamePs(formData)) {
+   if (await checkDoubleUserNamePassword(formData)) {
       console.log('Successful authentication');
       userData.forEach(el => {
          if (el.name == formData.name) {

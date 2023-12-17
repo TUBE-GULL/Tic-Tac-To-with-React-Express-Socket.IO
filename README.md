@@ -1,6 +1,10 @@
 ___________________________________________________________________________
 project development
 
+0.0.21
+
+A little refactoring
+
 0.0.20
 
 I fixed the error with socket.io
