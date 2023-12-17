@@ -1,13 +1,13 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import io from 'socket.io-client';
-import GamePage from '../script/GamePage';
+// import React from 'react';
+// import ReactDOM from 'react-dom';
+import GamePage from '../script/GamePage'
 
 const socket = io('http://localhost:8080');
 const $events = document.getElementById('events');
 const $userList = document.getElementById('userList');
 
 const thisUser = {};
+
 
 socket.on('userData', (userData) => {
    thisUser.name = userData.user.name;
@@ -48,14 +48,8 @@ socket.on('confirmed', ({ senderName, senderSocketId, receiverName, receiverSock
    ReactDOM.render(<GamePage />, document.getElementById('root'));
 });
 
-// socket.on('confirmed', ({ senderName, senderSocketId, receiverName, receiverSocketId }) => {
-//    alert(`Подтверждено: ${senderName} и ${receiverName}`)
-//    window.location.href = '/game'
-// });
-
-
 socket.on('refusalAlert', ({ receiverName }) => {
    alert(`${receiverName} отказался принять сообщение`);
 });
 
-ReactDOM.render(<GamePage />, document.getElementById('root'));
+// ReactDOM.render(<GamePage />, document.getElementById('root'));

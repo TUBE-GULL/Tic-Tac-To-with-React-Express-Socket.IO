@@ -6,7 +6,7 @@ import path from 'path';
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server); // Correct usage
+const io = new Server(server);
 const PORT = process.env.PORT || 8080;
 
 // out module
@@ -17,6 +17,8 @@ import { singUp, singIn } from './node/components/singInUp.js';
 const userSecretKey = await tokenGeneration(20);
 
 app.use(express.static('public'))
+app.use('/node_modules', express.static('node_modules', { 'Content-Type': 'application/javascript' }))
+
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(session({
@@ -151,7 +153,9 @@ io.on('connection', (socket) => {
 // 3) взаимодействия с пользователями нажатия на иконку с user 
 //    у пользователя к которому отправили уведомления вы берает 
 //    зайти ему в сесию или нет
+
 // 4) синхранизация 2 пользователей в сети в одной комнате
+// тут есть момент что решил перейти на react надо понять как все там связать
 // 5) синхранизация работы игры и подстройка ее под двух users
 // 6) сбор данных и вывод  в имя пользователя
 

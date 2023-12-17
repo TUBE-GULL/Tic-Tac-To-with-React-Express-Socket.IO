@@ -1,6 +1,11 @@
 ___________________________________________________________________________
 project development
 
+0.0.20
+
+I fixed the error with socket.io
+it's time to take on react
+
 0.0.19
 
 edited README
