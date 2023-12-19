@@ -1,6 +1,10 @@
 ___________________________________________________________________________
 project development
 
+0.0.22
+
+I'll figure out the react
+
 0.0.21
 
 A little refactoring

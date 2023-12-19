@@ -1,20 +1,24 @@
 import express from 'express';
 import session from 'express-session';
 import http from 'http';
-import { Server } from 'socket.io'; // Correct import
+import { Server } from 'socket.io';
 import path from 'path';
+import babelRegister from '@babel/register';
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 const PORT = process.env.PORT || 8080;
 
+// Generate a secret key for sessions
+const userSecretKey = await tokenGeneration(20);
+
 // out module
 import tokenGeneration from './node/components/function/tokenGeneration.js';
 import { singUp, singIn } from './node/components/singInUp.js';
+import babelConfig from './public/babel.config.js';
 
-// Generate a secret key for sessions
-const userSecretKey = await tokenGeneration(20);
+babelRegister(babelConfig);
 
 app.use(express.static('public'))
 app.use('/node_modules', express.static('node_modules', { 'Content-Type': 'application/javascript' }))
@@ -162,6 +166,6 @@ io.on('connection', (socket) => {
 
 //=======================================================
 
-server.listen(8080, () => {
+server.listen(PORT, () => {
    console.log(`Socket.IO + Start sever on port ${PORT}...`);
 });

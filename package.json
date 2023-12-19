@@ -4,7 +4,7 @@
   "description": "![Watch the video](./img/videoGIF.gif)",
   "main": "app.js",
   "scripts": {
-    "build": "babel your-source-directory -d your-output-directory",
+    "build": "babel ./public/script/module -d ./public/script",
     "start": "node app.js",
     "dev": "nodemon app.js"
   },
@@ -32,9 +32,11 @@
     "type": "^2.7.2"
   },
   "devDependencies": {
+    "@babel/cli": "^7.23.4",
     "@babel/core": "^7.23.6",
     "@babel/preset-env": "^7.23.6",
     "@babel/preset-react": "^7.23.3",
+    "@babel/register": "^7.22.15",
     "nodemon": "^3.0.1"
   }
 }

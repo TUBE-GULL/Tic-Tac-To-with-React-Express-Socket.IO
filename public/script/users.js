@@ -1,6 +1,8 @@
 // import React from 'react';
 // import ReactDOM from 'react-dom';
-import GamePage from './module/GamePage'
+// import GamePage from './GamePage'
+// import GamePage from '/script/GamePage.js';
+
 
 const socket = io('http://localhost:8080');
 const $events = document.getElementById('events');
@@ -45,11 +47,11 @@ socket.on('confirm', ({ senderName, senderSocketId, receiverName, receiverSocket
 });
 
 socket.on('confirmed', ({ senderName, senderSocketId, receiverName, receiverSocketId }) => {
-   ReactDOM.render(<GamePage />, document.getElementById('root'));
+   // ReactDOM.render(<GamePage />, document.getElementById('root_start_game'));
 });
 
 socket.on('refusalAlert', ({ receiverName }) => {
    alert(`${receiverName} отказался принять сообщение`);
 });
 
-// ReactDOM.render(<GamePage />, document.getElementById('root'));
+// ReactDOM.render(<GamePage />, document.getElementById('root_start_game'));
