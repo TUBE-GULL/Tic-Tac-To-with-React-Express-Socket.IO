@@ -3,7 +3,6 @@ import session from 'express-session';
 import http from 'http';
 import { Server } from 'socket.io';
 import path from 'path';
-import babelRegister from '@babel/register';
 
 const app = express();
 const server = http.createServer(app);
@@ -16,9 +15,6 @@ const userSecretKey = await tokenGeneration(20);
 // out module
 import tokenGeneration from './node/components/function/tokenGeneration.js';
 import { singUp, singIn } from './node/components/singInUp.js';
-import babelConfig from './public/babel.config.js';
-
-babelRegister(babelConfig);
 
 app.use(express.static('public'))
 // app.use(express.static('public', { 'extensions': ['js'] }));
@@ -33,24 +29,6 @@ app.use(session({
    // cookie: { secure: false } // Задайте secure на true при использовании HTTPS
 }))
 app.use('/script', express.static('script'));
-
-//=======================================================
-//для работы Jsx ? 
-
-app.use(express.static('public'));
-
-app.use('/script', (req, res, next) => {
-   const filename = path.join(__dirname, 'public', req.path);
-
-   if (filename.endsWith('.jsx')) {
-      res.type('application/javascript');
-      res.sendFile(filename);
-   } else {
-      next();
-   }
-});
-
-//=======================================================
 
 function getAbsolutePath(relativePath) {
    return path.join(new URL(relativePath, import.meta.url).pathname);
@@ -73,19 +51,6 @@ app.get('/singin', (req, res) => {
 app.post('/submit_singin', (req, res) => {
    singIn(req, res)
 })
-
-//game online ======================================
-
-// app.get('/game', (req, res) => {
-//    // res.sendFile(`${__dirname}/views/game.html`);
-
-
-//    // Пример: передача данных в шаблонизатор (предполагается, что у вас есть шаблонизатор, например, EJS)
-//    res.render('game', {
-//       senderSocketId: req.query.senderSocketId,
-//       receiverSocketId: req.query.receiverSocketId
-//    });
-// });
 
 //users online ======================================
 const activeRooms = {}; // объект для хранения данных комнат
@@ -170,6 +135,20 @@ io.on('connection', (socket) => {
       io.emit('activeUsers', activeUsers)
    })
 })
+
+//game online ======================================
+
+// app.get('/game', (req, res) => {
+//    // res.sendFile(`${__dirname}/views/game.html`);
+
+
+//    // Пример: передача данных в шаблонизатор (предполагается, что у вас есть шаблонизатор, например, EJS)
+//    res.render('game', {
+//       senderSocketId: req.query.senderSocketId,
+//       receiverSocketId: req.query.receiverSocketId
+//    });
+// });
+
 //задача создать 
 // 1) проверка вхожа чтобы пользователь не задублировался
 // 2) сделать отображения всех пользователь онлайн на клиенте

@@ -41,7 +41,6 @@ const checkRow = (a, b, c) => {
       cells[b].innerHTML === cells[c].innerHTML
 }
 
-
 cells.forEach(cell => {
    cell.addEventListener('click', function () {
       clickCell(cell)
