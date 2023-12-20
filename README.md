@@ -1,6 +1,12 @@
 ___________________________________________________________________________
 project development
 
+0.0.23★
+
+I spent 4 days trying to figure out how to run jsx through the server, but it didn't work
+
+I think I'll go with Socket.io.
+
 0.0.22
 
 I'll figure out the react

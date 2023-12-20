@@ -21,6 +21,7 @@ import babelConfig from './public/babel.config.js';
 babelRegister(babelConfig);
 
 app.use(express.static('public'))
+// app.use(express.static('public', { 'extensions': ['js'] }));
 app.use('/node_modules', express.static('node_modules', { 'Content-Type': 'application/javascript' }))
 
 app.use(express.urlencoded({ extended: true }))
@@ -31,7 +32,25 @@ app.use(session({
    saveUninitialized: true,
    // cookie: { secure: false } // Задайте secure на true при использовании HTTPS
 }))
+app.use('/script', express.static('script'));
 
+//=======================================================
+//для работы Jsx ? 
+
+app.use(express.static('public'));
+
+app.use('/script', (req, res, next) => {
+   const filename = path.join(__dirname, 'public', req.path);
+
+   if (filename.endsWith('.jsx')) {
+      res.type('application/javascript');
+      res.sendFile(filename);
+   } else {
+      next();
+   }
+});
+
+//=======================================================
 
 function getAbsolutePath(relativePath) {
    return path.join(new URL(relativePath, import.meta.url).pathname);
@@ -162,7 +181,6 @@ io.on('connection', (socket) => {
 // тут есть момент что решил перейти на react надо понять как все там связать
 // 5) синхранизация работы игры и подстройка ее под двух users
 // 6) сбор данных и вывод  в имя пользователя
-
 
 //=======================================================
 
