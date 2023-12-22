@@ -1,6 +1,11 @@
 ___________________________________________________________________________
 project development
 
+
+0.0.24
+
+page successfully drawn using react
+
 0.0.23★
 
 I spent 4 days trying to figure out how to run jsx through the server, but it didn't work

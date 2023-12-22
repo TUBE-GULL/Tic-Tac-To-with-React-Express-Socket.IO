@@ -6,17 +6,20 @@ body {
   display: flex;
   justify-content: center; }
 
-.inform .timers {
-  font-size: 30px;
-  text-align: center; }
-.inform .inform_user {
-  margin: 0;
-  padding: 0;
+.inform {
   display: flex;
-  justify-content: center; }
-  .inform .inform_user h2 {
+  justify-content: space-between; }
+  .inform .timers {
+    font-size: 30px;
+    text-align: center; }
+  .inform .inform_user {
     margin: 0;
-    font-size: 30px; }
+    padding: 0;
+    display: flex;
+    justify-content: center; }
+    .inform .inform_user h2 {
+      margin: 0;
+      font-size: 30px; }
 
 table {
   width: 500px;

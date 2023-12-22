@@ -10,6 +10,8 @@ body {
 .content {}
 
 .inform {
+   display: flex;
+   justify-content: space-between;
 
    .timers {
       font-size: 30px;
