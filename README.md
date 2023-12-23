@@ -1,6 +1,9 @@
 ___________________________________________________________________________
 project development
 
+0.0.25
+
+a couple of game functions thrown in
 
 0.0.24
 

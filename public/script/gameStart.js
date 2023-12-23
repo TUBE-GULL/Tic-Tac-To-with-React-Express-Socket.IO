@@ -1,17 +1,18 @@
-const GameStart = () => {
-   return React.createElement('div', { className: 'content' },
+const GameStart = ({ senderName, senderTime, receiverName, receiverTime }) => {
+
+   const content = React.createElement('div', { className: 'content' },
       React.createElement('div', { className: 'inform' },
          React.createElement('div', { className: 'userOne' },
-            React.createElement('p', { className: 'userOne_name' }, 'name one'),
-            React.createElement('p', { className: 'userOne_time' }, 'best time')
+            React.createElement('p', { className: 'userOne_name' }, senderName),
+            React.createElement('p', { className: 'userOne_time' }, `Best time  ${senderTime}`)
          ),
          React.createElement('div', { className: 'timers' },
-            React.createElement('h1', {}, 'Timer'),
+            React.createElement('h1', {}, 'Таймер'),
             React.createElement('p', { id: 'timer' }, '00:00:00')
          ),
          React.createElement('div', { className: 'userTwo' },
-            React.createElement('p', { className: 'userTwo_name' }, 'name two'),
-            React.createElement('p', { className: 'userTwo_time' }, 'best time')
+            React.createElement('p', { className: 'userTwo_name' }, receiverName),
+            React.createElement('p', { className: 'userTwo_time' }, `Best time ${receiverTime}`)
          )
       ),
       React.createElement('table', { className: 'table' },
@@ -34,6 +35,8 @@ const GameStart = () => {
          )
       )
    );
-}
+
+   return content;
+};
 
 export default GameStart;

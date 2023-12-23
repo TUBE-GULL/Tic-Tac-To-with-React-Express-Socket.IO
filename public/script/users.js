@@ -1,10 +1,10 @@
 import GameStart from '/script/gameStart.js';
-// import listOnlineUsers from './listOnlineUsers'
+
+const socket = io('http://localhost:8080');
 
 const rootElement = document.getElementById('root');
 const root = ReactDOM.createRoot(rootElement);
-
-const socket = io('http://localhost:8080');
+const timerElement = document.getElementById('timer')
 const $events = document.getElementById('events');
 const $userList = document.getElementById('userList');
 
@@ -24,6 +24,7 @@ socket.on('activeUsers', users => {
       const user = users[userId];
       const item = document.createElement('button');
       item.innerText = `${user.name} ${user.time}`;
+      item.id = userId; // добавления кнопкам id  для легко поиска 
       $userList.appendChild(item);
 
       item.addEventListener('click', () => {
@@ -46,11 +47,67 @@ socket.on('confirm', ({ senderName, senderSocketId, receiverName, receiverSocket
    }
 });
 
-socket.on('confirmed', ({ senderName, senderSocketId, receiverName, receiverSocketId }) => {
-   root.render(React.createElement(GameStart));
-
+socket.on('confirmed', ({ senderName, senderSocketId, receiverName, receiverSocketId, senderTime, receiverTime }) => {
+   root.render(
+      React.createElement(GameStart, {
+         senderName: senderName,
+         senderTime: senderTime,
+         receiverName: receiverName,
+         receiverTime: receiverTime
+      })
+   );
 });
 
 socket.on('refusalAlert', ({ receiverName }) => {
-   alert(`${receiverName} отказался принять сообщение`);
+   alert(`${receiverName} отказался принять запрос на начало игры`);
 });
+//сделать проверку на то вдруг пользователь вышел или у него оборвало интернет 
+//то пользователя должно  отправлять обрано в центральное меню приложения 
+
+
+
+
+
+// function timer +++++++++++++++++++++++++++++++++++++++++++++++
+
+socket.on('timerUpdate', ({ time }) => {
+   timerElement.textContent = time;
+});
+
+// const timerInterval = setInterval(() => {
+//    socket.emit('updateTimer', (roomName));
+// }, 10);
+
+
+// socket.on('timerUpdate', ({ time }) => {
+//    timerElement.textContent = time;
+// });
+
+
+
+
+
+
+socket.on('updateBoard', ({ cells, currentPlayer }) => {
+   // Обновление интерфейса с новым состоянием доски
+   // и текущим игроком (currentPlayer)
+});
+
+socket.on('gameOver', ({ winner, draw }) => {
+   if (winner) {
+      alert(`Игрок ${winner} победил!`);
+   } else if (draw) {
+      alert('Ничья!');
+   }
+   // Логика завершения игры...
+});
+
+// Обработка кликов по ячейкам на клиенте
+const cells = document.querySelectorAll('.cell');
+
+cells.forEach((cell, index) => {
+   cell.addEventListener('click', () => {
+      socket.emit('cellClick', index);
+   });
+});
+

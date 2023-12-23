@@ -31,7 +31,6 @@ const timers = () => {
 
 const timerInterval = setInterval(() => {
    timerElement.textContent = timers()
-   // console.log(cells)// inform 
 }, 10);
 
 

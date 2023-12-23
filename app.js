@@ -17,7 +17,6 @@ import tokenGeneration from './node/components/function/tokenGeneration.js';
 import { singUp, singIn } from './node/components/singInUp.js';
 
 app.use(express.static('public'))
-// app.use(express.static('public', { 'extensions': ['js'] }));
 app.use('/node_modules', express.static('node_modules', { 'Content-Type': 'application/javascript' }))
 
 app.use(express.urlencoded({ extended: true }))
@@ -54,8 +53,78 @@ app.post('/submit_singin', (req, res) => {
 
 //users online ======================================
 const activeRooms = {}; // объект для хранения данных комнат
+const roomTimers = {};  // обьект для хранения времени комнат 
 const activeUsers = {} // обьект  пользователей в сети 
 const user = {}        // данные пользователя при входе 
+
+// function timer +++++++++++++++++++++++++++++++++++++++++++++++ 
+const timers = (roomName) => {
+
+   if (!roomTimers[roomName]) {
+      roomTimers[roomName] = {
+         minutes: 0,
+         seconds: 0,
+         miniSeconds: 0,
+      };
+   }
+   const timer = roomTimers[roomName];
+
+   timer.miniSeconds++
+   if (timer.miniSeconds === 60) {
+      timer.seconds++
+      timer.miniSeconds = 0
+   }
+   if (timer.seconds === 60) {
+      timer.minutes++
+      timer.seconds = 0
+   }
+   if (timer.minutes === 60) {
+      timer.minutes = 0;
+      timer.seconds = 0;
+      timer.miniSeconds = 0;
+   }
+
+   const formattedMinutes = timer.minutes.toString().padStart(2, '0');
+   const formattedSeconds = timer.seconds.toString().padStart(2, '0');
+   const formattedMiniSeconds = timer.miniSeconds.toString().padStart(2, '0');
+
+   return `${formattedMinutes}:${formattedSeconds}:${formattedMiniSeconds}`
+};
+
+function startTimerForRoom(roomName) {
+   const roomTimerInterval = setInterval(() => {
+      const currentTime = timers(roomName);
+      io.to(roomName).emit('timerUpdate', { time: currentTime });
+   }, 10);
+};
+
+// function games +++++++++++++++++++++++++++++++++++++++++++++++ 
+
+
+const checkWin = () => {
+   const winPatterns = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8], // Горизонтальные
+      [0, 3, 6], [1, 4, 7], [2, 5, 8], // Вертикальные
+      [0, 4, 8], [2, 4, 6]             // Диагональные
+   ];
+
+   return winPatterns.some(pattern =>
+      cells[pattern[0]] !== '' &&
+      cells[pattern[0]] === cells[pattern[1]] &&
+      cells[pattern[1]] === cells[pattern[2]]
+   );
+}
+
+const checkDraw = () => {
+   return cells.every(cell => cell !== '');
+}
+
+const resetGame = () => {
+   cells.fill('');
+   currentPlayer = 'X';
+   io.emit('updateBoard', { cells, currentPlayer });
+}
+
 
 app.get('/users', (req, res) => {
    // получаем данные пользователя из сессии
@@ -108,22 +177,75 @@ io.on('connection', (socket) => {
 
          const roomName = `room_${senderSocketId}_${receiverSocketId}`;
 
-         io.sockets.sockets.get(senderSocketId).join(roomName);
-         io.sockets.sockets.get(receiverSocketId).join(roomName);
+         // проверка на повтор комнаты 
+         const userAlreadyInRoom = Object.values(activeRooms).some(room => {
+            return room.senderSocketId === senderSocketId || room.receiverSocketId === senderSocketId;
+         });
 
-         activeRooms[roomName] = {
-            senderName,
-            senderSocketId,
-            receiverName,
-            receiverSocketId,
-            senderTime,
-            receiverTime
-         };
 
-         io.to(senderSocketId).emit('confirmed', { senderName, senderSocketId, receiverName, receiverSocketId });
-         io.to(receiverSocketId).emit('confirmed', { senderName, senderSocketId, receiverName, receiverSocketId });
+         if (!userAlreadyInRoom) {
+            io.sockets.sockets.get(senderSocketId).join(roomName);
+            io.sockets.sockets.get(receiverSocketId).join(roomName);
 
-         console.log(`Пользователи ${senderName} и ${receiverName} переведены в комнату ${roomName}`);
+            activeRooms[roomName] = {
+               senderName,
+               senderSocketId,
+               receiverName,
+               receiverSocketId,
+               senderTime,
+               receiverTime
+            };
+
+            io.to(senderSocketId).emit('confirmed', ({ senderName, senderSocketId, receiverName, receiverSocketId, senderTime, receiverTime }) => {
+               startTimerForRoom(roomName);
+            });
+            io.to(receiverSocketId).emit('confirmed', ({ senderName, senderSocketId, receiverName, receiverSocketId, senderTime, receiverTime }) => {
+               startTimerForRoom(roomName);
+            });
+            console.log(`Пользователи ${senderName} и ${receiverName} переведены в комнату ${roomName}`);
+
+
+            // Удаление данных пользователей из комнаты 
+            delete activeUsers[senderSocketId];
+            delete activeUsers[receiverSocketId];
+
+            // отправляет все пользователя на перерисовку страницы 
+            io.emit('activeUsers', activeUsers);
+            roomTimers[roomName] = roomTimerInterval;
+
+
+
+
+
+
+
+
+
+
+
+            // const cells = Array(9).fill('');
+            // let currentPlayer = 'X';
+
+            // socket.on('cellClick', (index) => {
+            //    if (cells[index] === '') {
+            //       cells[index] = currentPlayer;
+            //       io.emit('updateBoard', { cells, currentPlayer });
+
+            //       if (checkWin()) {
+            //          io.emit('gameOver', { winner: currentPlayer });
+            //          resetGame();
+            //       } else if (checkDraw()) {
+            //          io.emit('gameOver', { draw: true });
+            //          resetGame();
+            //       } else {
+            //          currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            //       }
+            //    }
+            // });
+
+         } else {
+            console.log(`Пользователи ${senderName} и ${receiverName} уже находятся в комнате ${roomName}`);
+         }
       } else {
          console.log('Невалидные сокеты');
       }
@@ -140,7 +262,6 @@ io.on('connection', (socket) => {
 
 // app.get('/game', (req, res) => {
 //    // res.sendFile(`${__dirname}/views/game.html`);
-
 
 //    // Пример: передача данных в шаблонизатор (предполагается, что у вас есть шаблонизатор, например, EJS)
 //    res.render('game', {
