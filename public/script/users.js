@@ -4,12 +4,10 @@ const socket = io('http://localhost:8080');
 
 const rootElement = document.getElementById('root');
 const root = ReactDOM.createRoot(rootElement);
-const timerElement = document.getElementById('timer')
 const $events = document.getElementById('events');
 const $userList = document.getElementById('userList');
 
 const thisUser = {};
-
 
 socket.on('userData', (userData) => {
    thisUser.name = userData.user.name;
@@ -64,29 +62,14 @@ socket.on('refusalAlert', ({ receiverName }) => {
 //сделать проверку на то вдруг пользователь вышел или у него оборвало интернет 
 //то пользователя должно  отправлять обрано в центральное меню приложения 
 
-
-
-
-
 // function timer +++++++++++++++++++++++++++++++++++++++++++++++
 
+
 socket.on('timerUpdate', ({ time }) => {
+   const timerElement = document.getElementById('timer');
+
    timerElement.textContent = time;
 });
-
-// const timerInterval = setInterval(() => {
-//    socket.emit('updateTimer', (roomName));
-// }, 10);
-
-
-// socket.on('timerUpdate', ({ time }) => {
-//    timerElement.textContent = time;
-// });
-
-
-
-
-
 
 socket.on('updateBoard', ({ cells, currentPlayer }) => {
    // Обновление интерфейса с новым состоянием доски

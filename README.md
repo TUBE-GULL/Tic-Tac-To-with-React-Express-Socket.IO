@@ -1,6 +1,10 @@
 ___________________________________________________________________________
 project development
 
+0.0.26
+
+did a refactoring timer and also did Import
+
 0.0.25
 
 a couple of game functions thrown in

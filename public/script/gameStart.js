@@ -39,4 +39,4 @@ const GameStart = ({ senderName, senderTime, receiverName, receiverTime }) => {
    return content;
 };
 
-export default GameStart;
+export default GameStart; 

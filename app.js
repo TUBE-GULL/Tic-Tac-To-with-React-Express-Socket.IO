@@ -15,6 +15,7 @@ const userSecretKey = await tokenGeneration(20);
 // out module
 import tokenGeneration from './node/components/function/tokenGeneration.js';
 import { singUp, singIn } from './node/components/singInUp.js';
+import startTimerForRoom from './node/components/function/components/startTimerForRoom.js';
 
 app.use(express.static('public'))
 app.use('/node_modules', express.static('node_modules', { 'Content-Type': 'application/javascript' }))
@@ -57,49 +58,7 @@ const roomTimers = {};  // обьект для хранения времени �
 const activeUsers = {} // обьект  пользователей в сети 
 const user = {}        // данные пользователя при входе 
 
-// function timer +++++++++++++++++++++++++++++++++++++++++++++++ 
-const timers = (roomName) => {
-
-   if (!roomTimers[roomName]) {
-      roomTimers[roomName] = {
-         minutes: 0,
-         seconds: 0,
-         miniSeconds: 0,
-      };
-   }
-   const timer = roomTimers[roomName];
-
-   timer.miniSeconds++
-   if (timer.miniSeconds === 60) {
-      timer.seconds++
-      timer.miniSeconds = 0
-   }
-   if (timer.seconds === 60) {
-      timer.minutes++
-      timer.seconds = 0
-   }
-   if (timer.minutes === 60) {
-      timer.minutes = 0;
-      timer.seconds = 0;
-      timer.miniSeconds = 0;
-   }
-
-   const formattedMinutes = timer.minutes.toString().padStart(2, '0');
-   const formattedSeconds = timer.seconds.toString().padStart(2, '0');
-   const formattedMiniSeconds = timer.miniSeconds.toString().padStart(2, '0');
-
-   return `${formattedMinutes}:${formattedSeconds}:${formattedMiniSeconds}`
-};
-
-function startTimerForRoom(roomName) {
-   const roomTimerInterval = setInterval(() => {
-      const currentTime = timers(roomName);
-      io.to(roomName).emit('timerUpdate', { time: currentTime });
-   }, 10);
-};
-
 // function games +++++++++++++++++++++++++++++++++++++++++++++++ 
-
 
 const checkWin = () => {
    const winPatterns = [
@@ -158,7 +117,7 @@ io.on('connection', (socket) => {
    socket.on('buttonClick', ({ senderName, senderSocketId, receiverName, receiverSocketId, senderTime }) => {
       // console.log({ senderName, senderSocketId, receiverName, receiverSocketId })
       if (senderSocketId !== receiverSocketId) {
-         // && senderSocketId !== undefined
+         // && senderSocketId !== undefined // бывает чо видно undefined надо чтобы выбрасывало в singin 
          io.to(receiverSocketId).emit('confirm', { senderName, senderSocketId, receiverName, receiverSocketId, senderTime })
       }
    })
@@ -196,14 +155,14 @@ io.on('connection', (socket) => {
                receiverTime
             };
 
-            io.to(senderSocketId).emit('confirmed', ({ senderName, senderSocketId, receiverName, receiverSocketId, senderTime, receiverTime }) => {
-               startTimerForRoom(roomName);
-            });
-            io.to(receiverSocketId).emit('confirmed', ({ senderName, senderSocketId, receiverName, receiverSocketId, senderTime, receiverTime }) => {
-               startTimerForRoom(roomName);
-            });
+            io.to(senderSocketId).emit('confirmed', { senderName, senderSocketId, receiverName, receiverSocketId, senderTime, receiverTime });
+            io.to(receiverSocketId).emit('confirmed', { senderName, senderSocketId, receiverName, receiverSocketId, senderTime, receiverTime });
             console.log(`Пользователи ${senderName} и ${receiverName} переведены в комнату ${roomName}`);
 
+            startTimerForRoom(io, roomTimers, roomName);
+
+            let roomTimerInterval;
+            roomTimers[roomName] = roomTimerInterval;
 
             // Удаление данных пользователей из комнаты 
             delete activeUsers[senderSocketId];
@@ -211,14 +170,6 @@ io.on('connection', (socket) => {
 
             // отправляет все пользователя на перерисовку страницы 
             io.emit('activeUsers', activeUsers);
-            roomTimers[roomName] = roomTimerInterval;
-
-
-
-
-
-
-
 
 
 
@@ -257,30 +208,6 @@ io.on('connection', (socket) => {
       io.emit('activeUsers', activeUsers)
    })
 })
-
-//game online ======================================
-
-// app.get('/game', (req, res) => {
-//    // res.sendFile(`${__dirname}/views/game.html`);
-
-//    // Пример: передача данных в шаблонизатор (предполагается, что у вас есть шаблонизатор, например, EJS)
-//    res.render('game', {
-//       senderSocketId: req.query.senderSocketId,
-//       receiverSocketId: req.query.receiverSocketId
-//    });
-// });
-
-//задача создать 
-// 1) проверка вхожа чтобы пользователь не задублировался
-// 2) сделать отображения всех пользователь онлайн на клиенте
-// 3) взаимодействия с пользователями нажатия на иконку с user 
-//    у пользователя к которому отправили уведомления вы берает 
-//    зайти ему в сесию или нет
-
-// 4) синхранизация 2 пользователей в сети в одной комнате
-// тут есть момент что решил перейти на react надо понять как все там связать
-// 5) синхранизация работы игры и подстройка ее под двух users
-// 6) сбор данных и вывод  в имя пользователя
 
 //=======================================================
 
