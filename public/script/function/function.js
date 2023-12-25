@@ -42,7 +42,7 @@ const checkRow = (a, b, c) => {
 }
 
 cells.forEach(cell => {
-   cell.addEventListener('click', function () {
+   cell.addEventListener('click', () => {
       clickCell(cell)
    })
 });

@@ -1,6 +1,10 @@
 ___________________________________________________________________________
 project development
 
+0.0.27
+
+finally started writing a game function
+
 0.0.26
 
 did a refactoring timer and also did Import

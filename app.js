@@ -58,33 +58,6 @@ const roomTimers = {};  // обьект для хранения времени �
 const activeUsers = {} // обьект  пользователей в сети 
 const user = {}        // данные пользователя при входе 
 
-// function games +++++++++++++++++++++++++++++++++++++++++++++++ 
-
-const checkWin = () => {
-   const winPatterns = [
-      [0, 1, 2], [3, 4, 5], [6, 7, 8], // Горизонтальные
-      [0, 3, 6], [1, 4, 7], [2, 5, 8], // Вертикальные
-      [0, 4, 8], [2, 4, 6]             // Диагональные
-   ];
-
-   return winPatterns.some(pattern =>
-      cells[pattern[0]] !== '' &&
-      cells[pattern[0]] === cells[pattern[1]] &&
-      cells[pattern[1]] === cells[pattern[2]]
-   );
-}
-
-const checkDraw = () => {
-   return cells.every(cell => cell !== '');
-}
-
-const resetGame = () => {
-   cells.fill('');
-   currentPlayer = 'X';
-   io.emit('updateBoard', { cells, currentPlayer });
-}
-
-
 app.get('/users', (req, res) => {
    // получаем данные пользователя из сессии
    user.name = req.session.user.name
@@ -134,7 +107,7 @@ io.on('connection', (socket) => {
 
       if (validSockets) {
 
-         const roomName = `room_${senderSocketId}_${receiverSocketId}`;
+         const roomForGame = `room_${senderSocketId}_${receiverSocketId}`;
 
          // проверка на повтор комнаты 
          const userAlreadyInRoom = Object.values(activeRooms).some(room => {
@@ -143,10 +116,10 @@ io.on('connection', (socket) => {
 
 
          if (!userAlreadyInRoom) {
-            io.sockets.sockets.get(senderSocketId).join(roomName);
-            io.sockets.sockets.get(receiverSocketId).join(roomName);
+            io.sockets.sockets.get(senderSocketId).join(roomForGame);
+            io.sockets.sockets.get(receiverSocketId).join(roomForGame);
 
-            activeRooms[roomName] = {
+            activeRooms[roomForGame] = {
                senderName,
                senderSocketId,
                receiverName,
@@ -157,12 +130,12 @@ io.on('connection', (socket) => {
 
             io.to(senderSocketId).emit('confirmed', { senderName, senderSocketId, receiverName, receiverSocketId, senderTime, receiverTime });
             io.to(receiverSocketId).emit('confirmed', { senderName, senderSocketId, receiverName, receiverSocketId, senderTime, receiverTime });
-            console.log(`Пользователи ${senderName} и ${receiverName} переведены в комнату ${roomName}`);
+            console.log(`Пользователи ${senderName} и ${receiverName} переведены в комнату ${roomForGame}`);
 
-            startTimerForRoom(io, roomTimers, roomName);
+            startTimerForRoom(io, roomTimers, roomForGame);
 
             let roomTimerInterval;
-            roomTimers[roomName] = roomTimerInterval;
+            roomTimers[roomForGame] = roomTimerInterval;
 
             // Удаление данных пользователей из комнаты 
             delete activeUsers[senderSocketId];
@@ -171,31 +144,96 @@ io.on('connection', (socket) => {
             // отправляет все пользователя на перерисовку страницы 
             io.emit('activeUsers', activeUsers);
 
+            // game +++++++++++++++++++++++++++++++++++++++++++++++
+
+            // 1) сделать передачу заняых клеток на сервере будет хранитсья массив с данными о занятых клетках
+            // 2) пользователь при нажатии на кледку отправляет данные о том что он занял ячейку и отправляет номер ячейки и символ
+            // 3)
+
+            socket.on('startGame', (gameData) => {
+               // console.log(gameData)
+               const oneUser = {
+                  oneUserName: gameData.senderName,
+                  oneUserSocketId: gameData.senderSocketId,
+                  offNo: true,
+               };
+               const twoUser = {
+                  twoUserName: gameData.senderName,
+                  twoUserSocketId: gameData.receiverSocketId,
+                  offNo: false,
+               };
+
+               // const randomTicTacToe = getRandomTicTacToe() добавить рандомное появления x o 
+
+               const xSymbol = 'x';
+               const oSymbol = 'o';
+
+               io.to(oneUser.oneUserSocketId).emit('Games', { symbol: xSymbol, offNo: oneUser.offNo });
+               io.to(twoUser.twoUserSocketId).emit('Games', { symbol: oSymbol, offNo: twoUser.offNo });
+
+               // io.to(roomForGame).emit('Games', { randomTicTacToe });
+
+               const dataFieldGames = [] // 9  
+
+               const handleCellClick = (data, user, symbol) => {
+                  const index = data.index;
+                  dataFieldGames[index] = data.content;
+
+                  io.to(oneUser.oneUserSocketId).emit('updateGame', { dataFieldGames });
+                  io.to(twoUser.twoUserSocketId).emit('updateGame', { dataFieldGames });
+                  io.to(user.userSocketId).emit('Games', { symbol, offNo: user.offNo });
+
+                  switchOnOff(user);
+               };
+
+               socket.on('clickCell', (data) => {
+                  handleCellClick(data, oneUser, xSymbol);
+               });
+
+               // socket.on('clickCellTwo', (data) => {
+               //    handleCellClick(data, twoUser, oSymbol);
+               // });
+            })
 
 
+            // function games +++++++++++++++++++++++++++++++++++++++++++++++
 
-            // const cells = Array(9).fill('');
-            // let currentPlayer = 'X';
+            const switchOnOff = (userObject) => {
+               userObject.offNo = !userObject.offNo;
+            };
 
-            // socket.on('cellClick', (index) => {
-            //    if (cells[index] === '') {
-            //       cells[index] = currentPlayer;
-            //       io.emit('updateBoard', { cells, currentPlayer });
+            const getRandomTicTacToe = () => {
+               const values = ['X', 'O'];
+               const randomIndex = Math.floor(Math.random() * values.length);
+               return values[randomIndex];
+            };
 
-            //       if (checkWin()) {
-            //          io.emit('gameOver', { winner: currentPlayer });
-            //          resetGame();
-            //       } else if (checkDraw()) {
-            //          io.emit('gameOver', { draw: true });
-            //          resetGame();
-            //       } else {
-            //          currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-            //       }
-            //    }
-            // });
+            const checkWin = () => {
+               const winPatterns = [
+                  [0, 1, 2], [3, 4, 5], [6, 7, 8], // Горизонтальные
+                  [0, 3, 6], [1, 4, 7], [2, 5, 8], // Вертикальные
+                  [0, 4, 8], [2, 4, 6]             // Диагональные
+               ];
+
+               return winPatterns.some(pattern =>
+                  cells[pattern[0]] !== '' &&
+                  cells[pattern[0]] === cells[pattern[1]] &&
+                  cells[pattern[1]] === cells[pattern[2]]
+               );
+            }
+
+            const checkDraw = () => {
+               return cells.every(cell => cell !== '');
+            }
+
+            const resetGame = () => {
+               cells.fill('');
+               currentPlayer = 'X';
+               io.emit('updateBoard', { cells, currentPlayer });
+            }
 
          } else {
-            console.log(`Пользователи ${senderName} и ${receiverName} уже находятся в комнате ${roomName}`);
+            console.log(`Пользователи ${senderName} и ${receiverName} уже находятся в комнате ${roomForGame}`);
          }
       } else {
          console.log('Невалидные сокеты');
