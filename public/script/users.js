@@ -1,4 +1,4 @@
-import GameStart from '/script/gameStart.js';
+import GameStart from '/script/gameField.js';
 
 const socket = io('http://localhost:8080');
 
@@ -13,7 +13,7 @@ socket.on('userData', (userData) => {
    thisUser.name = userData.user.name;
    thisUser.time = userData.user.timer;
    thisUser.socketId = userData.socketId;
-   console.log(`Successful authentication ${userData.user.name} ${userData.user.timer}`);
+   // console.log(`Successful authentication ${userData.user.name} ${userData.user.timer}`);
 });
 
 socket.on('activeUsers', users => {
@@ -74,81 +74,114 @@ socket.on('timerUpdate', ({ time }) => {
 
 // function game +++++++++++++++++++++++++++++++++++++++++++++++
 
-socket.on('Games', ({ symbol, offNo }) => {
-   console.log('connection server')
+let arrayCells;
+let userData = {};
+
+socket.on('start', ({ user }) => {
+   userData = user;
    const cells = document.getElementsByClassName('cell');
-   const arrayCells = [...cells];
-   // console.dir(cells);
-   arrayCells.forEach((cell, index) => {
-      try {
-         console.log(symbol);
+   arrayCells = [...cells];
 
-         if (!offNo) {
-            cell.addEventListener('click', () => {
-               cell.textContent = symbol;
-               console.dir(cell.textContent);
+   console.log('connection server')
 
-               const cellData = {
-                  index: index,
-                  content: symbol,
-               };
+})
+console.log(userData)
 
-               socket.emit('clickCell', cellData);
-            });
-         }
-      } catch (error) {
-         console.error('Error processing Games event:', error);
-      }
-   });
+const handleCellClick = (cellNumber) => {
+   console.log(`Clicked on cell ${cellNumber}`);
+   console.log(userData.offNo);
+   console.log(userData.symbol);
 
-   //функция для обновления страницы у всех пользователей после нажатия 
-   socket.on('updateGame', (data) => {
-      const updatedCells = data.dataFieldGames;
 
-      for (const index in updatedCells) {
-         const cell = arrayCells[index];
-         if (cell) {
-            cell.textContent = updatedCells[index];
-         }
-      }
-   });
+   if (!userData.offNo) {
+      const cellElement = document.getElementById(`cell${cellNumber}`);
+      cellElement.textContent = userData.symbol;
 
-});
+      const cellData = {
+         index: cellNumber,
+         content: userData.symbol,
+      };
+      socket.emit('clickCell', cellData);
+   }
+};
 
 
 
 
-//функция по перерисовке игрового поля 
+//    cellElement.textContent = ;
+//    
+// }
 
-// socket.on('activeUsers', users => {
-//    $userList.innerHTML = '';
-//    for (const userId in users) {
-//       const user = users[userId];
-//       const item = document.createElement('button');
-//       item.innerText = `${user.name} ${user.time}`;
-//       item.id = userId; // добавления кнопкам id  для легко поиска 
-//       $userList.appendChild(item);
-
-//       item.addEventListener('click', () => {
-//          const senderTime = thisUser.time;
-//          console.log(`Button clicked for user: ${thisUser.name} ${user.name}`);
-//          socket.emit('buttonClick', { senderName: thisUser.name, senderSocketId: thisUser.socketId, receiverName: user.name, receiverSocketId: user.socketId, senderTime });
-//       });
-//       $userList.appendChild(item);
-//    }
-// });
-
-
-// socket.on('updateGame', (data) => {
-
+// const addHandleCellClick = (arrayCells, symbol, offNo) => {
 //    arrayCells.forEach((cell, index) => {
 //       try {
-//          console.log(symbol);
+//          console.log(symbol)
+//          console.log(offNo)
 
+//          if (!offNo) {
+//             cell.addEventListener('click', () => {
 
+//              
+//                console.dir(cell.textContent);
+
+//                const cellData = {
+//                   index: index,
+//                   content: symbol,
+//                };
+
+//                socket.emit('clickCell', cellData);
+//             });
+//          }
 //       } catch (error) {
 //          console.error('Error processing Games event:', error);
 //       }
 //    });
+// };
+
+
+
+// socket.on('Games', ({ symbol, offNo, users }) => {
+//    const cells = document.getElementsByClassName('cell');
+//    const arrayCells = [...cells];
+
+//    // console.log(offNo)
+//    console.log('connection server')
+
+//    // addHandleCellClick(arrayCells, symbol, offNo)
+//    arrayCells.forEach((cell, index) => {
+//       try {
+
+//          if (!offNo) {
+//             cell.addEventListener('click', () => {
+
+//                cell.textContent = symbol;
+//                console.dir(cell.textContent);
+
+//                const cellData = {
+//                   index: index,
+//                   content: symbol,
+//                };
+
+//                socket.emit('clickCell', cellData, users);
+//             });
+//          }
+//       } catch (error) {
+//          console.error('Error processing Games event:', error);
+//       }
+//    });
+
+//    //функция для обновления страницы у всех пользователей после нажатия 
+//    socket.on('updateGame', (data) => {
+//       const updatedCells = data.dataFieldGames;
+
+//       for (const index of Object.keys(updatedCells)) {
+//          const cell = arrayCells[index];
+//          if (cell) {
+//             cell.textContent = updatedCells[index];
+//          }
+//       }
+//    });
 // });
 
+
+export default handleCellClick;

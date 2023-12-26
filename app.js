@@ -150,57 +150,79 @@ io.on('connection', (socket) => {
             // 2) пользователь при нажатии на кледку отправляет данные о том что он занял ячейку и отправляет номер ячейки и символ
             // 3)
 
+
             socket.on('startGame', (gameData) => {
-               // console.log(gameData)
-               const oneUser = {
-                  oneUserName: gameData.senderName,
-                  oneUserSocketId: gameData.senderSocketId,
-                  offNo: true,
-               };
-               const twoUser = {
-                  twoUserName: gameData.senderName,
-                  twoUserSocketId: gameData.receiverSocketId,
-                  offNo: false,
-               };
+               console.log('start game');
 
-               // const randomTicTacToe = getRandomTicTacToe() добавить рандомное появления x o 
+               // массив сделан для передаче между socket
+               const users = [
+                  {
+                     oneUserName: gameData.senderName,
+                     oneUserSocketId: gameData.senderSocketId,
+                     offNo: true,
+                     Symbol
+                  },
+                  {
+                     twoUserName: gameData.senderName,
+                     twoUserSocketId: gameData.receiverSocketId,
+                     offNo: false,
+                     Symbol
+                  }
+               ];
+               // const randomTicTacToe = getRandomTicTacToe() добавить рандомное появления x o
 
-               const xSymbol = 'x';
-               const oSymbol = 'o';
+               users[0].Symbol = 'x';
+               users[1].Symbol = 'o';
 
-               io.to(oneUser.oneUserSocketId).emit('Games', { symbol: xSymbol, offNo: oneUser.offNo });
-               io.to(twoUser.twoUserSocketId).emit('Games', { symbol: oSymbol, offNo: twoUser.offNo });
+               console.log(users);
 
-               // io.to(roomForGame).emit('Games', { randomTicTacToe });
 
-               const dataFieldGames = [] // 9  
+               // тут отправляю данные всем игракам 
+               io.to(users[0].oneUserSocketId).emit('start', { user: users[0] });
+               io.to(users[1].twoUserSocketId).emit('start', { user: users[1] });
 
-               const handleCellClick = (data, user, symbol) => {
-                  const index = data.index;
-                  dataFieldGames[index] = data.content;
+            });
 
-                  io.to(oneUser.oneUserSocketId).emit('updateGame', { dataFieldGames });
-                  io.to(twoUser.twoUserSocketId).emit('updateGame', { dataFieldGames });
-                  io.to(user.userSocketId).emit('Games', { symbol, offNo: user.offNo });
 
-                  switchOnOff(user);
-               };
 
-               socket.on('clickCell', (data) => {
-                  handleCellClick(data, oneUser, xSymbol);
-               });
 
-               // socket.on('clickCellTwo', (data) => {
-               //    handleCellClick(data, twoUser, oSymbol);
-               // });
-            })
+            // socket.on('startGame', (gameData) => {
+            //    const users = [
+            //       {
+            //          oneUserName: gameData.senderName,
+            //          oneUserSocketId: gameData.senderSocketId,
+            //          offNo: true,
+            //       },
+            //       {
+            //          twoUserName: gameData.senderName,
+            //          twoUserSocketId: gameData.receiverSocketId,
+            //          offNo: false,
+            //       }
+            //    ]
+            //    // const randomTicTacToe = getRandomTicTacToe() добавить рандомное появления x o 
 
+            //    const xSymbol = 'x';
+            //    const oSymbol = 'o';
+
+            //    io.to(users[0].oneUserSocketId).emit('Games', { symbol: xSymbol, offNo: users[0].offNo, users });
+            //    io.to(users[1].twoUserSocketId).emit('Games', { symbol: oSymbol, offNo: users[1].offNo, users });
+
+            //    // io.to(roomForGame).emit('Games', { randomTicTacToe });
+            // })
+
+            // socket.on('clickCell', (data, users) => {
+            //    const dataFieldGames = [] // 9 
+
+            //    const index = data.index;
+            //    dataFieldGames[index] = data.content;
+
+            //    io.to(users[0].oneUserSocketId).emit('updateGame', { dataFieldGames });
+            //    io.to(users[1].twoUserSocketId).emit('updateGame', { dataFieldGames });
+            //    io.to(users[0].oneUserSocketId).emit('Games', { offNo: users[0].offNo, users });
+            //    io.to(users[1].twoUserSocketId).emit('Games', { offNo: users[1].offNo, users });
+            // });
 
             // function games +++++++++++++++++++++++++++++++++++++++++++++++
-
-            const switchOnOff = (userObject) => {
-               userObject.offNo = !userObject.offNo;
-            };
 
             const getRandomTicTacToe = () => {
                const values = ['X', 'O'];

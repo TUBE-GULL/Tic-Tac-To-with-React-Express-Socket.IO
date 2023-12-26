@@ -1,3 +1,5 @@
+import handleCellClick from "/script/users.js";
+
 const GameStart = ({ senderName, senderTime, receiverName, receiverTime }) => {
 
    const content = React.createElement('div', { className: 'content' },
@@ -18,19 +20,19 @@ const GameStart = ({ senderName, senderTime, receiverName, receiverTime }) => {
       React.createElement('table', { className: 'table' },
          React.createElement('tbody', { className: 'tbody' },
             React.createElement('tr', { className: 'stroke' },
-               React.createElement('th', { className: 'cell' }),
-               React.createElement('th', { className: 'cell' }),
-               React.createElement('th', { className: 'cell' })
+               React.createElement('th', { className: 'cell', id: 'cell0', onClick: () => handleCellClick(0) }),
+               React.createElement('th', { className: 'cell', id: 'cell1', onClick: () => handleCellClick(1) }),
+               React.createElement('th', { className: 'cell', id: 'cell2', onClick: () => handleCellClick(2) })
             ),
             React.createElement('tr', { className: 'stroke' },
-               React.createElement('th', { className: 'cell' }),
-               React.createElement('th', { className: 'cell' }),
-               React.createElement('th', { className: 'cell' })
+               React.createElement('th', { className: 'cell', id: 'cell3', onClick: () => handleCellClick(3) }),
+               React.createElement('th', { className: 'cell', id: 'cell4', onClick: () => handleCellClick(4) }),
+               React.createElement('th', { className: 'cell', id: 'cell5', onClick: () => handleCellClick(5) })
             ),
             React.createElement('tr', { className: 'stroke' },
-               React.createElement('th', { className: 'cell' }),
-               React.createElement('th', { className: 'cell' }),
-               React.createElement('th', { className: 'cell' })
+               React.createElement('th', { className: 'cell', id: 'cell6', onClick: () => handleCellClick(6) }),
+               React.createElement('th', { className: 'cell', id: 'cell7', onClick: () => handleCellClick(7) }),
+               React.createElement('th', { className: 'cell', id: 'cell8', onClick: () => handleCellClick(8) })
             )
          )
       )

@@ -1,6 +1,10 @@
 ___________________________________________________________________________
 project development
 
+0.0.28 
+
+still trying to understand and reworking the function
+
 0.0.27
 
 finally started writing a game function
