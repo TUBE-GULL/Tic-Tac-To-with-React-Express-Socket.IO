@@ -150,10 +150,9 @@ io.on('connection', (socket) => {
             // 2) пользователь при нажатии на кледку отправляет данные о том что он занял ячейку и отправляет номер ячейки и символ
             // 3)
 
-
             socket.on('startGame', (gameData) => {
-               console.log('start game');
-
+               console.log(gameData.senderSocketId)
+               console.log(gameData.receiverSocketId)
                // массив сделан для передаче между socket
                const users = [
                   {
@@ -163,7 +162,7 @@ io.on('connection', (socket) => {
                      Symbol
                   },
                   {
-                     twoUserName: gameData.senderName,
+                     twoUserName: gameData.receiverName,
                      twoUserSocketId: gameData.receiverSocketId,
                      offNo: false,
                      Symbol
@@ -171,17 +170,41 @@ io.on('connection', (socket) => {
                ];
                // const randomTicTacToe = getRandomTicTacToe() добавить рандомное появления x o
 
-               users[0].Symbol = 'x';
-               users[1].Symbol = 'o';
-
-               console.log(users);
-
+               users[0].Symbol = 'X';
+               users[1].Symbol = 'O';
 
                // тут отправляю данные всем игракам 
-               io.to(users[0].oneUserSocketId).emit('start', { user: users[0] });
-               io.to(users[1].twoUserSocketId).emit('start', { user: users[1] });
-
+               io.to(users[0].oneUserSocketId).emit('start', { users, user: users[0] });
+               io.to(users[1].twoUserSocketId).emit('start', { users, user: users[1] });
             });
+
+
+            socket.on('clickCell', (userData) => {
+               console.log(userData);
+            });
+
+            // socket.on('clickCell', ({ usersData, cellData }) => {
+            //    console.log('click')
+
+            //    // console.log(usersData[0].offNo)
+            //    // console.log(usersData[1].offNo)
+
+            //    usersData[0].offNo = !usersData[0].offNo;
+            //    usersData[1].offNo = !usersData[1].offNo;
+
+            //    console.log(usersData[0].oneUserSocketId)
+            //    console.log(usersData[1].twoUserSocketId)
+
+            //    const dataFieldGames = ['', '', '', '', '', '', '', '', ''];
+
+            //    const index = cellData.index;
+            //    dataFieldGames[index] = cellData.content;
+
+            //    io.to(usersData[0].oneUserSocketId).emit('onetwo', { dataFieldGames, user: usersData[0] });
+            //    io.to(usersData[1].twoUserSocketId).emit('onetwo', { dataFieldGames, user: usersData[1] });
+            //    // io.to(usersData[0].oneUserSocketId).emit('Games', { users: usersData, user: usersData[0] });
+            //    // io.to(usersData[1].twoUserSocketId).emit('Games', { users: usersData, user: usersData[1] });
+            // });
 
 
 

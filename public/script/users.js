@@ -76,37 +76,63 @@ socket.on('timerUpdate', ({ time }) => {
 
 let arrayCells;
 let userData = {};
+let usersData = []
 
-socket.on('start', ({ user }) => {
-   userData = user;
+socket.on('start', ({ users, user }) => {
    const cells = document.getElementsByClassName('cell');
    arrayCells = [...cells];
-
+   usersData = users;
+   userData = user;
    console.log('connection server')
+   console.log(userData)
 
 })
-console.log(userData)
 
 const handleCellClick = (cellNumber) => {
-   console.log(`Clicked on cell ${cellNumber}`);
-   console.log(userData.offNo);
-   console.log(userData.symbol);
+   console.log('Handling cell click');
 
+   const cellElement = document.getElementById(`cell${cellNumber}`);
+   cellElement.textContent = userData.Symbol;
 
-   if (!userData.offNo) {
-      const cellElement = document.getElementById(`cell${cellNumber}`);
-      cellElement.textContent = userData.symbol;
-
-      const cellData = {
-         index: cellNumber,
-         content: userData.symbol,
-      };
-      socket.emit('clickCell', cellData);
-   }
+   // Отправляйте данные о клике вместе с идентификатором пользователя
+   socket.emit('clickCell', userData);
 };
 
 
+socket.on('updateGameField', ({ dataFieldGames, user }) => {
+   console.log('перерисовка поля!')
 
+   for (const index of Object.keys(dataFieldGames)) {
+      const cell = arrayCells[index];
+      if (cell) {
+         cell.textContent = dataFieldGames[index];
+      }
+   }
+   userData = user;
+
+   // const otherUserIndex = usersData.findIndex(u => u !== userData);
+   // const otherUser = usersData[otherUserIndex];
+   // if (otherUser) {
+   //    console.log('Updating other user:', otherUser);
+   //    usersData[otherUserIndex] = user;
+   // }
+});
+
+// const handleCellClick = (cellNumber) => {
+//    console.log('Handling cell click');
+
+//    // if (!userData.offNo) {
+//    const cellElement = document.getElementById(`cell${cellNumber}`);
+//    cellElement.textContent = userData.Symbol;
+
+//    const cellData = {
+//       index: cellNumber,
+//       content: userData.Symbol,
+//    };
+
+//    socket.emit('clickCell', { usersData, cellData });
+//    // }
+// };
 
 //    cellElement.textContent = ;
 //    
