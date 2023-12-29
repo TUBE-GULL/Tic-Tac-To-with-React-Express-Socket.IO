@@ -3,7 +3,8 @@ project development
 
 0.0.30★
 
-+translated for Windows 
++translated for Windows
+ 
 complete refactoring
 
 0.0.29
