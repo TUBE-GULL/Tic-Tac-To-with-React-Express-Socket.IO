@@ -1,6 +1,11 @@
 ___________________________________________________________________________
 project development
 
+0.0.30★
+
++translated for Windows 
+complete refactoring
+
 0.0.29
 
 still trying to understand and reworking the function
