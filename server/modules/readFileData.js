@@ -1,5 +1,5 @@
 import fs from 'fs/promises';
-import { getAbsolutePath } from '../modules/getAbsolutePath.js';
+import getAbsolutePath from './getAbsolutePath.js';
 
 const readFileData = async () => {
    try {
@@ -13,4 +13,4 @@ const readFileData = async () => {
    };
 };
 
-export { readFileData };
+export default readFileData;

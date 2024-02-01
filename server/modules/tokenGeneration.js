@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import { readFileData } from './readFileData.js';
+import readFileData from './readFileData.js';
 
 // const tokenGeneration = (bit) => { // ушел в бесконечный цикл когда data 0
 //    // let token = crypto.randomBytes(bit).toString('hex')
@@ -22,4 +22,4 @@ const tokenGeneration = async (bit) => {
    return token
 }
 
-export { tokenGeneration };
+export default tokenGeneration;

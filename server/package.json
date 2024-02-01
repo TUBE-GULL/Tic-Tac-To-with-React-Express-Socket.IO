@@ -1,5 +1,5 @@
 {
-  "name": "tic_tac_toe_node.js",
+  "name": "Tic-Tac-To-with-React-Express-Socket.IO",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
@@ -15,8 +15,7 @@
     "crypto": "^1.0.1",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
-    "socket.io": "^4.7.2",
-    "socket.io-client": "^4.7.2"
+    "socket.io": "^4.7.2"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

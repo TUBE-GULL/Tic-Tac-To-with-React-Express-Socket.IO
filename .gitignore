@@ -1,3 +1,6 @@
-client/node_modules
-server/node_modules
-.git
+**node_modules
+**package-lock.json
+
+.gitignore
+
+dist

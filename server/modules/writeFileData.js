@@ -1,5 +1,5 @@
 import fs from 'fs/promises';
-import { getAbsolutePath } from '../modules/getAbsolutePath.js';
+import getAbsolutePath from './getAbsolutePath.js';
 
 
 const writeFileData = async (newData) => {
@@ -16,4 +16,4 @@ const writeFileData = async (newData) => {
    }
 }
 
-export { writeFileData };
+export default writeFileData;
