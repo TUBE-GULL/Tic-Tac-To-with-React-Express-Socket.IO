@@ -1,12 +1,18 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import Authorization from './modules/authorization/Authorization';
+import Lobby from './modules/lobby/Lobby'
+export const EntranceLobby = React.createContext()
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [showAuthorization, setShowAuthorization] = useState(true);
+  const [socketFormData, setSocketFormData] = useState('');
 
   return (
     <>
-      <Authorization />
+      <EntranceLobby.Provider value={{ showAuthorization, setShowAuthorization, socketFormData, setSocketFormData }}>
+        {showAuthorization && < Authorization />}
+        {!showAuthorization && <Lobby />}
+      </EntranceLobby.Provider >
     </>
   )
 }

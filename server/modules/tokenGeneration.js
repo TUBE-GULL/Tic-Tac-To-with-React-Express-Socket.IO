@@ -1,19 +1,8 @@
 import crypto from 'crypto';
-import readFileData from './readFileData.js';
-
-// const tokenGeneration = (bit) => { // ушел в бесконечный цикл когда data 0
-//    // let token = crypto.randomBytes(bit).toString('hex')
-//    let token;
-
-//    do {
-//       token = crypto.randomBytes(bit).toString('hex');
-//    } while (data.every(el => el.token === token));
-
-//    return token;
-// }
+import readFileJson from './readFileJson.js';
 
 const tokenGeneration = async (bit) => {
-   const data = await readFileData()
+   const data = await readFileJson('../data/data.json')
    let token = crypto.randomBytes(bit).toString('hex')
    // console.log(data)
    if (data.every(el => el.token == token)) {

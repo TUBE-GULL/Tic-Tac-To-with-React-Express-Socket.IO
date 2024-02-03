@@ -2,11 +2,11 @@ import fs from 'fs/promises';
 import getAbsolutePath from './getAbsolutePath.js';
 
 
-const writeFileData = async (newData) => {
+const writeFileData = async (newData, Address) => {
    try {
       const jsonData = JSON.stringify(newData, null, 2);
 
-      await fs.writeFile(getAbsolutePath('../data/data.json'), [jsonData], 'utf-8');
+      await fs.writeFile(getAbsolutePath(Address), [jsonData], 'utf-8');
 
       console.log('Данные успешно записаны в файл: data.json');
       return true;

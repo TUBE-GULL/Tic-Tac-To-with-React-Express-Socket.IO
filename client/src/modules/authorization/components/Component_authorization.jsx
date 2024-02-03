@@ -7,7 +7,7 @@ export default function ComponentAuthorization(props) {
          value={props.value}
          onChange={props.onChange}
          placeholder={props.placeholder}
-         // className={!checkSubmit(loginFormData) && !loginFormData.firstName.trim() ? style.error : ''}
+         className={props.className}
          maxLength={props.maxLength}
          minLength={props.minLength}
          required

@@ -1,9 +1,9 @@
 import fs from 'fs/promises';
 import getAbsolutePath from './getAbsolutePath.js';
 
-const readFileData = async () => {
+const readFileJson = async (Address) => {
    try {
-      const Data = await fs.readFile(getAbsolutePath('../data/data.json'), 'utf-8');
+      const Data = await fs.readFile(getAbsolutePath(Address), 'utf-8');
       const usersData = JSON.parse(Data);
       // console.log(usersData);
       return usersData;
@@ -13,4 +13,4 @@ const readFileData = async () => {
    };
 };
 
-export default readFileData;
+export default readFileJson;

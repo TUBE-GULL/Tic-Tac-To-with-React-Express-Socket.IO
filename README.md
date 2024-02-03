@@ -1,6 +1,10 @@
 ___________________________________________________________________________
 project development
 
+0.0.33
+
+MVC refactoring
+
 0.0.32
 
 made registration design layout
