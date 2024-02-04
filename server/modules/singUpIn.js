@@ -55,13 +55,11 @@ const singIn = async (req, res) => {
       res.json({ success: true });
    } else {
       const formData = req.body;
-
       try {
          if (await checkUserFirstsName(formData) && await checkUserDoubleNamePassword(formData)) {
             console.log('➜ Successful authentication');
             const user = userData.find(el => el.Nickname === formData.Nickname);
             const token = jwt.sign({ id: user.id }, config.secretKey, { expiresIn: '1h' });
-
 
             Cookie.push(token);
             await writeFileJson(Cookie, '../data/cookie.json');

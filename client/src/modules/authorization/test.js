@@ -1,6 +1,5 @@
 export default function Authorization() {
-   const { showAuthorization, setShowAuthorization } = useContext(EntranceLobby);
-   const { setSocketFormData } = useContext(EntranceLobby);
+
    const [Registering, setRegistering] = useState(true);
    const [PasswordsDoNot, setPasswordsDoNot] = useState(false);
    const [NoticeMessage, setNoticeMessage] = useState('');

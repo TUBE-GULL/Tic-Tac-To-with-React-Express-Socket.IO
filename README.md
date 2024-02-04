@@ -1,6 +1,11 @@
 ___________________________________________________________________________
 project development
 
+0.0.34
+
+made auto-sending cookies
+and did some refactoring
+
 0.0.33
 
 MVC refactoring

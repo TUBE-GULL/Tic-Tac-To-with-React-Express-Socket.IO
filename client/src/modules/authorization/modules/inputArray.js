@@ -1,4 +1,4 @@
-const inputArraySignIn = [{
+export const inputArraySignIn = (loginFormData, handleChange) => [{
    type: 'text',
    name: 'Nickname',
    value: loginFormData.Nickname,
@@ -18,7 +18,7 @@ const inputArraySignIn = [{
    minLength: 3
 }];
 
-const inputArraySignUp = [{
+export const inputArraySignUp = (registeringFormData, handleChange, passwordsDoNot) => [{
    type: 'text',
    name: 'Nickname',
    value: registeringFormData.Nickname,
@@ -32,8 +32,8 @@ const inputArraySignUp = [{
    name: 'registerPassword',
    value: registeringFormData.registerPassword,
    onChange: (e) => handleChange(e, 'registerPassword'),
-   placeholder: PasswordsDoNot ? 'passwords don\'t match' : "Register Password:",
-   className: PasswordsDoNot ? 'passwordsDoNot' : '',
+   placeholder: passwordsDoNot ? 'passwords don\'t match' : "Register Password:",
+   className: passwordsDoNot ? 'passwordsDoNot' : '',
    autocomplete: "off",
    maxLength: 20,
    minLength: 3
@@ -43,12 +43,9 @@ const inputArraySignUp = [{
    name: 'confirmPassword',
    value: registeringFormData.confirmPassword,
    onChange: (e) => handleChange(e, 'confirmPassword'),
-   placeholder: PasswordsDoNot ? 'passwords don\'t match' : "Confirm Password:",
-   className: PasswordsDoNot ? 'passwordsDoNot' : '',
+   placeholder: passwordsDoNot ? 'passwords don\'t match' : "Confirm Password:",
+   className: passwordsDoNot ? 'passwordsDoNot' : '',
    autocomplete: "off",
    maxLength: 20,
    minLength: 3
 }];
-
-
-export default { inputArraySignIn, inputArraySignUp }
