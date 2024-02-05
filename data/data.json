@@ -1,68 +1,14 @@
 [
   {
-    "id": "d87d311afd054622c6db",
+    "id": "929702e8cec91f3580f9",
     "Nickname": "Oleg",
-    "password": "$2b$10$A45YD/nRdlcl9h9WO4QB.OAf.JRyrGeGX7FGHqlsEDZGJrXlgO1cm",
+    "password": "$2b$10$0/yOCEtAD1nCDUM1yBNrd.lCOtgIfDm43FDGfhDdH6SIx.gMtzGoi",
     "time": ""
   },
   {
-    "id": "80af6067798ae0d3d1fc",
+    "id": "352bae26fbbe71c96857",
     "Nickname": "Fox",
-    "password": "$2b$10$nHMuUR4RI/E/G9K0zSgwxus8EGoyeRTDis2Pk2ZaxpBtvvccwLvce",
-    "time": ""
-  },
-  {
-    "id": "90d5c3f89485a678519a",
-    "Nickname": "Oleg1",
-    "password": "$2b$10$JW4dN/YxJf8yeJ.8vHFWfOgzgEVI78Yxj/pwZNuvLCagi4hnsJN4m",
-    "time": ""
-  },
-  {
-    "id": "41e338f28e298f5e3326",
-    "Nickname": "Oleg11",
-    "password": "$2b$10$jqr.b4PhROiFMn3HHCvZO.SutzPGCklDDOJVBHlY7LlFK.VnhCSze",
-    "time": ""
-  },
-  {
-    "id": "9fe4ca949742a8fffe23",
-    "Nickname": "Oleg1231",
-    "password": "$2b$10$ai.bIn50xWSC4yKrZbw7Dux5pFD3KGDW0UbsjldHVvIJvMCku6klS",
-    "time": ""
-  },
-  {
-    "id": "2c562d702b7d99355bde",
-    "Nickname": "Foxs",
-    "password": "$2b$10$pM1GMTbkO3nvXN/R9NtcOuynKp/eq2o50LsN6KTJtqFJbnV.m5Aci",
-    "time": ""
-  },
-  {
-    "id": "0f5bbb456a973e034636",
-    "Nickname": "123",
-    "password": "$2b$10$ttwgdqSctdAz60OFO27VhePnm9kYERyHnTxjhbpCX66R7JHtds5Ce",
-    "time": ""
-  },
-  {
-    "id": "99773651acddb5e6f69f",
-    "Nickname": "1233",
-    "password": "$2b$10$bL.gXeqH9Re/CRABH05YVuhyvzHgXsxNjYEY5wGPyjTeTkGC7TD1e",
-    "time": ""
-  },
-  {
-    "id": "f350b39663f97b49f218",
-    "Nickname": "122",
-    "password": "$2b$10$mk8VzW0VFsBoAQP5GuCwP.xxGx2KMekkaOnZuhrE3kFw6LB.GrzMa",
-    "time": ""
-  },
-  {
-    "id": "f50834d744f703a97096",
-    "Nickname": "12223",
-    "password": "$2b$10$o/n.wdsjoSc7H9P4q419mupuwvaZ4rXassbw5H0JeyYd3.UKd0enu",
-    "time": ""
-  },
-  {
-    "id": "a31dc7fdf24fdd67bf97",
-    "Nickname": "132123",
-    "password": "$2b$10$QeSFIKBI5gxKw7UKdwdnQOx3pjcgKHE4qjpjbCCc4WpmPB6AVPc5q",
+    "password": "$2b$10$d593h1mxUAQNhFWtVC4IL..aP8FvXE09mnlAuQaj6BXhbOWTSvExS",
     "time": ""
   }
 ]

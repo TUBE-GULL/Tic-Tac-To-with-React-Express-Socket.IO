@@ -1,6 +1,10 @@
 ___________________________________________________________________________
 project development
 
+0.0.35
+
+made up the layout  lobby
+
 0.0.34
 
 made auto-sending cookies

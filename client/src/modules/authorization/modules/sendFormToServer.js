@@ -13,7 +13,7 @@ async function sendFormToServer(post, formData, cookies, setCookie) {
       if (post === '/api/submit_singIn') {
 
          return result.error
-            ? { result: false, errorMessage: 'Internal Server Error' }
+            ? { result: false, errorMessage: 'Wrong login or password !' }
             : { result: true, errorMessage: 'Successful authentication' }
 
       } else {

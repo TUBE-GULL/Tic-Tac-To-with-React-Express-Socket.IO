@@ -1,0 +1,201 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+.lobby {
+   width: 100%;
+   height: 100vh;
+   display: flex;
+   background: rgba(255, 255, 255, 0);
+   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+   backdrop-filter: blur(2px);
+   -webkit-backdrop-filter: blur(3px);
+   font-family: 'Press Start 2P', system-ui;
+
+
+   .listLobby {
+      width: 40%;
+      margin: 2%;
+      background: rgba(0, 0, 0, 0.1);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      backdrop-filter: blur(4.5px);
+      border-radius: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      overflow: hidden;
+
+      h1,
+      h2 {
+         color: #fff;
+         text-align: center;
+      }
+
+      .UsersList {
+         display: flex;
+         flex-direction: column;
+         width: 95%;
+         height: 90%;
+         margin: 0 2.5%;
+
+         overflow-y: auto;
+         scroll-behavior: smooth;
+
+         .UserElement {
+            display: flex;
+            margin: 1% 2%;
+            padding: 5PX;
+            width: 96%;
+            background: rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(4.5px);
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+
+            h1,
+            h2 {
+
+               margin: 0;
+               padding: 0;
+            }
+         }
+      }
+
+   }
+
+   .lobbyChat {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      margin: 2%;
+      width: 60%;
+      max-height: 100%;
+      background: rgba(0, 0, 0, 0.2);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      backdrop-filter: blur(4.5px);
+      border-radius: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+
+
+      h1 {
+         width: 100%;
+         color: #fff;
+         font-size: 25px;
+         font-family: 'Press Start 2P', system-ui;
+         text-align: center;
+      }
+
+      .contentChat {
+         flex-shrink: 0;
+         width: 95%;
+         height: 80%;
+         margin: 0 2.5%;
+         border: 1px solid rgba(255, 255, 255, 0.18);
+         border-radius: 10px;
+         color: #fff;
+
+         overflow-y: auto;
+         scroll-behavior: smooth;
+
+
+         .messagesender,
+         .messagerecipient {
+            max-width: 80%;
+            background: rgba(0, 0, 0, 0.4);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(4.5px);
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            font-size: 15px;
+            font-family: 'Press Start 2P', system-ui;
+
+            h1 {
+               font-size: 20px;
+            }
+
+            .messagesender {
+               align-self: flex-start;
+            }
+
+            .messagerecipient {
+               align-self: flex-end;
+            }
+         }
+      }
+
+      .FormChat {
+         display: block;
+         width: 100%;
+         padding-bottom: 2%;
+         margin: 0 auto;
+         text-align: center;
+         font-family: 'Press Start 2P', system-ui;
+
+         .buttonSmaile {
+            width: 4%;
+            height: 34px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px 0 0 10px;
+            color: #fff;
+            font-size: 25px;
+            font-family: 'Press Start 2P', system-ui;
+         }
+
+         .InputChat {
+            width: 80%;
+            height: 30px;
+            background: rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            color: #fff;
+            font-size: 20px;
+            font-family: 'Press Start 2P', system-ui;
+         }
+
+         .buttonChat {
+            width: 10%;
+            height: 34px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0 10px 10px 0;
+            color: #fff;
+            font-size: 20px;
+            font-family: 'Press Start 2P', system-ui;
+         }
+
+         .InputChat:hover,
+         .buttonSmaile:hover,
+         .buttonChat:hover {
+            background: rgba(255, 255, 255, 0.562);
+            color: #000000;
+         }
+
+         .buttonSmaile:active,
+         .buttonChat:active {
+            background: rgba(255, 255, 255, 0.2);
+         }
+      }
+
+
+
+      // /*  Firefox */
+      // .contentChat {
+      //    scrollbar-color: rgba(255, 255, 255, 0.2) rgba(169, 169, 169, 0);
+      // }
+
+   }
+
+   .contentChat::-webkit-scrollbar,
+   .UsersList::-webkit-scrollbar {
+      width: 10px;
+   }
+
+   .contentChat::-webkit-scrollbar-track,
+   .UsersList::-webkit-scrollbar-track {
+      background-color: rgba(169, 169, 169, 0);
+   }
+
+   .contentChat::-webkit-scrollbar-thumb,
+   .UsersList::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+      border-radius: 6px;
+   }
+}

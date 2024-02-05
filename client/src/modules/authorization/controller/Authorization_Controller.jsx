@@ -6,7 +6,7 @@ import { inputArraySignIn, inputArraySignUp } from '../modules/inputArray';
 import ComponentAuthorization from '../components/Component_authorization';
 import sendFormToServer from '../modules/sendFormToServer';
 import sendCookieToServer from '../modules/sendCookieToServer';
-import Notice from '../components/notice/Notice'
+import Notice from '../components/notice/Notice';
 import { EntranceLobby } from '../../../App';
 
 function AuthorizationController() {
@@ -69,7 +69,7 @@ function AuthorizationController() {
       // check form 
       if (registering) {//sing in
          const result = await sendFormToServer('/api/submit_singIn', loginFormData, cookies, setCookie)
-         if (result) {
+         if (result.result) {
             setSocketFormData(loginFormData);
             setShowAuthorization(!showAuthorization);
          } else {

@@ -49,12 +49,13 @@ const singUp = async (req, res) => {
 const singIn = async (req, res) => {
    const { authToken } = req.cookies;
    const Cookie = await readFileJson('../data/cookie.json');
-   console.log(authToken)
+
    if (Cookie.includes(authToken)) {
       console.log('User authenticated via cookie');
       res.json({ success: true });
    } else {
       const formData = req.body;
+      console.log(formData)
       try {
          if (await checkUserFirstsName(formData) && await checkUserDoubleNamePassword(formData)) {
             console.log('➜ Successful authentication');
@@ -65,6 +66,7 @@ const singIn = async (req, res) => {
             await writeFileJson(Cookie, '../data/cookie.json');
 
             res.cookie('authToken', token);
+
             res.json({ success: true });
          } else {
             console.log('➜ Authentication failed');
