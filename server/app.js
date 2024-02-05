@@ -38,10 +38,19 @@ app.post('/submit_singIn', async (req, res) => {
 });
 
 io.on('connection', (socket) => {
+   const authToken = socket.handshake.headers.authorization; // Получаем токен из заголовков
+   try {
+      const decodedToken = jwt.verify(authToken, config.secretKey);
+      const userId = decodedToken.id;
+      console.log(userId);
+      const user = socket.handshake.headers;
+      console.log(user);
 
-   // jwt.verify()
+
+   } catch (error) {
+      console.error('Error verifying token:', error);
+   }
 });
-
 console.time(' ➜ \x1b[32mServer startup time:\x1b[0m');
 server.listen(PORT, () => {
    logs();

@@ -49,10 +49,23 @@ const singUp = async (req, res) => {
 const singIn = async (req, res) => {
    const { authToken } = req.cookies;
    const Cookie = await readFileJson('../data/cookie.json');
-
    if (Cookie.includes(authToken)) {
-      console.log('User authenticated via cookie');
-      res.json({ success: true });
+      try {
+         console.log('User authenticated via cookie');
+         const decodedToken = jwt.verify(authToken, config.secretKey);
+         const userId = decodedToken.id;
+         res.json({ success: true });
+      } catch (error) {
+         if (error instanceof jwt.TokenExpiredError) {
+            //обработать ошибку с токеном ! 
+            console.error('Token expired:', error);
+            res.status(401).json({ success: false, error: 'Token expired' });
+         } else {
+            //обработать ошибку с токеном ! 
+            console.error('Error verifying token:', error);
+            res.status(401).json({ success: false, error: 'Invalid token' });
+         }
+      }
    } else {
       const formData = req.body;
       console.log(formData)
@@ -60,7 +73,7 @@ const singIn = async (req, res) => {
          if (await checkUserFirstsName(formData) && await checkUserDoubleNamePassword(formData)) {
             console.log('➜ Successful authentication');
             const user = userData.find(el => el.Nickname === formData.Nickname);
-            const token = jwt.sign({ id: user.id }, config.secretKey, { expiresIn: '1h' });
+            const token = jwt.sign({ id: user.id }, config.secretKey, { expiresIn: '7day' });
 
             Cookie.push(token);
             await writeFileJson(Cookie, '../data/cookie.json');
@@ -81,3 +94,14 @@ const singIn = async (req, res) => {
 
 
 export { singUp, singIn };
+
+
+// console.log('User authenticated via cookie');
+
+// const decodedToken = jwt.verify(authToken, config.secretKey);
+
+// // В объекте decodedToken должен быть ключ, содержащий id
+// const userId = decodedToken.id;
+
+// console.log(userId)
+// res.json({ success: true });
