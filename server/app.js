@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken';
 
 //modules
 import logs from './modules/logs.js';
-import { singUp, singIn } from './modules/singUpIn.js'
+import authenticated from './services/authenticated.js';
 import getAbsolutePath from './modules/getAbsolutePath.js';
 import readFileJson from './modules/readFileJson.js';
 
@@ -24,7 +24,7 @@ app.get('/', (req, res) => {
 });
 
 app.post('/submit_singUp', (req, res) => {
-   singUp(req, res);
+   authenticated.singUp(req, res);
 });
 
 app.use((req, res, next) => {
@@ -34,7 +34,7 @@ app.use((req, res, next) => {
 });
 
 app.post('/submit_singIn', async (req, res) => {
-   singIn(req, res);
+   authenticated.singIn(req, res);
 });
 
 io.on('connection', (socket) => {

@@ -1,6 +1,10 @@
 ___________________________________________________________________________
 project development
 
+0.0.36
+
+functions refactoring Authenticated placed in class
+
 0.0.35
 
 made up the layout  lobby
