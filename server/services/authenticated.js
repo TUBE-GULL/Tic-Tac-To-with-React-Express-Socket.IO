@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import readFileJson from '../modules/readFileJson.js';
 import writeFileJson from '../modules/writeFileJson.js';
 import tokenGeneration from '../modules/tokenGeneration.js';
+import cookieParser from 'cookie-parser';
 
 const userData = await readFileJson('../data/data.json');
 const config = await readFileJson('./config.json');
@@ -44,11 +45,12 @@ class Authenticated {
       }
    };
 
-   async checkCookie(req, res) {
+   async checkCookie(req, res, authToken) {
       try {
          console.log('User authenticated via cookie');
-         const decodedToken = jwt.verify(authToken, config.secretKey);
-         const userId = decodedToken.id;
+         const userData = cookieParser.validateAccessToken(authToken)
+         const userId = userData.id;
+
          res.json({ success: true });
       } catch (error) {
          if (error instanceof jwt.TokenExpiredError) {
@@ -70,13 +72,9 @@ class Authenticated {
          if (await this.checkUserFirstsName(formData) && await this.checkUserDoubleNamePassword(formData)) {
             console.log('➜ Successful authentication');
             const user = userData.find(el => el.Nickname === formData.Nickname);
-            const token = jwt.sign({ id: user.id }, config.secretKey, { expiresIn: '7day' });
-
-            Cookie.push(token);
-            await writeFileJson(Cookie, '../data/cookie.json');
-
+            const token = cookieParser.generateCookieToken({ id: user.id })
+            cookieParser.writeCookieData(token)
             res.cookie('authToken', token);
-
             res.json({ success: true });
          } else {
             console.log('➜ Authentication failed');
@@ -92,7 +90,7 @@ class Authenticated {
       const { authToken } = req.cookies;
       const Cookie = await readFileJson('../data/cookie.json');
       if (Cookie.includes(authToken)) {
-         await this.checkCookie(req, res);
+         await this.checkCookie(req, res, authToken);
       } else {
          await this.checkUser(req, res, Cookie);
       };
@@ -100,4 +98,5 @@ class Authenticated {
 };
 
 const authenticated = new Authenticated();
+
 export default authenticated;
