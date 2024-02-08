@@ -5,7 +5,7 @@ function LobbyList() {
 
    return (
       <div className="listLobby">
-         <h1 className="listLobbyH1">Users Onlin</h1>
+         <h1 className="listLobbyH1">Users Online</h1>
          <div className="UsersList">
 
          </div>

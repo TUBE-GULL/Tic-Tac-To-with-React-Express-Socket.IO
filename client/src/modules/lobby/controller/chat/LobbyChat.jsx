@@ -1,8 +1,11 @@
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import Messages from './modules/Message';
+import io from 'socket.io-client';
 
 function lobbyChat() {
    const contentChatRef = useRef(null);
+   const [socket, setSocket] = useState(null);
+   const [message, setMessage] = useState('');
    const [messageInput, setMessageInput] = useState('');
    const [messages, setMessages] = useState([]);
 
@@ -18,8 +21,6 @@ function lobbyChat() {
          sender: [userInfo.firstName, userInfo.lastName],
          message: messageInput
       };
-      // socket.emit('sendMessage', message);
-
       setMessageInput('');
    };
 
@@ -28,10 +29,32 @@ function lobbyChat() {
       contentChatRef.current.scrollTop = contentChatRef.current.scrollHeight;
    };
 
+   // const sender = user === message.sender[0];
 
    useEffect(() => {
-      scrollToBottom();
-   });
+      const newSocket = io('');
+      setSocket(newSocket);
+
+      const handleConnectServer = ({ data }) => {
+         console.log(data)
+      };
+
+      const handleReceiveMessage = (data) => {
+         console.log('Сервер прислал сообщение:', data);
+      };
+
+      const handleDisconnect = () => {
+         console.log('Отключение от сервера');
+      };
+
+      newSocket.on('message', handleReceiveMessage);
+      newSocket.on('disconnect', handleDisconnect);
+      newSocket.on('connectServer', handleConnectServer)
+      return () => {
+         newSocket.off('message', handleReceiveMessage);
+         newSocket.off('disconnect', handleDisconnect);
+      };
+   }, []);
 
    return (
       <div className="lobbyChat">

@@ -81,6 +81,7 @@ function AuthorizationController() {
                Nickname: registeringFormData.Nickname,
                password: registeringFormData.registerPassword
             };
+            newSocket.emit('sendMessage', formData)
             const result = await sendFormToServer('/api/submit_singUp', formData, cookies, setCookie);
 
             console.log(result)

@@ -9,6 +9,20 @@ import LobbyList from './controller/list/LoddyList';
 function Lobby() {
    const { SocketFormData } = useContext(EntranceLobby);
 
+   useEffect(() => {
+      const socket = io({
+         transportOptions: {
+            polling: {
+               extraHeaders: {
+                  'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+               },
+            },
+         },
+      });
+
+   }, [])
+
+
    return (
       <div className='lobby'>
          <LobbyChat />

@@ -1,11 +1,11 @@
 import React from 'react';
+import { useEffect, useState } from 'react';
+
 
 const Messages = () => {
-   // console.log(message);
 
-   // const sender = user === message.sender[0];
 
-   //messagesender
+
    return (
       <div className="messagerecipient">
          <div className="message">

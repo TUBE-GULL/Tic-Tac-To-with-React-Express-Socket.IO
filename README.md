@@ -1,6 +1,10 @@
 ___________________________________________________________________________
 project development
 
+0.0.37
+
+moved work with cookie into a separate class
+
 0.0.36
 
 functions refactoring Authenticated placed in class
