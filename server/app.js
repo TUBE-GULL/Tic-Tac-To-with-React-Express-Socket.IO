@@ -18,26 +18,26 @@ const UsersOnline = {};
 const config = await readFileJson('./config.json');
 
 io.on('connection', (socket) => {
-
    // io.use((socket, next) =>)
+
    // const authToken = socket.handshake.headers.authorization;
+   // console.log(authToken);
+   // try {
+   //    const decodedToken = jwt.verify(authToken, config.secretKey);
+   //    const userId = decodedToken.id;
+   //    console.log('User ID:', userId);
 
-   try {
-      const decodedToken = jwt.verify(authToken, config.secretKey);
-      const userId = decodedToken.id;
-      console.log('User ID:', userId);
+   //    const user = {
+   //       id: userId,
+   //    };
+   //    UsersOnline[socket.id] = user;
 
-      const user = {
-         id: userId,
-      };
-      UsersOnline[socket.id] = user;
+   //    socket.emit('connectServer', { user });
 
-      socket.emit('connectServer', { user });
-
-      io.emit('usersOnline', UsersOnline);
-   } catch (error) {
-      console.error('Error verifying token:', error);
-   }
+   //    io.emit('usersOnline', UsersOnline);
+   // } catch (error) {
+   //    console.error('Error verifying token:', error);
+   // }
 
    socket.emit('connectServer', { data: 'text' });
 

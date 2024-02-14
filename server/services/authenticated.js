@@ -7,9 +7,16 @@ import tokenGeneration from '../modules/tokenGeneration.js';
 import cookieParser from 'cookie-parser';
 
 const userData = await readFileJson('../data/data.json');
-const config = await readFileJson('./config.json');
 
 class Authenticated {
+
+   exportUserData(userId) {
+      const user = userData.find(el => el.id === userId);
+      return {
+         Nickname: user.Nickname,
+         time: user.time,
+      }
+   };
 
    checkUserFirstsName(formData) {
       return userData.some(el => el.Nickname == formData.Nickname);
@@ -25,7 +32,6 @@ class Authenticated {
 
    async singUp(req, res) {
       const formData = req.body;
-      console.log('singUp')
       if (!this.checkUserFirstsName(formData)) {
          const hashedPassword = await bcrypt.hash(formData.password, 10);
          const newUser = {
@@ -46,11 +52,14 @@ class Authenticated {
    };
 
    async checkCookie(req, res, authToken) {
+      // console.log(authToken)
       try {
          console.log('User authenticated via cookie');
-         const userData = cookieParser.validateAccessToken(authToken)
-         const userId = userData.id;
-
+         //!!! 
+         // const userData = cookieParser.validateAccessToken(authToken);
+         // console.log(userData)
+         // io.to(socket.id).emit('userData', exportUserData(userData.id));
+         //!!!!
          res.json({ success: true });
       } catch (error) {
          if (error instanceof jwt.TokenExpiredError) {
@@ -65,15 +74,15 @@ class Authenticated {
       };
    };
 
-   async checkUser(req, res, Cookie) {
+   async checkUser(req, res) {
       const formData = req.body;
       try {
          console.log('User authenticated via form');
          if (await this.checkUserFirstsName(formData) && await this.checkUserDoubleNamePassword(formData)) {
             console.log('➜ Successful authentication');
             const user = userData.find(el => el.Nickname === formData.Nickname);
-            const token = cookieParser.generateCookieToken({ id: user.id })
-            cookieParser.writeCookieData(token)
+            const token = cookieParser.generateCookieToken({ id: user.id });
+            cookieParser.writeCookieData(token);
             res.cookie('authToken', token);
             res.json({ success: true });
          } else {
