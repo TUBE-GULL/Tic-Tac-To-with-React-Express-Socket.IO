@@ -4,7 +4,6 @@ import io from 'socket.io-client';
 
 function lobbyChat() {
    const contentChatRef = useRef(null);
-   const [socket, setSocket] = useState(null);
    const [message, setMessage] = useState('');
    const [messageInput, setMessageInput] = useState('');
    const [messages, setMessages] = useState([]);
