@@ -3,8 +3,8 @@ import React, { useContext, useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import { EntranceLobby } from '../../App';
 
-import LobbyChat from './controller/chat/LobbyChat';
-import LobbyList from './controller/list/LobbyList';
+// import LobbyChat from './controller/chat/LobbyChat';
+// import LobbyList from './controller/list/LobbyList';
 
 function Lobby() {
    const { SocketFormData } = useContext(EntranceLobby);
@@ -41,8 +41,8 @@ function Lobby() {
 
    return (
       <div className='lobby'>
-         <LobbyChat />
-         <LobbyList />
+         <LobbyChat user={userData} />
+         <LobbyList user={userData} />
       </div>
    )
 };

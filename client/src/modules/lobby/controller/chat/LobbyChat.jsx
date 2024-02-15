@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState, useRef } from 'react';
 import Messages from './modules/Message';
 import io from 'socket.io-client';
 
-function lobbyChat() {
+function lobbyChat(user) {
    const contentChatRef = useRef(null);
    const [message, setMessage] = useState('');
    const [messageInput, setMessageInput] = useState('');
