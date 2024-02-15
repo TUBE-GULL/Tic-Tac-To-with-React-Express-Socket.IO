@@ -5,6 +5,7 @@ import readFileJson from '../modules/readFileJson.js';
 import writeFileJson from '../modules/writeFileJson.js';
 import tokenGeneration from '../modules/tokenGeneration.js';
 import cookieParser from 'cookie-parser';
+import tokenService from './cookieTokenServices.js';
 
 const userData = await readFileJson('../data/data.json');
 
@@ -55,19 +56,19 @@ class Authenticated {
       // console.log(authToken)
       try {
          console.log('User authenticated via cookie');
-         //!!! 
-         // const userData = cookieParser.validateAccessToken(authToken);
-         // console.log(userData)
-         // io.to(socket.id).emit('userData', exportUserData(userData.id));
-         //!!!!
+
+         const user = cookieParser.validateAccessToken(authToken);
+         console.log(user)
+         io.to(socket.id).emit('userData', exportUserData(user.id));
+
          res.json({ success: true });
       } catch (error) {
          if (error instanceof jwt.TokenExpiredError) {
-            //обработать ошибку с токеном ! 
+            //обработать ошибку с токеном !!!! 
             console.error('Token expired:', error);
             res.status(401).json({ success: false, error: 'Token expired' });
          } else {
-            //обработать ошибку с токеном ! 
+            //обработать ошибку с токеном !!! 
             console.error('Error verifying token:', error);
             res.status(401).json({ success: false, error: 'Invalid token' });
          };
@@ -80,9 +81,13 @@ class Authenticated {
          console.log('User authenticated via form');
          if (await this.checkUserFirstsName(formData) && await this.checkUserDoubleNamePassword(formData)) {
             console.log('➜ Successful authentication');
+
             const user = userData.find(el => el.Nickname === formData.Nickname);
-            const token = cookieParser.generateCookieToken({ id: user.id });
-            cookieParser.writeCookieData(token);
+
+            const token = tokenService.generateCookieToken({ id: user.id });
+
+            tokenService.writeCookieData(token);
+
             res.cookie('authToken', token);
             res.json({ success: true });
          } else {

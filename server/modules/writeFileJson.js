@@ -8,10 +8,10 @@ const writeFileData = async (newData, Address) => {
 
       await fs.writeFile(getAbsolutePath(Address), [jsonData], 'utf-8');
 
-      console.log('Данные успешно записаны в файл: data.json');
+      console.log(`successful write in data in ${Address}`);
       return true;
    } catch (error) {
-      console.error('Ошибка при записи данных в файл:', error);
+      console.error('ERROR write in data:', error);
       return false;
    }
 }

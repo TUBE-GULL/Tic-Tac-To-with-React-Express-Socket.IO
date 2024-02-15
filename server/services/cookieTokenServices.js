@@ -1,5 +1,7 @@
-import writeFileJson from '../modules/writeFileJson.js';
+import jwt from 'jsonwebtoken';
 
+import writeFileJson from '../modules/writeFileJson.js';
+import readFileJson from '../modules/readFileJson.js';
 
 const config = await readFileJson('./config.json');
 const Cookie = await readFileJson('../data/cookie.json');
@@ -38,10 +40,6 @@ class TokenService {
       Cookie.push(token);
       await writeFileJson(Cookie, '../data/cookie.json');
    }
-
-
-
-
 };
 
 const tokenService = new TokenService;
