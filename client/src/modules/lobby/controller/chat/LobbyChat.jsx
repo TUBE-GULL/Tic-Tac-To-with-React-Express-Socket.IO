@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState, useRef } from 'react';
 import Messages from './modules/Message';
 import io from 'socket.io-client';
 
-function lobbyChat(user) {
+function lobbyChat() {
    const contentChatRef = useRef(null);
    const [message, setMessage] = useState('');
    const [messageInput, setMessageInput] = useState('');
@@ -30,30 +30,30 @@ function lobbyChat(user) {
 
    // const sender = user === message.sender[0];
 
-   useEffect(() => {
-      const newSocket = io('');
-      setSocket(newSocket);
+   // useEffect(() => {
+   //    const newSocket = io('');
+   //    setSocket(newSocket);
 
-      const handleConnectServer = ({ data }) => {
-         console.log(data)
-      };
+   //    const handleConnectServer = ({ data }) => {
+   //       console.log(data)
+   //    };
 
-      const handleReceiveMessage = (data) => {
-         console.log('Сервер прислал сообщение:', data);
-      };
+   //    const handleReceiveMessage = (data) => {
+   //       console.log('Сервер прислал сообщение:', data);
+   //    };
 
-      const handleDisconnect = () => {
-         console.log('Отключение от сервера');
-      };
+   //    const handleDisconnect = () => {
+   //       console.log('Отключение от сервера');
+   //    };
 
-      newSocket.on('message', handleReceiveMessage);
-      newSocket.on('disconnect', handleDisconnect);
-      newSocket.on('connectServer', handleConnectServer)
-      return () => {
-         newSocket.off('message', handleReceiveMessage);
-         newSocket.off('disconnect', handleDisconnect);
-      };
-   }, []);
+   //    newSocket.on('message', handleReceiveMessage);
+   //    newSocket.on('disconnect', handleDisconnect);
+   //    newSocket.on('connectServer', handleConnectServer)
+   //    return () => {
+   //       newSocket.off('message', handleReceiveMessage);
+   //       newSocket.off('disconnect', handleDisconnect);
+   //    };
+   // }, []);
 
    return (
       <div className="lobbyChat">

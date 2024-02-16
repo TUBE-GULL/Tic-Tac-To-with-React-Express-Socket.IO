@@ -4,5 +4,17 @@
     "Nickname": "Oleg",
     "password": "$2b$10$3VFMePLwe8xR.30NMf/guOgWiIsL3HOkCZnEBqZVq2VouTM/l6EoW",
     "time": ""
+  },
+  {
+    "id": "666d243bf23fd5dbdf01",
+    "Nickname": "Fox",
+    "password": "$2b$10$1UDE1ShY5tF5A0rWfNMUH.Y2rP4jREcZ4sSvDbXOW.ZVIG1AvOVYa",
+    "time": ""
+  },
+  {
+    "id": "caf10eb26a3a1043f5c8",
+    "Nickname": "edge",
+    "password": "$2b$10$b3XWAj9hzzEwzLnFltEFCOSOq/V2fkHr5UsOJ5M067xL.3zWgaay2",
+    "time": ""
   }
 ]

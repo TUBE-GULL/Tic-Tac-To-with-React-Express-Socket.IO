@@ -23,6 +23,7 @@ function AuthorizationController() {
       const authToken = cookies.authToken;
       if (authToken) {
          const result = sendCookieToServer('/api/submit_singIn', authToken, cookies, setCookie);
+         console.log(result)
          result
             ? setShowAuthorization(!showAuthorization)
             : console.log('undefined')

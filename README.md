@@ -1,6 +1,10 @@
 ___________________________________________________________________________
 project development
 
+0.0.38
+
+portable socket in the classroom
+
 0.0.37error 
 
 corrected the error

@@ -2,7 +2,6 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import authenticated from '../services/authenticated.js';
 import getAbsolutePath from '../modules/getAbsolutePath.js';
-
 const router = express.Router();
 
 router.use(express.json());

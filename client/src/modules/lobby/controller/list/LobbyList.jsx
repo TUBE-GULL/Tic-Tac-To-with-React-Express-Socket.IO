@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import User from './modules/User';
 
-function LobbyList(user) {
+function LobbyList() {
 
    return (
       <div className="listLobby">
