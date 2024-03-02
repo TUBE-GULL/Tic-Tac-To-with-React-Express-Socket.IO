@@ -10,13 +10,11 @@ class SocketServer {
    }
 
    initializeSocketEvents(userData) {
-
       this.io.on('connection', (socket) => {
-         console.log(userData)
-
          if (userData === undefined) {
-            this.io.to(socket).emit('undefined');
+            socket.emit('undefined');
          }
+
          this.handleConnection(socket, userData);
 
          socket.on('disconnect', () => {
@@ -25,25 +23,33 @@ class SocketServer {
       });
    }
 
+   checkUserUndefined(socket, userData) {
+      if (userData === undefined) {
+         this.io.to(socket.id).emit('undefined');
+      } else {
+         return true
+      }
+   }
+
    handleConnection(socket, userData) {
       // console.log('User connected: ' + socket.id);
-      // console.log(userData)
-
+      console.log(userData)
 
       // Привязываем socket.id к идентификатору пользователя
-      // this.usersOnline[socket.id] = userData.id;
+      this.usersOnline[socket.id] = userData.id;
 
       // // Отправляем пользовательские данные на его сокет
       // this.sendSocketDataUser(socket.id, userId);
 
       // // Отправляем обновленный список пользователей онлайн
-      this.io.emit('usersOnline', this.usersOnline);
+      // this.io.emit('usersOnline', this.usersOnline);
    }
 
    disconnect(socket) {
       console.log('User disconnected: ' + socket.id);
       delete this.usersOnline[socket.id];
       this.io.emit('usersOnline', this.usersOnline);
+      // console.log(this.usersOnline)
    }
 
    sendSocketDataUser(socketId, data) {
@@ -55,7 +61,6 @@ class SocketServer {
    //    this.io.emit('userData', userId);
    // }
 };
-
 
 export default SocketServer;
 

@@ -20,15 +20,25 @@ function AuthorizationController() {
    const textSignUp = ['Register', 'CREATE AN ACCOUNT', 'Don\'t have an account ? ', 'CREATE ACCOUNT'];
 
    useEffect(() => {
-      const authToken = cookies.authToken;
-      if (authToken) {
-         const result = sendCookieToServer('/api/submit_singIn', authToken, cookies, setCookie);
-         console.log(result)
-         result
-            ? setShowAuthorization(!showAuthorization)
-            : console.log('undefined')
-      }
+      const fetchData = async () => {
+         const authToken = cookies.authToken;
+         if (authToken) {
+            try {
+               const result = await sendCookieToServer('/api/submit_singIn', authToken, cookies, setCookie);
+               if (result) {
+                  setShowAuthorization(!showAuthorization);
+               } else {
+                  console.log('The token has expired or there is no token');
+               }
+            } catch (error) {
+               console.error('An error occurred:', error);
+            }
+         }
+      };
+
+      fetchData();
    }, []);
+
 
    const [loginFormData, setLoginFormData] = useState({
       Nickname: '',

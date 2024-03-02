@@ -11,9 +11,8 @@ async function sendCookieToServer(post, authToken, cookies, setCookie) {
       });
 
       const result = await response.json();
-      return result.error
-         ? { result: false, errorMessage: 'Internal Server Error' }
-         : { result: true, errorMessage: 'Successful authentication' }
+      // console.log(result.success)
+      return result.success
    } catch (error) {
       console.log(error.message);
       return { result: false, errorMessage: 'An error occurred while sending data' }

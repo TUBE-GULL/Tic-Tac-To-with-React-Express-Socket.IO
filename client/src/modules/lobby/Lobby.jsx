@@ -13,27 +13,28 @@ function Lobby() {
    const [socket, setSocket] = useState(null);
    const [userData, setUserData] = useState('');
 
-   useEffect(() => {
+   // useEffect(() => {
 
-      const Socket = io('');
-      setSocket(Socket);
+   //    const Socket = io('');
+   //    setSocket(Socket);
 
-      const switchOff = () => {
-         setShowAuthorization(!showAuthorization);
-      }
+   //    const switchOff = () => {
+   //       console.log('undefined')
+   //       setShowAuthorization(!showAuthorization);
+   //    }
 
-      const handleToGetUserData = ({ user }) => {
-         console.log(user)
-         // return setUserData(user);
-      };
+   //    const handleToGetUserData = (user) => {
+   //       console.log(user)
+   //       // return setUserData(user);
+   //    };
 
-      Socket.on('undefined', switchOff)
-      Socket.on('userData', handleToGetUserData);
-      return () => {
-         Socket.off('userData', handleToGetUserData);
-         Socket.off('undefined', switchOff)
-      }
-   }, []);
+   //    Socket.on('undefined', switchOff)
+   //    Socket.on('userData', handleToGetUserData);
+   //    return () => {
+   //       Socket.off('userData', handleToGetUserData);
+   //       Socket.off('undefined', switchOff)
+   //    }
+   // }, []);
 
 
    return (
@@ -43,12 +44,10 @@ function Lobby() {
       </div>
    )
 };
-// user={userData}
+
 export default Lobby;
 
-
-
-
+// user={userData}
 // const socket = io({
 //    transportOptions: {
 //       polling: {

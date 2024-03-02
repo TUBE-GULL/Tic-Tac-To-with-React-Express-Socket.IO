@@ -18,8 +18,10 @@ class TokenService {
       try {
          const userData = jwt.verify(token, config.secretKey);
 
+         // console.log('Token verified successfully:', userData);
          return userData;
       } catch (e) {
+         console.error('Token verification failed:', e);
          return null;
       }
    };

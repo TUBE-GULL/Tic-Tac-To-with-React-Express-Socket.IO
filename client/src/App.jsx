@@ -7,6 +7,8 @@ function App() {
   const [showAuthorization, setShowAuthorization] = useState(true);
   const [socketFormData, setSocketFormData] = useState('');
 
+  // socket setShowAuthorization(!showAuthorization)
+
   return (
     <>
       <EntranceLobby.Provider value={{ showAuthorization, setShowAuthorization, socketFormData, setSocketFormData }}>
