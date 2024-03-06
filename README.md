@@ -1,6 +1,10 @@
 ___________________________________________________________________________
 project development
 
+0.0.39 
+
+started migrating the (server) project to TypeScript
+
 0.0.38
 
 portable socket in the classroom

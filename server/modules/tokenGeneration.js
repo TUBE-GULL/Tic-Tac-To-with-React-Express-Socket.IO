@@ -6,6 +6,7 @@ const tokenGeneration = async (bit) => {
    let token = crypto.randomBytes(bit).toString('hex')
    // console.log(data)
    if (data.every(el => el.token == token)) {
+      console.log(el)
       token = crypto.randomBytes(bit).toString('hex')
    }
    return token
