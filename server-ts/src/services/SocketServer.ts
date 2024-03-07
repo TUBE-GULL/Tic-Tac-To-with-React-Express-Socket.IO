@@ -1,5 +1,5 @@
 import { Server as SocketIOServer } from 'socket.io';
-import readFileJson from '../modules/readFileJson.js';
+import readFileJson from '../readFileJson.js';
 
 class SocketServer {
    constructor(httpServer) {

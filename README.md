@@ -1,6 +1,10 @@
 ___________________________________________________________________________
 project development
 
+0.0.40
+
+while I started to understand the TS
+
 0.0.39 
 
 started migrating the (server) project to TypeScript

@@ -1,20 +1,20 @@
 import jwt from 'jsonwebtoken';
 
-import writeFileJson from '../modules/writeFileJson.js';
-import readFileJson from '../modules/readFileJson.js';
+import writeFileJson from '../server-ts/src/modules/writeFileJson.js';
+import readFileJson from '../server-ts/src/modules/readFileJson.js';
 
 const config = await readFileJson('./config.json');
 const Cookie = await readFileJson('../data/cookie.json');
 
 class TokenService {
-   generateCookieToken(useData) {
+   generateCookieToken(useData: object): object {
       const accessToken = jwt.sign(useData, config.secretKey, { expiresIn: '1day' });
       // const refreshToken = jwt.sign(useData, config.RefreshSecretKey, { expiresIn: '14day' });
 
       return { accessToken };//, refreshToken 
    };
 
-   validateAccessToken(token) {
+   validateAccessToken(token: string) {
       try {
          const userData = jwt.verify(token, config.secretKey);
 
@@ -37,7 +37,7 @@ class TokenService {
 
    // };
 
-   async writeCookieData(token) {
+   async writeCookieData(token: string) {
       //!
       Cookie.push(token);
       await writeFileJson(Cookie, '../data/cookie.json');

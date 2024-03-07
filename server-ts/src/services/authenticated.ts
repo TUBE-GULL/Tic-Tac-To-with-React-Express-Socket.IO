@@ -1,16 +1,28 @@
 import bcrypt from 'bcrypt';
-import socketServer from '../app.js';
+import { Request, Response } from 'express';
+import socketServer from '../server-ts/app.js';
 import tokenService from './cookieTokenServices.js';
-import readFileJson from '../modules/readFileJson.js';
-import writeFileJson from '../modules/writeFileJson.js';
-import tokenGeneration from '../modules/tokenGeneration.js';
+import readFileJson from '../server-ts/src/modules/readFileJson.js';
+import writeFileJson from '../server-ts/src/modules/writeFileJson.js';
+import tokenGeneration from '../server-ts/src/modules/tokenGeneration.js';
 
 const userData = await readFileJson('../data/data.json');
 
+interface FormData {
+   Nickname: string,
+   password: string,
+}
+
+interface UserData {
+   id: number,
+   Nickname: string,
+   time: string,
+}
+
 class Authenticated {
 
-   exportUserData(userId) {
-      const user = userData.find(el => el.id === userId);
+   exportUserData(userId: number): UserData {
+      const user = userData.find((el) => el.id === userId);
       return {
          id: userId,
          Nickname: user.Nickname,
@@ -18,11 +30,11 @@ class Authenticated {
       }
    };
 
-   checkUserFirstsName(formData) {
+   checkUserFirstsName(formData: FormData): boolean {
       return userData.some(el => el.Nickname == formData.Nickname);
    };
 
-   async checkUserDoubleNamePassword(formData) {
+   async checkUserDoubleNamePassword(formData: FormData) {
       const user = userData.find(el => el.Nickname === formData.Nickname);
       if (user && await bcrypt.compare(formData.password, user.password)) {
          return true;
@@ -30,7 +42,7 @@ class Authenticated {
       return false;
    };
 
-   async checkUser(req, res) {
+   async checkUser(req: Request, res: Response) {
       const formData = req.body;
       try {
          if (await this.checkUserFirstsName(formData) && await this.checkUserDoubleNamePassword(formData)) {
@@ -52,7 +64,7 @@ class Authenticated {
       };
    };
 
-   async checkCookie(req, res, authToken) {
+   async checkCookie(req: Request, res: Response, authToken: string) {
       try {
          const user = tokenService.validateAccessToken(authToken);
          socketServer.initializeSocketEvents(this.exportUserData(user.id));
@@ -63,7 +75,7 @@ class Authenticated {
       };
    };
 
-   async singIn(req, res) {
+   async singIn(req: Request, res: Response) {
       const { authToken } = req.cookies;
       const Cookie = await readFileJson('../data/cookie.json');
       if (authToken && authToken.accessToken && Cookie.includes(authToken.accessToken)) {
@@ -71,11 +83,11 @@ class Authenticated {
          await this.checkCookie(req, res, authToken.accessToken);
       } else {
          console.log('User authenticated via form');
-         await this.checkUser(req, res, Cookie);
+         await this.checkUser(req, res);
       };
    };
 
-   async singUp(req, res) {
+   async singUp(req: Request, res: Response) {
       const formData = req.body;
       if (!this.checkUserFirstsName(formData)) {
          const hashedPassword = await bcrypt.hash(formData.password, 10);
