@@ -1,9 +1,15 @@
 ___________________________________________________________________________
 project development
 
+
+
 0.0.40
 
 while I started to understand the TS
+
+also rewrote a little app(server)
+
++wrote a class logger
 
 0.0.39 
 
