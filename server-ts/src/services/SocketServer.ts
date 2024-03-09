@@ -1,5 +1,7 @@
-import { Server as SocketIOServer } from 'socket.io';
-import readFileJson from '../readFileJson.js';
+import { Server as SocketIOServer, Socket } from 'socket.io';
+import { Server as HttpServer } from 'http';
+import { UserData, FormData } from '../types/types';
+import readFileJson from '../modules/readFileJson';
 
 class SocketServer {
    constructor(httpServer) {
@@ -23,7 +25,7 @@ class SocketServer {
       });
    }
 
-   checkUserUndefined(socket, userData) {
+   checkUserUndefined(socket: Socket, userData) {
       if (userData === undefined) {
          this.io.to(socket.id).emit('undefined');
       } else {
@@ -31,7 +33,7 @@ class SocketServer {
       }
    }
 
-   handleConnection(socket, userData) {
+   handleConnection(socket: Socket, userData): void {
       // console.log('User connected: ' + socket.id);
       console.log(userData)
 
@@ -45,14 +47,14 @@ class SocketServer {
       // this.io.emit('usersOnline', this.usersOnline);
    }
 
-   disconnect(socket) {
+   disconnect(socket: Socket): void {
       console.log('User disconnected: ' + socket.id);
       delete this.usersOnline[socket.id];
       this.io.emit('usersOnline', this.usersOnline);
       // console.log(this.usersOnline)
    }
 
-   sendSocketDataUser(socketId, data) {
+   sendSocketDataUser(socketId, data): void {
       this.io.to(socketId).emit('sendData', data);
    }
 

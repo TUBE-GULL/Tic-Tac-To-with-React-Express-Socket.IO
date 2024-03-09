@@ -1,7 +1,10 @@
 ___________________________________________________________________________
 project development
 
+0.0.40+ 
 
+I'm still migrating the server to ts
+I make corrections to the code and add typing
 
 0.0.40
 

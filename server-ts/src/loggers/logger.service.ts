@@ -15,16 +15,17 @@ class Logger {
    };
 
    log(text: unknown, ...texts: (string | number)[]): void {
-      console.log(`${this.data()}: ➜ \x1b[4m${text}/\x1b[0m`);
+      console.log(`${this.data()} \x1b[4m INFO/\x1b[0m: ➜ \x1b[4m${text}\x1b[0m`);
+
 
       for (const text of texts) {
-         console.log(`${this.data()}: ➜ \x1b[4${text}/\x1b[0m`);
+         console.log(`${this.data()} \x1b[4m INFO/\x1b[0m: ➜ \x1b[4m${text}\x1b[0m`);
       }
    };
 
-   error(args: unknown[]) {
+   error(error: unknown[]) {
       this.data()
-      console.error(`${this.data()}: ➜  ${args}`)
+      console.error(`${this.data()} \x1b[31m ERROR/\x1b[0m : ➜  ${error}`);
    };
 }
 

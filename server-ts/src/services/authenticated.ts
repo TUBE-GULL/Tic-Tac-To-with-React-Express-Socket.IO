@@ -1,23 +1,14 @@
 import bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
-import socketServer from '../server-ts/app.js';
+import socketServer from '../services/SocketServer';
 import tokenService from './cookieTokenServices.js';
-import readFileJson from '../server-ts/src/modules/readFileJson.js';
-import writeFileJson from '../server-ts/src/modules/writeFileJson.js';
-import tokenGeneration from '../server-ts/src/modules/tokenGeneration.js';
+import readFileJson from '../modules/readFileJson.js';
+import writeFileJson from '../modules/writeFileJson.js';
+import tokenGeneration from '../modules/tokenGeneration.js';
+import { UserData, FormData } from '../types/types';
 
 const userData = await readFileJson('../data/data.json');
 
-interface FormData {
-   Nickname: string,
-   password: string,
-}
-
-interface UserData {
-   id: number,
-   Nickname: string,
-   time: string,
-}
 
 class Authenticated {
 

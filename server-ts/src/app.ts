@@ -1,10 +1,10 @@
 import * as http from 'http';
 import express, { Express } from 'express';
-import MyLog from './src/loggers/myLogs';
+import MyLogo from './loggers/My-Logo';
 import { Server } from 'http'
-import router from '../server-ts/src/routes/router';
-// import SocketServer from '../services/SocketServer';
-import logger from './src/loggers/logger.service';
+import router from './routes/router';
+import SocketServer from './services/SocketServer';
+import logger from './loggers/logger.service';
 
 export class App {
    app: Express;
@@ -23,13 +23,13 @@ export class App {
       this.app.use('/', router)
    }
 
-   // SocketServer(): void {
-   //    const socketServer = new SocketServer(this.server);
-   // }
+   SocketServer(): void {
+      const socketServer = new SocketServer(this.server);
+   }
 
    startServer(): void {
       this.server.listen(this.PORT, () => {
-         MyLog();
+         MyLogo();
          this.Logger.log(`\x1b[32mLocal: \x1b[4mhttp://localhost:${this.PORT}/\x1b[0m`);
          console.timeEnd(' ➜ \x1b[32mServer startup time:\x1b[0m');
       })
@@ -38,7 +38,7 @@ export class App {
    public async start() {
       console.time(' ➜ \x1b[32mServer startup time:\x1b[0m');
 
-      // this.SocketServer();
+      this.SocketServer();
       this.Routes();
       this.startServer();
    }

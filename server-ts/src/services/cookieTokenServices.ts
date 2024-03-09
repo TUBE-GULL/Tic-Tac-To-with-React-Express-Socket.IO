@@ -1,10 +1,11 @@
 import jwt from 'jsonwebtoken';
 
-import writeFileJson from '../server-ts/src/modules/writeFileJson.js';
-import readFileJson from '../server-ts/src/modules/readFileJson.js';
+import writeFileJson from '../modules/writeFileJson.js';
+import readFileJson from '../modules/readFileJson.js';
 
 const config = await readFileJson('./config.json');
 const Cookie = await readFileJson('../data/cookie.json');
+
 
 class TokenService {
    generateCookieToken(useData: object): object {
