@@ -1,10 +1,10 @@
 import * as http from 'http';
 import express, { Express } from 'express';
-import MyLogo from './loggers/My-Logo';
 import { Server } from 'http'
-import router from './routes/router';
-import SocketServer from './services/SocketServer';
-import logger from './loggers/logger.service';
+import router from './routes/router.js';
+import MyLogo from './loggers/My-Logo.js';
+import SocketServer from './services/SocketServer.js';
+import logger from './loggers/logger.service.js';
 
 export class App {
    app: Express;

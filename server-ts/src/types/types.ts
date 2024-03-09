@@ -1,8 +1,10 @@
 //export Interfaces !!! ================================================
 
+
 export interface UserData {
-   id: number | string;
+   id: string | number;
    Nickname: string;
+   password?: string | number;
    time: string;
 }
 

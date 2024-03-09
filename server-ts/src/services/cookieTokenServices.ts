@@ -8,7 +8,7 @@ const Cookie = await readFileJson('../data/cookie.json');
 
 
 class TokenService {
-   generateCookieToken(useData: object): object {
+   generateCookieToken(useData: object): { accessToken: string } {
       const accessToken = jwt.sign(useData, config.secretKey, { expiresIn: '1day' });
       // const refreshToken = jwt.sign(useData, config.RefreshSecretKey, { expiresIn: '14day' });
 

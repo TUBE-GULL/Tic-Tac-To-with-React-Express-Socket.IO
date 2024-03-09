@@ -1,11 +1,11 @@
 import bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
-import socketServer from '../services/SocketServer';
+import socketServer from '../services/SocketServer.js';
 import tokenService from './cookieTokenServices.js';
 import readFileJson from '../modules/readFileJson.js';
 import writeFileJson from '../modules/writeFileJson.js';
 import tokenGeneration from '../modules/tokenGeneration.js';
-import { UserData, FormData } from '../types/types';
+import { UserData, FormData } from '../types/types.js';
 
 const userData = await readFileJson('../data/data.json');
 
@@ -13,7 +13,9 @@ const userData = await readFileJson('../data/data.json');
 class Authenticated {
 
    exportUserData(userId: number): UserData {
-      const user = userData.find((el) => el.id === userId);
+
+      const user = userData.find((el: UserData) => el.id === userId);
+
       return {
          id: userId,
          Nickname: user.Nickname,
@@ -22,11 +24,13 @@ class Authenticated {
    };
 
    checkUserFirstsName(formData: FormData): boolean {
-      return userData.some(el => el.Nickname == formData.Nickname);
+      return userData.some((el: UserData) => el.Nickname == formData.Nickname);
    };
 
    async checkUserDoubleNamePassword(formData: FormData) {
-      const user = userData.find(el => el.Nickname === formData.Nickname);
+
+      const user = userData.find((el: UserData) => el.Nickname === formData.Nickname);
+
       if (user && await bcrypt.compare(formData.password, user.password)) {
          return true;
       }
@@ -38,12 +42,13 @@ class Authenticated {
       try {
          if (await this.checkUserFirstsName(formData) && await this.checkUserDoubleNamePassword(formData)) {
             console.log('➜ Successful authentication');
-            const user = userData.find(el => el.Nickname === formData.Nickname);
+
+            const user = userData.find((el: UserData) => el.Nickname === formData.Nickname);
 
             const token = tokenService.generateCookieToken({ id: user.id });
-            tokenService.writeCookieData(token.accessToken);
+            tokenService.writeCookieData(token.accessToken);//     ?
 
-            socketServer.initializeSocketEvents(user);
+            // socketServer.initializeSocketEvents(user);
             res.cookie('authToken', token);
             res.json({ success: true });
          } else {
@@ -58,7 +63,7 @@ class Authenticated {
    async checkCookie(req: Request, res: Response, authToken: string) {
       try {
          const user = tokenService.validateAccessToken(authToken);
-         socketServer.initializeSocketEvents(this.exportUserData(user.id));
+         // socketServer.initializeSocketEvents(this.exportUserData(user.id));
          res.json({ success: true });
       } catch (error) {
          console.error('Token expired:', error);

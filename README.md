@@ -1,6 +1,10 @@
 ___________________________________________________________________________
 project development
 
+0.0.41
+
+migrated the server in typescript
+
 0.0.40+ 
 
 I'm still migrating the server to ts

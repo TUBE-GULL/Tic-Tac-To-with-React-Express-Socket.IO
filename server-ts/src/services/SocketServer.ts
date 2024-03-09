@@ -1,31 +1,30 @@
 import { Server as SocketIOServer, Socket } from 'socket.io';
 import { Server as HttpServer } from 'http';
-import { UserData, FormData } from '../types/types';
-import readFileJson from '../modules/readFileJson';
+import { UserData, FormData } from '../types/types.js';
+import readFileJson from '../modules/readFileJson.js';
 
 class SocketServer {
-   constructor(httpServer) {
+   private io: SocketIOServer;
+   private usersOnline: Record<string, number>;
+
+
+   constructor(httpServer: HttpServer) {
       this.io = new SocketIOServer(httpServer, { cors: { origin: "*", methods: ["GET", "POST"] } });
       this.usersOnline = {};
 
       this.initializeSocketEvents();
    }
 
-   initializeSocketEvents(userData) {
-      this.io.on('connection', (socket) => {
-         if (userData === undefined) {
-            socket.emit('undefined');
-         }
-
-         this.handleConnection(socket, userData);
-
+   initializeSocketEvents(): void {
+      this.io.on('connection', (socket: Socket) => {
+         this.handleConnection(socket);
          socket.on('disconnect', () => {
             this.disconnect(socket);
          });
       });
    }
 
-   checkUserUndefined(socket: Socket, userData) {
+   checkUserUndefined(socket: Socket, userData: UserData) {
       if (userData === undefined) {
          this.io.to(socket.id).emit('undefined');
       } else {
@@ -33,19 +32,39 @@ class SocketServer {
       }
    }
 
-   handleConnection(socket: Socket, userData): void {
-      // console.log('User connected: ' + socket.id);
-      console.log(userData)
+   // handleConnection(socket: Socket, userData: UserData): void {
+   //    // console.log('User connected: ' + socket.id);
+   //    console.log(userData)
 
-      // Привязываем socket.id к идентификатору пользователя
-      this.usersOnline[socket.id] = userData.id;
+   //    // Привязываем socket.id к идентификатору пользователя
+   //    this.usersOnline[socket.id] = userData.id;
 
-      // // Отправляем пользовательские данные на его сокет
-      // this.sendSocketDataUser(socket.id, userId);
+   //    // // Отправляем пользовательские данные на его сокет
+   //    // this.sendSocketDataUser(socket.id, userId);
 
-      // // Отправляем обновленный список пользователей онлайн
-      // this.io.emit('usersOnline', this.usersOnline);
+   //    // // Отправляем обновленный список пользователей онлайн
+   //    // this.io.emit('usersOnline', this.usersOnline);
+   // }
+
+   private handleConnection(socket: Socket): void {
+      const userData = readFileJson('../data/data.json');
+      if (userData === undefined) {
+         socket.emit('undefined');
+      } else {
+         console.log('User connected: ' + socket.id);
+         console.log(userData);
+
+         // Привязываем socket.id к идентификатору пользователя
+         // this.usersOnline[socket.id] = userData.id;
+
+         // Отправляем пользовательские данные на его сокет
+         // this.sendSocketDataUser(socket.id, userData);
+
+         // Отправляем обновленный список пользователей онлайн
+         this.io.emit('usersOnline', this.usersOnline);
+      }
    }
+
 
    disconnect(socket: Socket): void {
       console.log('User disconnected: ' + socket.id);
@@ -54,7 +73,7 @@ class SocketServer {
       // console.log(this.usersOnline)
    }
 
-   sendSocketDataUser(socketId, data): void {
+   sendSocketDataUser(socketId: string, data: UserData): void {
       this.io.to(socketId).emit('sendData', data);
    }
 

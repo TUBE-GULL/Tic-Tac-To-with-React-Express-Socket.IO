@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import cookieParser from 'cookie-parser';
-import authenticated from '../services/authenticated';
-import getAbsolutePath from '../modules/getAbsolutePath';
+import authenticated from '../services/authenticated.js';
+import getAbsolutePath from '../modules/getAbsolutePath.js';
 
 const router = express.Router();
 
