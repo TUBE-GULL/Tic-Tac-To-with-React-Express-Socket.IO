@@ -1,6 +1,10 @@
 ___________________________________________________________________________
 project development
 
+0.0.43 
+
+everything is fixed, moving on
+
 0.0.42 
 
 problem using SocketServer dependency

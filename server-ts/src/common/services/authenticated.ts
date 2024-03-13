@@ -1,23 +1,20 @@
 import bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
-import APP from '../../app.js';
-import SocketServer from './SocketServer.js';
 import tokenService from './cookieTokenServices.js';
 import Logger from '../../loggers/logger.service.js';
 import readFileJson from '../modules/readFileJson.js';
 import { UserData, FormData } from '../types/types.js';
 import writeFileJson from '../modules/writeFileJson.js';
 import tokenGeneration from '../modules/tokenGeneration.js';
+import SocketServer from './SocketServer.js';
 
 const userData = await readFileJson('../data/data.json');
 
 class Authenticated {
    SocketServer: SocketServer;
-   // app: App;
    logger: Logger;
 
    constructor(SocketServer: SocketServer, Logger: Logger) {
-      // this.SocketServer = socketServer;
       this.logger = Logger;
       this.SocketServer = SocketServer;
    }
@@ -116,10 +113,4 @@ class Authenticated {
    };
 };
 
-const logger = new Logger();
-const socketServer = new SocketServer(APP.server, logger);
-
-const authenticated = new Authenticated(socketServer, logger)
-
-
-export default authenticated;
+export default Authenticated;

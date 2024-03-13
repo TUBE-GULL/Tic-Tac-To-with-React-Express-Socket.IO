@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import cookieParser from 'cookie-parser';
-import authenticated from '../common/services/authenticated.js';
+import { authenticated } from '../app.js';
 import getAbsolutePath from '../common/modules/getAbsolutePath.js';
 
 const router = express.Router();

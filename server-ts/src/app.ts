@@ -5,6 +5,7 @@ import router from './routes/router.js';
 import MyLogo from './loggers/My-Logo.js';
 import SocketServer from './common/services/SocketServer.js';
 import logger from './loggers/logger.service.js';
+import Authenticated from './common/services/authenticated.js';
 
 class App {
    app: Express;
@@ -40,11 +41,13 @@ class App {
       this.startServer();
    };
 };
+const Logger = new logger();
 
-const APP = new App(new logger());
+const APP = new App(Logger);
 
-export default APP;
+const authenticated = new Authenticated(APP.socketServer, Logger)
 
+export { APP, authenticated };
 
 // this.SocketServer();
 // SocketServer(): void {
