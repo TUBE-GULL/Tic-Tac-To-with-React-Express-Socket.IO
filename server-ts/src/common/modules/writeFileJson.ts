@@ -1,12 +1,7 @@
 import fs from 'fs/promises';
 import getAbsolutePath from './getAbsolutePath.js';
+import { writeFileData } from '../types/types.js';
 
-interface writeFileData {
-   id: number,
-   Nickname: string,
-   password: string,
-   time: string
-}
 
 const writeFileData = async (newData: writeFileData, Address: string): Promise<boolean> => {
    try {

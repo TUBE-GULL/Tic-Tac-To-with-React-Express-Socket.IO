@@ -13,5 +13,12 @@ export interface FormData {
    password: string,
 }
 
+export interface writeFileData {
+   id: number,
+   Nickname: string,
+   password: string,
+   time: string
+}
+
 
 //export Types !!! =====================================================

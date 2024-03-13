@@ -1,6 +1,10 @@
 ___________________________________________________________________________
 project development
 
+0.0.42 
+
+problem using SocketServer dependency
+
 0.0.41
 
 migrated the server in typescript

@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import cookieParser from 'cookie-parser';
-import authenticated from '../services/authenticated.js';
-import getAbsolutePath from '../modules/getAbsolutePath.js';
+import authenticated from '../common/services/authenticated.js';
+import getAbsolutePath from '../common/modules/getAbsolutePath.js';
 
 const router = express.Router();
 
@@ -18,7 +18,7 @@ router.post('/submit_singUp', (req: Request, res: Response) => {
 });
 
 router.post('/submit_singIn', async (req: Request, res: Response) => {
-   await authenticated.singIn(req, res);
+   authenticated.singIn(req, res);
 });
 
 export default router;

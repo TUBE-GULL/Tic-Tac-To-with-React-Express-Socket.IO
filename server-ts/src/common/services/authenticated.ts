@@ -1,16 +1,26 @@
 import bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
-import socketServer from '../services/SocketServer.js';
+import APP from '../../app.js';
+import SocketServer from './SocketServer.js';
 import tokenService from './cookieTokenServices.js';
+import Logger from '../../loggers/logger.service.js';
 import readFileJson from '../modules/readFileJson.js';
+import { UserData, FormData } from '../types/types.js';
 import writeFileJson from '../modules/writeFileJson.js';
 import tokenGeneration from '../modules/tokenGeneration.js';
-import { UserData, FormData } from '../types/types.js';
 
 const userData = await readFileJson('../data/data.json');
 
-
 class Authenticated {
+   SocketServer: SocketServer;
+   // app: App;
+   logger: Logger;
+
+   constructor(SocketServer: SocketServer, Logger: Logger) {
+      // this.SocketServer = socketServer;
+      this.logger = Logger;
+      this.SocketServer = SocketServer;
+   }
 
    exportUserData(userId: number): UserData {
 
@@ -48,14 +58,14 @@ class Authenticated {
             const token = tokenService.generateCookieToken({ id: user.id });
             tokenService.writeCookieData(token.accessToken);//     ?
 
-            // socketServer.initializeSocketEvents(user);
+            this.SocketServer.initializeSocketEvents(user);
             res.cookie('authToken', token);
             res.json({ success: true });
          } else {
             res.status(401).json({ success: false, error: 'Wrong login or password !' });
          }
       } catch (error) {
-         console.error('Error during sign in:', error);
+         this.logger.error(error);
          res.status(500).json({ success: false, error: 'Internal Server Error' });
       };
    };
@@ -63,10 +73,11 @@ class Authenticated {
    async checkCookie(req: Request, res: Response, authToken: string) {
       try {
          const user = tokenService.validateAccessToken(authToken);
-         // socketServer.initializeSocketEvents(this.exportUserData(user.id));
+         this.logger.log(user)
+         // this.SocketServer.initializeSocketEvents(this.exportUserData(user.id));
          res.json({ success: true });
       } catch (error) {
-         console.error('Token expired:', error);
+         this.logger.error(error);
          res.status(401).json({ success: false, error: 'The token has expired or there is no token' });
       };
    };
@@ -96,25 +107,19 @@ class Authenticated {
          userData.push(newUser);
          await writeFileJson(userData, '../data/data.json');
 
-         console.log('➜ Successful Registration');
+         this.logger.log('➜ Successful Registration');
          res.json({ success: true });
       } else {
-         console.log('➜ Registration failed');
+         this.logger.log('➜ Registration failed');
          res.status(401).json({ success: false, error: 'This user is busy !' });
       }
    };
 };
 
-const authenticated = new Authenticated();
+const logger = new Logger();
+const socketServer = new SocketServer(APP.server, logger);
+
+const authenticated = new Authenticated(socketServer, logger)
+
 
 export default authenticated;
-
-
-
-
-
-
-
-
-
-
