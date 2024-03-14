@@ -47,13 +47,17 @@ class SocketServer {
    // this.io.emit('usersOnline', this.usersOnline);
    // }
 
-   handleConnection(socket: Socket, user: UserData | number): void {
+   handleConnection(socket: Socket, user: UserData): void {
       const userData = readFileJson('../data/data.json');
+      this.Logger.log(user.id)
+      // this.usersOnline[socket.id] = user.id;
+
       if (userData === undefined) {
          socket.emit('undefined');
       } else {
-         this.Logger.log('User connected: ' + socket.id);
-         this.Logger.log(userData);
+         this.io
+         // this.Logger.log('User connected: ' + socket.id);
+         // this.Logger.log(userData);
 
          // Привязываем socket.id к идентификатору пользователя
          // this.usersOnline[socket.id] = userData.id;

@@ -15,11 +15,11 @@ class Logger {
    };
 
    log(text: unknown, ...texts: (string | number)[]): void {
-      console.log(`${this.data()} \x1b[32mINFO\x1b[0m: ➜  ${text}`);
+      console.log(`${this.data()} \x1b[32mINFO\x1b[0m: ➜  ${JSON.stringify(text)}`);
 
 
       for (const text of texts) {
-         console.log(`${this.data()}\x1b[32mINFO\x1b[0m: ➜  ${text}`);
+         console.log(`${this.data()}\x1b[32mINFO\x1b[0m: ➜  ${JSON.stringify(text)}`);
       }
    };
 

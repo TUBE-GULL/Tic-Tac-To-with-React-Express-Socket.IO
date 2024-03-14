@@ -29,6 +29,8 @@ function AuthorizationController() {
                   setShowAuthorization(!showAuthorization);
                } else {
                   console.log('The token has expired or there is no token');
+                  // обработать если куки истек !  дать команду на стерении куки 
+                  document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
                }
             } catch (error) {
                console.error('An error occurred:', error);

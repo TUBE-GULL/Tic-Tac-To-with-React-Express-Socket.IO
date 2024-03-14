@@ -42,9 +42,7 @@ class App {
    };
 };
 const Logger = new logger();
-
 const APP = new App(Logger);
-
 const authenticated = new Authenticated(APP.socketServer, Logger)
 
 export { APP, authenticated };

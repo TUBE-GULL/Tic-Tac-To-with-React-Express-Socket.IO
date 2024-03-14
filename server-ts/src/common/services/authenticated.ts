@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import { JwtPayload } from 'jsonwebtoken';
 import { Request, Response } from 'express';
 import tokenService from './cookieTokenServices.js';
 import Logger from '../../loggers/logger.service.js';
@@ -19,14 +20,14 @@ class Authenticated {
       this.SocketServer = SocketServer;
    }
 
-   exportUserData(userId: number): UserData {
+   exportUserData(user: JwtPayload): UserData {
 
-      const user = userData.find((el: UserData) => el.id === userId);
+      const dataUs = userData.find((el: UserData) => el.id === user.id);
 
       return {
-         id: userId,
-         Nickname: user.Nickname,
-         time: user.time,
+         id: dataUs.id,
+         Nickname: dataUs.Nickname,
+         time: dataUs.time,
       }
    };
 
@@ -48,7 +49,7 @@ class Authenticated {
       const formData = req.body;
       try {
          if (await this.checkUserFirstsName(formData) && await this.checkUserDoubleNamePassword(formData)) {
-            console.log('➜ Successful authentication');
+            this.logger.log('➜ Successful authentication');
 
             const user = userData.find((el: UserData) => el.Nickname === formData.Nickname);
 
@@ -70,9 +71,13 @@ class Authenticated {
    async checkCookie(req: Request, res: Response, authToken: string) {
       try {
          const user = tokenService.validateAccessToken(authToken);
-         this.logger.log(user)
-         // this.SocketServer.initializeSocketEvents(this.exportUserData(user.id));
-         res.json({ success: true });
+         if (user != null) {
+            this.SocketServer.initializeSocketEvents(this.exportUserData(user as JwtPayload));
+            res.json({ success: true });
+         } else {
+            this.logger.log('token null')
+            res.json({ success: false });
+         }
       } catch (error) {
          this.logger.error(error);
          res.status(401).json({ success: false, error: 'The token has expired or there is no token' });
@@ -81,18 +86,20 @@ class Authenticated {
 
    async singIn(req: Request, res: Response) {
       const { authToken } = req.cookies;
+      this.logger.log(authToken)
       const Cookie = await readFileJson('../data/cookie.json');
       if (authToken && authToken.accessToken && Cookie.includes(authToken.accessToken)) {
-         console.log('User authenticated via cookie');
+         this.logger.log('User authenticated via cookie');
          await this.checkCookie(req, res, authToken.accessToken);
       } else {
-         console.log('User authenticated via form');
+         this.logger.log('User authenticated via form');
          await this.checkUser(req, res);
       };
    };
 
    async singUp(req: Request, res: Response) {
       const formData = req.body;
+
       if (!this.checkUserFirstsName(formData)) {
          const hashedPassword = await bcrypt.hash(formData.password, 10);
          const newUser = {
