@@ -4,94 +4,84 @@ import { UserData, FormData } from '../types/types.js';
 import readFileJson from '../modules/readFileJson.js';
 import logger from '../../loggers/logger.service.js'
 
+
 class SocketServer {
-   private io: SocketIOServer;
-   private usersOnline: Record<string, number>;
-   private Logger: logger;
+   io: SocketIOServer;
+   socket: Socket | null;
+   usersOnline: Record<string, object>;
+   Logger: logger;
+
 
    constructor(httpServer: HttpServer, Logger: logger) {
       this.io = new SocketIOServer(httpServer, { cors: { origin: "*", methods: ["GET", "POST"] } });
+      this.socket = null;
       this.usersOnline = {};
       this.Logger = new logger
-      // this.initializeSocketEvents();
+      this.initializeSocketEvents();
    }
 
-   initializeSocketEvents(user: UserData): void {
+   initializeSocketEvents(): void {
       this.io.on('connection', (socket: Socket) => {
-         this.handleConnection(socket, user);
+         this.Logger.log('connection: ' + socket.id);
+         this.socket = socket;
+
+         socket.on('disconnect', () => {
+            this.disconnect(socket);
+         });
+
+         //CHAT ! 
+         socket.on('sendMessage', message => {
+            this.Logger.log(message)
+            this.io.emit('sendEveryoneMessage', message);
+         });
+
          socket.on('disconnect', () => {
             this.disconnect(socket);
          });
       });
-   }
+   };
 
-   checkUserUndefined(socket: Socket, userData: UserData) {
-      if (userData === undefined) {
-         this.io.to(socket.id).emit('undefined');
-      } else {
-         return true
+   sendUserInSocket(user: UserData): void {
+      this.Logger.log(user);
+      if (this.socket != null) {
+         if (!this.isUserOnline(user.id.toString())) {
+
+            this.usersOnline[this.socket.id] = { Nickname: user.Nickname, Time: user.time };
+            this.io.to(this.socket.id).emit('userData', user);
+         }
+         this.handleConnection(this.socket, user);
       }
-   }
-
-   // handleConnection(socket: Socket, userData: UserData): void {
-   // console.log('User connected: ' + socket.id);
-   // console.log(userData)
-
-   // Привязываем socket.id к идентификатору пользователя
-   // this.usersOnline[socket.id] = userData.id;
-
-   // // Отправляем пользовательские данные на его сокет
-   // this.sendSocketDataUser(socket.id, userId);
-
-   // // Отправляем обновленный список пользователей онлайн
-   // this.io.emit('usersOnline', this.usersOnline);
-   // }
+   };
 
    handleConnection(socket: Socket, user: UserData): void {
-      const userData = readFileJson('../data/data.json');
-      this.Logger.log(user.id)
-      // this.usersOnline[socket.id] = user.id;
 
-      if (userData === undefined) {
-         socket.emit('undefined');
-      } else {
-         this.io
-         // this.Logger.log('User connected: ' + socket.id);
-         // this.Logger.log(userData);
-
-         // Привязываем socket.id к идентификатору пользователя
-         // this.usersOnline[socket.id] = userData.id;
-
-         // Отправляем пользовательские данные на его сокет
-         // this.sendSocketDataUser(socket.id, userData);
-
-         // Отправляем обновленный список пользователей онлайн
-         this.io.emit('usersOnline', this.usersOnline);
-      }
+      this.io.to(socket.id).emit('userData', user);// send to id user
+      this.io.emit('usersOnline', this.usersOnline); // all users
    }
 
+
+   isUserOnline(userId: string): boolean {
+      const value = Object.values(this.usersOnline);
+      for (const userObj of value) {
+         if (userObj.id == userId) { //?
+            return true;
+         }
+      }
+      return false;
+   }
 
    disconnect(socket: Socket): void {
       this.Logger.log('User disconnected: ' + socket.id);
       delete this.usersOnline[socket.id];
       this.io.emit('usersOnline', this.usersOnline);
-      // console.log(this.usersOnline)
+      // this.Logger.log(this.usersOnline)
    }
 
-   sendSocketDataUser(socketId: string, data: UserData): void {
-      this.io.to(socketId).emit('sendData', data);
-   }
+   updateUsers() {
+      this.usersOnline
+      this.io.emit('sendEveryoneMessage', this.usersOnline);
 
-   // sendSocketDataUser(userId) {
-   //    console.log(userId)
-   //    this.io.emit('userData', userId);
-   // }
+   }
 };
 
 export default SocketServer;
-
-
-
-// const UsersOnline = {};
-// const config = await readFileJson('./config.json');
-

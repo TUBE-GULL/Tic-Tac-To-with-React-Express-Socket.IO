@@ -56,7 +56,7 @@ class Authenticated {
             const token = tokenService.generateCookieToken({ id: user.id });
             tokenService.writeCookieData(token.accessToken);//     ?
 
-            this.SocketServer.initializeSocketEvents(user);
+            this.SocketServer.sendUserInSocket(user);
             res.cookie('authToken', token);
             res.json({ success: true });
          } else {
@@ -72,7 +72,7 @@ class Authenticated {
       try {
          const user = tokenService.validateAccessToken(authToken);
          if (user != null) {
-            this.SocketServer.initializeSocketEvents(this.exportUserData(user as JwtPayload));
+            this.SocketServer.sendUserInSocket(this.exportUserData(user as JwtPayload));
             res.json({ success: true });
          } else {
             this.logger.log('token null')
@@ -86,7 +86,7 @@ class Authenticated {
 
    async singIn(req: Request, res: Response) {
       const { authToken } = req.cookies;
-      this.logger.log(authToken)
+      // this.logger.log(authToken)
       const Cookie = await readFileJson('../data/cookie.json');
       if (authToken && authToken.accessToken && Cookie.includes(authToken.accessToken)) {
          this.logger.log('User authenticated via cookie');

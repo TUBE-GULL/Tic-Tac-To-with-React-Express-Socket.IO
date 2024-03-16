@@ -1,77 +1,31 @@
-import React, { useContext, useEffect, useState, useRef } from 'react';
-import Messages from './modules/Message';
-import io from 'socket.io-client';
+import React, { useContext, useRef, useState } from 'react';
 
-function lobbyChat() {
+function LobbyChat({ newMessages, handleSubmit, handleMessageInputChange }) {
    const contentChatRef = useRef(null);
-   const [message, setMessage] = useState('');
-   const [messageInput, setMessageInput] = useState('');
-   const [messages, setMessages] = useState([]);
-
-
-   const handleChange = (e) => {
-      const { value } = e.target;
-      setMessageInput(value);
-   };
-
-   const handleSubmit = (e) => {
-      e.preventDefault();
-      const message = {
-         sender: [userInfo.firstName, userInfo.lastName],
-         message: messageInput
-      };
-      setMessageInput('');
-   };
-
+   const [MessageInputChat, setMessageInputChat] = useState('')
 
    const scrollToBottom = () => {
       contentChatRef.current.scrollTop = contentChatRef.current.scrollHeight;
    };
-
-   // const sender = user === message.sender[0];
-
-   // useEffect(() => {
-   //    const newSocket = io('');
-   //    setSocket(newSocket);
-
-   //    const handleConnectServer = ({ data }) => {
-   //       console.log(data)
-   //    };
-
-   //    const handleReceiveMessage = (data) => {
-   //       console.log('Сервер прислал сообщение:', data);
-   //    };
-
-   //    const handleDisconnect = () => {
-   //       console.log('Отключение от сервера');
-   //    };
-
-   //    newSocket.on('message', handleReceiveMessage);
-   //    newSocket.on('disconnect', handleDisconnect);
-   //    newSocket.on('connectServer', handleConnectServer)
-   //    return () => {
-   //       newSocket.off('message', handleReceiveMessage);
-   //       newSocket.off('disconnect', handleDisconnect);
-   //    };
-   // }, []);
 
    return (
       <div className="lobbyChat">
          <h1>Chat Lobby</h1>
 
          <div className="contentChat" ref={contentChatRef}>
+            <div className='message'>
+               <h2></h2>
+               <p></p>
+            </div>
 
          </div>
 
          <form className="FormChat" onSubmit={handleSubmit}>
-            <button className="buttonSmaile">😌</button>
-
             <input
                className="InputChat"
                type='text'
                name='textMessage'
-               value={messageInput}
-               onChange={(e) => handleChange(e, 'textMessage')}
+               onChange={handleMessageInputChange}
                placeholder='write !'
             ></input>
             <button className="buttonChat">Send</button>
@@ -80,4 +34,23 @@ function lobbyChat() {
    )
 }
 
-export default lobbyChat;
+export default LobbyChat;
+
+
+
+// const handleChange = (e) => {
+//    const { value } = e.target;
+//    setMessageInput(value);
+// };
+
+// const handleSubmit = (e) => {
+//    e.preventDefault();
+//    // console.log(messageInput)
+
+//    setMessage(messageInput)
+//    // const message = {
+//    //    sender: [userData.Nickname, userData.time],
+//    //    message: messageInput
+//    // };
+//    setMessageInput('');
+// };
