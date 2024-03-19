@@ -1,5 +1,5 @@
 import './Lobby.scss'
-import React, { useContext, useEffect, useState, useRef } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import { EntranceLobby } from '../../App';
 
@@ -9,7 +9,7 @@ import LobbyList from './controller/list/LobbyList';
 
 function Lobby() {
    const { showAuthorization, setShowAuthorization } = useContext(EntranceLobby);
-   const { SocketFormData } = useContext(EntranceLobby);
+   // const { SocketFormData } = useContext(EntranceLobby);
    const [socket, setSocket] = useState(null);
    const [userData, setUserData] = useState('');
    const [usersData, setUsersData] = useState('');
@@ -27,6 +27,7 @@ function Lobby() {
 
       const updateUserData = (user) => {
          console.log(user)
+         // Socket.emit('userData', user);
          setUserData(user);
       };
 
@@ -38,12 +39,12 @@ function Lobby() {
       };
 
       Socket.on('undefined', switchOff);
-      Socket.on('userData', updateUserData);
+      Socket.on('userFormData', updateUserData);
       Socket.on('usersOnline', updateListUsers);
       Socket.on('sendEveryoneMessage', updateMessages);
       return () => {
          Socket.off('undefined', switchOff);
-         Socket.off('userData', updateUserData);
+         Socket.off('userFormData', updateUserData);
          Socket.off('usersOnline', updateListUsers);
          Socket.off('sendEveryoneMessage', updateMessages);
 
@@ -56,7 +57,7 @@ function Lobby() {
       if (message !== '') {
          socket.emit('sendMessage', message);
       }
-   }
+   };
 
    const handleMessageInputChange = (e) => {
       setMessageInput(e.target.value);
@@ -83,14 +84,3 @@ function Lobby() {
 }
 
 export default Lobby;
-
-// user={userData}
-// const socket = io({
-//    transportOptions: {
-//       polling: {
-//          extraHeaders: {
-//             'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
-//          },
-//       },
-//    },
-// });

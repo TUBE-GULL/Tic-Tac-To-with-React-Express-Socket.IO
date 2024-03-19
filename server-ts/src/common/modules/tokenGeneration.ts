@@ -8,6 +8,6 @@ const tokenGeneration = async (bit: number): Promise<string> => {
       id = crypto.randomBytes(bit).toString('hex')
    }
    return id
-}
+};
 
 export default tokenGeneration;

@@ -1,6 +1,10 @@
 ___________________________________________________________________________
 project development
 
+0.0.45
+
+I corrected my mistakes and continue to work on the lobby
+
 0.0.44
 
 fixed a bug with cookies when they expired they were not deleted

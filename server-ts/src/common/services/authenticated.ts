@@ -56,7 +56,7 @@ class Authenticated {
             const token = tokenService.generateCookieToken({ id: user.id });
             tokenService.writeCookieData(token.accessToken);//     ?
 
-            this.SocketServer.sendUserInSocket(user);
+            this.SocketServer.formDataUser(user);
             res.cookie('authToken', token);
             res.json({ success: true });
          } else {
@@ -72,7 +72,7 @@ class Authenticated {
       try {
          const user = tokenService.validateAccessToken(authToken);
          if (user != null) {
-            this.SocketServer.sendUserInSocket(this.exportUserData(user as JwtPayload));
+            this.SocketServer.formDataUser(this.exportUserData(user as JwtPayload));
             res.json({ success: true });
          } else {
             this.logger.log('token null')
