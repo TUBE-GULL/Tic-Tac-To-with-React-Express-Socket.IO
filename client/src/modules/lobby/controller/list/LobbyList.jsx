@@ -5,7 +5,7 @@ const searchTime = (time) => {
    return time === '' ? '0:00' : time;
 };
 
-function LobbyList({ user, users }) {
+function LobbyList({ user, users, onButtonClick }) {
 
    // console.log(user)
    // console.log(users)
@@ -22,14 +22,19 @@ function LobbyList({ user, users }) {
             <div className='Profile'>
                <h2>{`${user.Nickname},${searchTime(user.time)}`}</h2>
             </div>
-            {userList.map(user => (
-               <div className='Profile' key={user.id}>
-                  <h2>{`${user.Nickname}, ${searchTime(user.Time)}`}</h2>
-               </div>
+            {userList.map(us => (
+               us.Nickname !== user.Nickname ? (
+                  <button className='ProfileButton' key={us.id} onClick={() => onButtonClick(us.id, us.Nickname, us.Time)}>
+                     <div className='Profile'>
+                        <h2>{`${us.Nickname}, ${searchTime(us.Time)}`}</h2>
+                     </div>
+                  </button>
+               ) : null
             ))}
          </div>
-      </div>
-   )
+      </div >
+   );
+
 }
 
 export default LobbyList;

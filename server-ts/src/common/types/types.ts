@@ -1,5 +1,10 @@
 //export Interfaces !!! ================================================
 
+export interface socketId {
+   socketId: string;
+   Nickname: string;
+   Time: string;
+}
 
 export interface UserData {
    id: string | number;

@@ -1,6 +1,11 @@
 ___________________________________________________________________________
 project development
 
+0.0.46
+
+sketched out the code
+while I made sketches
+
 0.0.45
 
 I corrected my mistakes and continue to work on the lobby
