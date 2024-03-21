@@ -1,6 +1,10 @@
 ___________________________________________________________________________
 project development
 
+0.0.47
+
+The code for the game is almost ready, all that remains is to connect everything to the server
+
 0.0.46
 
 sketched out the code

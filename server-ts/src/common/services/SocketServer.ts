@@ -42,39 +42,42 @@ class SocketServer {
          // invitation the Game
          socket.on('invitationGame', (data): void => {
             const userRival = this.searchUser(data.userRival);
+            // if (userRival.socketId != undefined) {
             this.io.to((userRival as socketId).socketId).emit('goToGame', { userRival, userSender: this.searchUser(data.userSender) });
+            // }
          })
 
          socket.on('resultInvitationToGame', (data): void => {
             this.Logger.log(data);
-            const userSender = data.usersData.userSender;
-            const userRival = data.usersData.userRival;
-
+            const userSender = { ...data.usersData.userSender, Symbol: 'X', stepGame: true };
+            const userRival = { ...data.usersData.userRival, Symbol: 'O', stepGame: false };
+            // const userSender = data.usersData.userSender;
+            // const userRival = data.usersData.userRival;
             if (userSender != undefined && userRival != undefined) {
-
                //result TRUE
                if (data.result) {
-                  // this.Logger.log(data.usersData.userRival)
-                  // this.Logger.log(data.usersData.userSender)
-
-                  const room = `${(userRival as socketId).socketId}${(userSender as socketId).socketId}`;
-                  this.gameRoom[room] = { userRival, userSender };
-                  this.Logger.log(this.gameRoom);
-
-                  this.io.to((userRival as socketId).socketId).emit('startGame', { room, userRival, userSender });
-                  this.io.to((userSender as socketId).socketId).emit('startGame', { room, userRival, userSender });
-
-
-
+                  this.io.to((userRival as socketId).socketId).emit('startGame', { user: userRival, users: { userRival, userSender } });
+                  this.io.to((userSender as socketId).socketId).emit('startGame', { user: userSender, users: { userRival, userSender } });
                   //result False 
                } else {
-                  this.io.to((userSender as socketId).socketId).emit('rejected', data.result);
+                  this.io.to((userSender as socketId).socketId).emit('rejected', { result: false });
                }
             } else {
                this.Logger.error('userRival or userSearch undefined');
             }
+         });
 
+         socket.on('stepGame', (data): void => {
+            this.Logger.log('stepGame')
+            this.Logger.log(data)
+            //тут проверка все значений по правилом хо
+            // data.data.updatedCells
+
+
+            this.io.to((data.data.userRival as socketId).socketId).emit('updateCells', { Cells: data.updatedCells, data });
+            this.io.to((data.data.userSender as socketId).socketId).emit('updateCells', { Cells: data.updatedCells, data });
          })
+
 
          socket.on('disconnect', () => {
             this.disconnect(socket);

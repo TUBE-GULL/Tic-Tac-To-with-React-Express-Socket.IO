@@ -172,14 +172,6 @@
             background: rgba(255, 255, 255, 0.2);
          }
       }
-
-
-
-      // /*  Firefox */
-      // .contentChat {
-      //    scrollbar-color: rgba(255, 255, 255, 0.2) rgba(169, 169, 169, 0);
-      // }
-
    }
 
    .contentChat::-webkit-scrollbar,
@@ -197,5 +189,60 @@
       background: rgba(255, 255, 255, 0.2);
       box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
       border-radius: 6px;
+   }
+}
+
+.gameFiled {
+   width: 100%;
+   height: 100%;
+   padding: 0;
+   margin: 0;
+   display: flex;
+   flex-direction: column;
+
+
+   color: #fff;
+   font-family: 'Press Start 2P', system-ui;
+
+   .inform {
+      width: 100%;
+      height: 15%;
+      display: flex;
+      justify-content: space-between;
+
+      .timers {
+         font-size: 20px;
+         text-align: center;
+         background: rgba(255, 255, 255, 0.2);
+         box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+         border-radius: 6px;
+      }
+
+      .informRight,
+      .informLeft,
+      .informTimers {
+         padding: 5px 15px 5px 15px;
+         margin: 10px;
+         background: rgba(255, 255, 255, 0.3);
+         box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+         border-radius: 6px;
+      }
+
+      .inform_user {
+         margin: 0;
+         padding: 0;
+         display: flex;
+         justify-content: center;
+
+         h3 {
+            margin: 0;
+            font-size: 20px;
+         }
+      }
+   }
+
+   .gameTable {
+      margin-top: 10%;
+      margin: 0 auto;
    }
 }
