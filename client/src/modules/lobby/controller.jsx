@@ -20,32 +20,7 @@ function Lobby() {
    const [data, setData] = useState('');
    const [stepGame, setStepGame] = useState(false);
    const [cells, setCells] = useState(Array(9).fill(''));
-
-   const clickCell = (index) => {
-      console.log(index)
-      console.log(data)
-      console.log(data.Symbol)
-
-      if (stepGame) {
-         const updatedCells = [...cells];
-         updatedCells[index] = data.user.Symbol;
-         setCells(updatedCells);
-
-
-         socket.emit('stepGame', { users: data, updatedCells });
-
-         //ban on step
-         setStepGame(false);
-      }
-   };
-
-   const updateCells = ({ Cells, stepGame }) => {
-      console.log('updateCells')
-      // console.log(data)
-      setCells(Cells)
-      // setData(data);
-      setStepGame(stepGame)
-   }
+   const [symbol, setSymbol] = useState('');
 
    useEffect(() => {
       const Socket = io('');
@@ -76,11 +51,12 @@ function Lobby() {
       };
 
       // тут менять страницу 
-      const startGame = (data) => {
+      const startGame = ({ stepGame, Symbol, data }) => {
          console.log('start');
-         console.log(data);
-         setStepGame(data.user.stepGame)
+         console.log(stepGame);
+         setStepGame(stepGame)
          setData(data);
+         setSymbol(Symbol);
          setInGame(true);
       }
 
@@ -120,6 +96,39 @@ function Lobby() {
          Socket.close();
       };
    }, [setSocket]);
+
+
+   const clickCell = (index) => {
+      console.log(index)
+      // console.log(data)
+      // console.log(data.Symbol)
+
+      if (stepGame) {
+         const updatedCells = [...cells];
+         updatedCells[index] = symbol;
+         setCells(updatedCells);
+         // console.log(userData.Nickname)
+         // console.log(data.users.userRival.Nickname)
+
+         socket.emit('stepGame', { sender: userData.Nickname, data, updatedCells });
+
+
+
+         // io.to(gameRoom).emit('stepGame', { data, updatedCells });
+         // socket.emit('stepGame', { data, updatedCells });
+
+         //ban on step
+         // setStepGame(false);
+      }
+   };
+
+   const updateCells = ({ Cells, stepGame, data }) => {
+      console.log('updateCells')
+      // console.log(data)
+      setCells(Cells)
+      setData(data);
+      setStepGame(stepGame)
+   }
 
    const sendMessage = (message) => {
       if (message !== '') {

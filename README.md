@@ -1,6 +1,10 @@
 ___________________________________________________________________________
 project development
 
+0.0.48
+
+The log in the socket is almost ready, now all that remains is to add the game logic
+
 0.0.47
 
 The code for the game is almost ready, all that remains is to connect everything to the server
