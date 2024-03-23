@@ -22,6 +22,12 @@ function Lobby() {
    const [cells, setCells] = useState(Array(9).fill(''));
    const [symbol, setSymbol] = useState('');
 
+   // if (!inGame) {
+   //    if (data != '') {
+
+   //    }
+   // }
+
    useEffect(() => {
       const Socket = io('');
       setSocket(Socket);
@@ -64,6 +70,15 @@ function Lobby() {
       const rejected = () => {
          console.log('rejected')
       }
+
+      const gameResult = ({ isWinner }) => {
+         alert(isWinner)
+         setInGame(false);
+
+         console.log(isWinner)
+      };
+
+
       // const invitationGame = (data) => {
       //    console.log('Получено приглашение:', data);
       // }
@@ -73,8 +88,9 @@ function Lobby() {
 
       // socket.on('sendMessage', sendMessage);
       // socket.on('invitationGame', invitationGame);
-      Socket.on('updateCells', updateCells)
-      Socket.on('rejected', rejected)
+      Socket.on('gameResult', gameResult);
+      Socket.on('updateCells', updateCells);
+      Socket.on('rejected', rejected);
       Socket.on('startGame', startGame);
       Socket.on('goToGame', noticeGoGame);
       Socket.on('undefined', switchOff);
@@ -82,8 +98,9 @@ function Lobby() {
       Socket.on('usersOnline', updateListUsers);
       Socket.on('sendEveryoneMessage', updateMessages);
       return () => {
-         Socket.off('updateCells', updateCells)
-         Socket.off('rejected', rejected)
+         Socket.off('victory', gameResult);
+         Socket.off('updateCells', updateCells);
+         Socket.off('rejected', rejected);
          Socket.off('startGame', noticeGoGame);
          Socket.off('goToGame', noticeGoGame);
          Socket.off('undefined', switchOff);
@@ -110,7 +127,7 @@ function Lobby() {
          // console.log(userData.Nickname)
          // console.log(data.users.userRival.Nickname)
 
-         socket.emit('stepGame', { sender: userData.Nickname, data, updatedCells });
+         socket.emit('stepGame', { sender: { Nickname: userData.Nickname, symbol: symbol }, data, updatedCells });
 
 
 

@@ -1,6 +1,10 @@
 ___________________________________________________________________________
 project development
 
+0.0.49
+
+functionality is ready left to polish the project
+
 0.0.48
 
 The log in the socket is almost ready, now all that remains is to add the game logic

@@ -83,11 +83,10 @@ class SocketServer {
          socket.on('stepGame', ({ sender, data, updatedCells }): void => {
             this.Logger.log('stepGame')
             this.Logger.log(sender)
-            // this.Logger.log(data.userSender.Nickname)
 
             let newStepGameSender, newStepGameRival;
 
-            if (sender === data.userSender.Nickname) {
+            if (sender.Nickname === data.userSender.Nickname) {
                newStepGameSender = !data.userSender.stepGame;
                newStepGameRival = !data.userRival.stepGame;
             } else {
@@ -97,6 +96,16 @@ class SocketServer {
 
             let newUserRival = { ...data.userRival, stepGame: newStepGameRival };
             let newUserSender = { ...data.userSender, stepGame: newStepGameSender };
+
+
+            //check uses on victory
+            if (checkWin(updatedCells)) {
+               this.Logger.log(sender.symbol);
+
+               const isSenderWinner = sender.symbol === data.userSender.Symbol;
+               this.io.to(data.userSender.socketId).emit('gameResult', { isWinner: !isSenderWinner });
+               this.io.to(data.userRival.socketId).emit('gameResult', { isWinner: isSenderWinner });
+            }
 
             this.io.to(newUserRival.socketId).emit('updateCells', { Cells: updatedCells, stepGame: newUserRival.stepGame, data });
             this.io.to(newUserSender.socketId).emit('updateCells', { Cells: updatedCells, stepGame: newUserSender.stepGame, data });
@@ -149,7 +158,7 @@ export default SocketServer;
 //    }, 10);
 // };
 
-const checkWin = (cells) => {
+const checkWin = (cells: string[]): boolean => {
    const winPatterns = [
       [0, 1, 2], [3, 4, 5], [6, 7, 8], // Горизонтальные
       [0, 3, 6], [1, 4, 7], [2, 5, 8], // Вертикальные
