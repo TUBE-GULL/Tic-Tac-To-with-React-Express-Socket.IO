@@ -21,12 +21,8 @@ function Lobby() {
    const [stepGame, setStepGame] = useState(false);
    const [cells, setCells] = useState(Array(9).fill(''));
    const [symbol, setSymbol] = useState('');
-
-   // if (!inGame) {
-   //    if (data != '') {
-
-   //    }
-   // }
+   const [buttonClick, setButtonClick] = useState(true);
+   const [gameRoom, setGameRoom] = useState('');
 
    useEffect(() => {
       const Socket = io('');
@@ -57,27 +53,34 @@ function Lobby() {
       };
 
       // тут менять страницу 
-      const startGame = ({ stepGame, Symbol, data }) => {
+      const startGame = ({ room, stepGame, Symbol, data }) => {
          console.log('start');
          console.log(stepGame);
          setStepGame(stepGame)
          setData(data);
          setSymbol(Symbol);
          setInGame(true);
+         setGameRoom(room)
       }
 
       //отказ
-      const rejected = () => {
+      const rejected = (message) => {
          console.log('rejected')
+         alert(message)
+         // setButtonClick(true);
       }
 
       const gameResult = ({ isWinner }) => {
          alert(isWinner)
          setInGame(false);
-
+         // setButtonClick(true);
          console.log(isWinner)
       };
 
+      const opponentRanAway = ({ message }) => {
+         alert(message)
+         setInGame(false);
+      }
 
       // const invitationGame = (data) => {
       //    console.log('Получено приглашение:', data);
@@ -88,6 +91,9 @@ function Lobby() {
 
       // socket.on('sendMessage', sendMessage);
       // socket.on('invitationGame', invitationGame);
+      Socket.on('gameCancelled', rejected)//?
+      Socket.on('opponentRanAway', opponentRanAway);
+      Socket.on('leaveGame', leaveGame);
       Socket.on('gameResult', gameResult);
       Socket.on('updateCells', updateCells);
       Socket.on('rejected', rejected);
@@ -98,6 +104,11 @@ function Lobby() {
       Socket.on('usersOnline', updateListUsers);
       Socket.on('sendEveryoneMessage', updateMessages);
       return () => {
+         // socket.off('sendMessage');
+         // socket.off('invitationGame');
+         Socket.off('gameCancelled', rejected)//?
+         Socket.off('opponentRanAway', opponentRanAway);
+         Socket.off('leaveGame', leaveGame);
          Socket.off('victory', gameResult);
          Socket.off('updateCells', updateCells);
          Socket.off('rejected', rejected);
@@ -107,56 +118,26 @@ function Lobby() {
          Socket.off('userFormData', updateUserData);
          Socket.off('usersOnline', updateListUsers);
          Socket.off('sendEveryoneMessage', updateMessages);
-
-         // socket.off('sendMessage');
-         // socket.off('invitationGame');
          Socket.close();
       };
    }, [setSocket]);
 
-
+   // Game choice user 
    const clickCell = (index) => {
-      console.log(index)
-      // console.log(data)
-      // console.log(data.Symbol)
-
       if (stepGame) {
          const updatedCells = [...cells];
          updatedCells[index] = symbol;
          setCells(updatedCells);
-         // console.log(userData.Nickname)
-         // console.log(data.users.userRival.Nickname)
-
-         socket.emit('stepGame', { sender: { Nickname: userData.Nickname, symbol: symbol }, data, updatedCells });
-
-
-
-         // io.to(gameRoom).emit('stepGame', { data, updatedCells });
-         // socket.emit('stepGame', { data, updatedCells });
-
-         //ban on step
-         // setStepGame(false);
+         socket.emit('stepGame', { room: gameRoom, sender: { Nickname: userData.Nickname, symbol: symbol }, data, updatedCells });
       }
    };
 
    const updateCells = ({ Cells, stepGame, data }) => {
       console.log('updateCells')
-      // console.log(data)
       setCells(Cells)
       setData(data);
       setStepGame(stepGame)
    }
-
-   const sendMessage = (message) => {
-      if (message !== '') {
-
-         socket.emit('sendMessage', { message });
-      }
-   };
-
-   const handleMessageInputChange = (e) => {
-      setMessageInput(e.target.value);
-   };
 
    const handleSubmit = (e) => {
       e.preventDefault();
@@ -177,8 +158,30 @@ function Lobby() {
          time: userTime,
       }
 
-      socket.emit('invitationGame', { userSender: userData, userRival: userRival });
-      // console.log("Clicked on user:", userId, userNickname, userTime);
+      if (buttonClick) {
+         socket.emit('invitationGame', { userSender: userData, userRival: userRival });
+         setButtonClick(!buttonClick);
+      } else {
+         alert('Ждем ответа !!!')
+      }
+   };
+
+   //in process !
+   const leaveGame = () => {
+      socket.emit('leaveGame', { userRival: data.userRival, userSender: data.userSender });
+      setInGame(false);
+   };
+
+   //в процессе !
+   const sendMessage = (message) => {
+      if (message !== '') {
+
+         socket.emit('sendMessage', { message });
+      }
+   };
+
+   const handleMessageInputChange = (e) => {
+      setMessageInput(e.target.value);
    };
 
    return (
