@@ -47,7 +47,6 @@ $ npm run start:dev
 - Author - [Oleg TUBE-GULL](https://github.com/TUBE-GULL)
 
 
-
 project development
 
 0.0.49
