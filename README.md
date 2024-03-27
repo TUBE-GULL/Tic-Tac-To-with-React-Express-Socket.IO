@@ -25,8 +25,6 @@
 
 ![Image ](img-git/Screenshot%20from%202024-02-01%2020-51-28.png)
 
-
-
 ## Installation
 
 ```bash (./server-ts) 
@@ -140,8 +138,6 @@ MVC refactoring
 0.0.32
 
 made registration design layout
-
-![Image ](img-git/Screenshot%20from%202024-02-01%2020-51-28.png)
 
 0.0.31
 
