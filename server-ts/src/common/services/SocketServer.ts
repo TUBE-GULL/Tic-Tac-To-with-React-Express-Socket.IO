@@ -51,14 +51,14 @@ class SocketServer {
             const userRival = { ...data.usersData.userRival, Symbol: 'O', stepGame: false };
 
             if (userSender != undefined && userRival != undefined) {
-               const room = userSender.socketId + userRival.socketId
-               this.gameRoom[userSender.socketId + userRival.socketId] = room// ?!!!
+               // const room = userSender.socketId + userRival.socketId
+               // this.gameRoom[userSender.socketId + userRival.socketId] = room// ?!!!
 
                //result TRUE
                if (data.result) {
 
-                  this.io.to(userRival.socketId).emit('startGame', { room, stepGame: true, Symbol: 'X', data: { userRival, userSender } });
-                  this.io.to(userSender.socketId).emit('startGame', { room, stepGame: false, Symbol: 'O', users: { userRival, userSender } });
+                  this.io.to(userRival.socketId).emit('startGame', { stepGame: true, Symbol: 'X', data: { userRival, userSender } });
+                  this.io.to(userSender.socketId).emit('startGame', {  stepGame: false, Symbol: 'O', users: { userRival, userSender } });
 
                   //delete list users online
                   this.Logger.log(`join the game ${userRival.socketId} and ${userSender.socketId} `)//room:${room} ???
@@ -76,10 +76,10 @@ class SocketServer {
             };
          });
 
-         socket.on('stepGame', ({ room, sender, data, updatedCells }): void => {
+         socket.on('stepGame', ({ sender, data, updatedCells }): void => {
             let newStepGameSender, newStepGameRival;
 
-            // this.Logger.log(room)
+            this.Logger.log(updatedCells)
             if (sender.Nickname === data.userSender.Nickname) {
                newStepGameSender = !data.userSender.stepGame;
                newStepGameRival = !data.userRival.stepGame;
@@ -91,23 +91,21 @@ class SocketServer {
             let newUserRival = { ...data.userRival, stepGame: newStepGameRival };
             let newUserSender = { ...data.userSender, stepGame: newStepGameSender };
 
-
             //check uses on victory
             if (checkWin(updatedCells)) {
                const isSenderWinner = sender.symbol === data.userSender.Symbol;
-               this.io.to(data.userSender.socketId).emit('gameResult', { isWinner: !isSenderWinner });
-               this.io.to(data.userRival.socketId).emit('gameResult', { isWinner: isSenderWinner });
-               delete this.usersOnline[data.userSender.socketId + data.userRival.socketId];
+               
+               this.io.to(data.userSender.socketId).emit('gameResult', { Cells: updatedCells,isWinner: !isSenderWinner });
+               this.io.to(data.userRival.socketId).emit('gameResult', { Cells: updatedCells,isWinner: isSenderWinner });
                this.returnUserList(data.userRival, data.userSender);
             } else if (updatedCells.every((el: string) => el !== '')) {
-               this.io.to(data.userSender.socketId).emit('gameResult', { isWinner: 'nobody' });
-               this.io.to(data.userRival.socketId).emit('gameResult', { isWinner: 'nobody' });
-               delete this.usersOnline[data.userSender.socketId + data.userRival.socketId];
+               this.io.to(data.userSender.socketId).emit('gameResult', { Cells: updatedCells, isWinner: 'nobody' });
+               this.io.to(data.userRival.socketId).emit('gameResult', { Cells: updatedCells, isWinner: 'nobody' });
                this.returnUserList(data.userRival, data.userSender);
+            }else{
+               this.io.to(newUserRival.socketId).emit('updateCells', { Cells: updatedCells, stepGame: newUserRival.stepGame, data });
+               this.io.to(newUserSender.socketId).emit('updateCells', { Cells: updatedCells, stepGame: newUserSender.stepGame, data });
             }
-            // socket.to(room).emit('updateCells', { Cells: updatedCells });
-            this.io.to(newUserRival.socketId).emit('updateCells', { Cells: updatedCells, stepGame: newUserRival.stepGame, data });
-            this.io.to(newUserSender.socketId).emit('updateCells', { Cells: updatedCells, stepGame: newUserSender.stepGame, data });
          });
 
          // socket.on('leaveGame', ({ userRival, userSender }) => {
