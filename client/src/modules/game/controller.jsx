@@ -4,9 +4,9 @@ import io from 'socket.io-client';
 import { EntranceLobby } from '../../App';
 
 //modules
-import LobbyChat from './controller/chat/LobbyChat';
-import LobbyList from './controller/list/LobbyList';
-import GameFiled from './controller/game/GameFiled';
+import LobbyChat from './components/chat/LobbyChat';
+import LobbyList from './components/list/LobbyList';
+import GameFiled from './components/game/GameFiled';
 
 export const StartGame = React.createContext()
 function Lobby() {
@@ -22,7 +22,6 @@ function Lobby() {
    const [cells, setCells] = useState(Array(9).fill(''));
    const [symbol, setSymbol] = useState('');
    const [buttonClick, setButtonClick] = useState(true);
-   const [gameRoom, setGameRoom] = useState('');
 
    useEffect(() => {
       const Socket = io('');
@@ -34,7 +33,6 @@ function Lobby() {
       };
 
       const updateUserData = (user) => {
-         // console.log(user)
          Socket.emit('userData', user);
          setUserData(user);
       };
@@ -53,14 +51,13 @@ function Lobby() {
       };
 
       // тут менять страницу 
-      const startGame = ({ room, stepGame, Symbol, data }) => {
+      const startGame = ({ stepGame, Symbol, data }) => {
          console.log('start');
          console.log(stepGame);
          setStepGame(stepGame)
          setData(data);
          setSymbol(Symbol);
          setInGame(true);
-         setGameRoom(room)
       }
 
       //отказ
@@ -70,11 +67,12 @@ function Lobby() {
          // setButtonClick(true);
       }
 
-      const gameResult = ({ isWinner }) => {
-         alert(isWinner)
+      const gameResult = ({cells, isWinner }) => {
          setInGame(false);
+         setCells(cells)
          // setButtonClick(true);
          console.log(isWinner)
+         alert(isWinner)
       };
 
       const opponentRanAway = ({ message }) => {
@@ -125,12 +123,15 @@ function Lobby() {
    // Game choice user 
    const clickCell = (index) => {
       if (stepGame) {
-         const updatedCells = [...cells];
-         updatedCells[index] = symbol;
-         setCells(updatedCells);
-         socket.emit('stepGame', { room: gameRoom, sender: { Nickname: userData.Nickname, symbol: symbol }, data, updatedCells });
+         if(cells[index]==''){
+            const updatedCells = [...cells];
+            updatedCells[index] = symbol;
+            setCells(updatedCells);
+            socket.emit('stepGame', {  sender: { Nickname: userData.Nickname, symbol: symbol }, data, updatedCells });
+         }
       }
    };
+
 
    const updateCells = ({ Cells, stepGame, data }) => {
       console.log('updateCells')

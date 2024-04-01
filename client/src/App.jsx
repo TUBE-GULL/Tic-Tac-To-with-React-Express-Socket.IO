@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import Authorization from './modules/authorization/Authorization';
-import Lobby from './modules/lobby/controller'
+import Lobby from './modules/game/controller'
 
 export const EntranceLobby = React.createContext()
 function App() {
