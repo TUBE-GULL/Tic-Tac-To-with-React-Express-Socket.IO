@@ -55,12 +55,12 @@ function Lobby() {
          setData(data);
          setSymbol(Symbol);
          setInGame(true);
-      }
+      };
 
       const rejected = (message) => {
          console.log('rejected')
          alert(message)
-      }
+      };
 
       const gameResult = ({ cells, isWinner }) => {
          setInGame(false);
@@ -78,7 +78,8 @@ function Lobby() {
       const invitationUser = () => {
          alert('he/she is busy')
          setInGame(true)
-      }
+      };
+
       // const invitationGame = (data) => {
       //    console.log('Получено приглашение:', data);
       // }

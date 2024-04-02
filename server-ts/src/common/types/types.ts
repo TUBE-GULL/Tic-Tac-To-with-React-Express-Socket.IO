@@ -30,7 +30,15 @@ export interface writeFileData {
    time: string
 }
 
-
+export interface RoomTimers {
+   [roomName: string]: {
+      minutes: number;
+      seconds: number;
+      miniSeconds: number;
+   };
+}
 //export Types !!! =====================================================
 
 export type CheckWinFunction = (cells: string[]) => boolean;
+
+export type TimerForGameFunction = (roomTimers: RoomTimers, roomName: string) => string;

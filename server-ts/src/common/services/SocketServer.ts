@@ -3,6 +3,7 @@ import { Server as HttpServer } from 'http';
 import { UserData, socketId, GameRoom, CheckWinFunction } from '../types/types.js';
 import checkWin from '../modules/gameFun.js';
 import logger from '../../loggers/logger.service.js'
+import timerForGame from '../modules/timerForGame.js';
 
 class SocketServer {
    io: SocketIOServer;
@@ -47,37 +48,37 @@ class SocketServer {
 
 
          // invitation the Game
-         socket.on('invitationGame', (data): void => {
-
-            // remove the user from invitation access
-            const userRival = this.searchUser(data.userRival);
-
-            this.io.to((userRival as socketId).socketId).emit('goToGame', { userRival, userSender: this.searchUser(data.userSender) });
-         });
-
-
          // socket.on('invitationGame', (data): void => {
-         //    this.Logger.log(this.usersOnline);
+
          //    // remove the user from invitation access
          //    const userRival = this.searchUser(data.userRival);
 
-         //    if (userRival === undefined) {
-
-         //       this.Logger.log('userRival: undefined');
-         //       this.io.to(data.userSender.socketId).emit('invitationUser', false);
-         //    } else {
-         //       if (userRival.invitation) {
-         //          this.io.to((userRival as socketId).socketId).emit('goToGame', { userRival, userSender: this.searchUser(data.userSender) });
-
-         //          //remove custom invitation
-         //          this.usersOnline.((userRival as socketId).socketId).invitation(false);
-
-
-         //       } else {
-         //          this.io.to(data.userSender.socketId).emit('invitationUser', false);
-         //       }
-         //    }
+         //    this.io.to((userRival as socketId).socketId).emit('goToGame', { userRival, userSender: this.searchUser(data.userSender) });
          // });
+
+
+         socket.on('invitationGame', (data): void => {
+            this.Logger.log(this.usersOnline);
+            // remove the user from invitation access
+            const userRival = this.searchUser(data.userRival);
+
+            if (userRival === undefined) {
+
+               this.Logger.log('userRival: undefined');
+               this.io.to(data.userSender.socketId).emit('invitationUser', false);
+            } else {
+               if (userRival.invitation) {
+                  this.io.to((userRival as socketId).socketId).emit('goToGame', { userRival, userSender: this.searchUser(data.userSender) });
+
+                  //remove custom invitation
+                  this.usersOnline.((userRival as socketId).socketId).invitation(false);
+
+
+               } else {
+                  this.io.to(data.userSender.socketId).emit('invitationUser', false);
+               }
+            }
+         });
 
          socket.on('resultInvitationToGame', (data): void => {
             const userSender = { ...data.usersData.userSender, Symbol: 'X', stepGame: true };
@@ -113,6 +114,17 @@ class SocketServer {
                this.Logger.error('userRival or userSearch undefined');
             };
          });
+
+         //send time room 
+         // io.on('connection', (socket: Socket) => {
+
+         // setInterval(() => {
+         //  const timeString = timerForGame(roomTimers, roomName);
+         //  socket.emit('timerUpdate', timeString);
+         // }, 1000);
+         //   });
+
+
 
          socket.on('stepGame', ({ sender, data, updatedCells }): void => {
             let newStepGameSender, newStepGameRival;
@@ -183,20 +195,18 @@ class SocketServer {
    // }
 
 
-   //    flipInvitation(userRival: UserData, userSender: UserData): boolean {
-   //       // Check if both users are online
-   //       if (this.usersOnline[userRival.socketId] && this.usersOnline[userSender.socketId]) {
-   //           // Set invitation status to false for userRival
-   //           this.usersOnline[userRival.socketId].invitation = false;
+   // flipInvitation(userRival: UserData, userSender: UserData): boolean {
+   //    // Check if both users are online
+   //    if (this.usersOnline[userRival.socketId] && this.usersOnline[userSender.socketId]) {
+   //       // Set invitation status to false for userRival
+   //       this.usersOnline[userRival.socketId].invitation = false;
+   //       this.usersOnline[userSender.socketId].invitation = false;
 
-   //           // Set invitation status to false for userSender
-   //           this.usersOnline[userSender.socketId].invitation = false;
-
-   //           return true; // Operation successful
-   //       } else {
-   //           return false; // One or both users are not online
-   //       }
-   //   }
+   //       return true;
+   //    } else {
+   //       return false;
+   //    }
+   // }
 
 
    returnUserList = (userRival: socketId, userSender: socketId): void => {
