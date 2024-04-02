@@ -52,8 +52,8 @@ function Lobby() {
 
       // тут менять страницу 
       const startGame = ({ stepGame, Symbol, data }) => {
-         console.log('start');
-         console.log(stepGame);
+         // console.log('start');
+         // console.log(stepGame);
          setStepGame(stepGame)
          setData(data);
          setSymbol(Symbol);
@@ -78,7 +78,7 @@ function Lobby() {
       const opponentRanAway = ({ message }) => {
          alert(message)
          setInGame(false);
-      }
+      };
 
       // const invitationGame = (data) => {
       //    console.log('Получено приглашение:', data);
@@ -131,7 +131,6 @@ function Lobby() {
          }
       }
    };
-
 
    const updateCells = ({ Cells, stepGame, data }) => {
       console.log('updateCells')
