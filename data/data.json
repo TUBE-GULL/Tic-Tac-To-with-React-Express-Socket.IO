@@ -22,5 +22,29 @@
     "Nickname": "Olegtest",
     "password": "$2b$10$VVNCHL3TOig8WFnw0frOhOzk6g0SKGNvgAXMPF2nTnF/BBlUb.MXC",
     "time": ""
+  },
+  {
+    "id": "6dd38f4a71966f1d382c",
+    "Nickname": "Fox1",
+    "password": "$2b$10$UBldTvEe2C8HHOlTAHVHeeNpVh879AdetvGVhhR6sgxY8aqEE.N.y",
+    "time": ""
+  },
+  {
+    "id": "10b461175ce8f684af08",
+    "Nickname": "Scatman",
+    "password": "$2b$10$y6U9pCXr94EykshIDVgD9u3gWkf2jpsAxVB6fZ197wnhLzvuUySHu",
+    "time": ""
+  },
+  {
+    "id": "6e7404e4b2b348b1986b",
+    "Nickname": "val",
+    "password": "$2b$10$YEhCZQSSNvUB0O/mfw.OvuJAD5nlVMqKGJJbBgcdL5QbXCyng0W0O",
+    "time": ""
+  },
+  {
+    "id": "67578ac62f62c3c1b73e",
+    "Nickname": "Oleg123",
+    "password": "$2b$10$cSbS34YRfSFFSgfL0SApvOKWGYJwVNXUVMWhuwKdt9VJjEzQX7pDW",
+    "time": ""
   }
 ]

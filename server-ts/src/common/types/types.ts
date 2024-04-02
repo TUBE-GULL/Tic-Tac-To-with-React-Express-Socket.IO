@@ -15,6 +15,7 @@ export interface UserData {
    Nickname: string;
    password?: string | number;
    time: string;
+   invitation?: boolean;
 }
 
 export interface FormData {
@@ -31,3 +32,5 @@ export interface writeFileData {
 
 
 //export Types !!! =====================================================
+
+export type CheckWinFunction = (cells: string[]) => boolean;

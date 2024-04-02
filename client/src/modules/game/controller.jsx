@@ -50,36 +50,35 @@ function Lobby() {
             : Socket.emit('resultInvitationToGame', { result: false, usersData })
       };
 
-      // тут менять страницу 
       const startGame = ({ stepGame, Symbol, data }) => {
-         // console.log('start');
-         // console.log(stepGame);
          setStepGame(stepGame)
          setData(data);
          setSymbol(Symbol);
          setInGame(true);
       }
 
-      //отказ
       const rejected = (message) => {
          console.log('rejected')
          alert(message)
-         // setButtonClick(true);
       }
 
-      const gameResult = ({cells, isWinner }) => {
+      const gameResult = ({ cells, isWinner }) => {
          setInGame(false);
          setCells(cells)
-         // setButtonClick(true);
-         console.log(isWinner)
          alert(isWinner)
+         window.location.reload();
       };
 
       const opponentRanAway = ({ message }) => {
          alert(message)
          setInGame(false);
+         window.location.reload();
       };
 
+      const invitationUser = () => {
+         alert('he/she is busy')
+         setInGame(true)
+      }
       // const invitationGame = (data) => {
       //    console.log('Получено приглашение:', data);
       // }
@@ -89,6 +88,7 @@ function Lobby() {
 
       // socket.on('sendMessage', sendMessage);
       // socket.on('invitationGame', invitationGame);
+      Socket.on('invitationUser', invitationUser);
       Socket.on('gameCancelled', rejected)//?
       Socket.on('opponentRanAway', opponentRanAway);
       Socket.on('leaveGame', leaveGame);
@@ -104,6 +104,7 @@ function Lobby() {
       return () => {
          // socket.off('sendMessage');
          // socket.off('invitationGame');
+         Socket.off('invitationUser', invitationUser);
          Socket.off('gameCancelled', rejected)//?
          Socket.off('opponentRanAway', opponentRanAway);
          Socket.off('leaveGame', leaveGame);
@@ -123,11 +124,11 @@ function Lobby() {
    // Game choice user 
    const clickCell = (index) => {
       if (stepGame) {
-         if(cells[index]==''){
+         if (cells[index] == '') {
             const updatedCells = [...cells];
             updatedCells[index] = symbol;
             setCells(updatedCells);
-            socket.emit('stepGame', {  sender: { Nickname: userData.Nickname, symbol: symbol }, data, updatedCells });
+            socket.emit('stepGame', { sender: { Nickname: userData.Nickname, symbol: symbol }, data, updatedCells });
          }
       }
    };
