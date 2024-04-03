@@ -163,7 +163,7 @@ function Lobby() {
    };
 
    return (
-      <StartGame.Provider value={{ inGame, setInGame, cells, setCells, }}>
+      <StartGame.Provider value={{ inGame, setInGame, cells, setCells, messages }}>
          {!inGame && < div className='lobby'>
             <LobbyChat newMessages={messages} handleSubmit={handleSubmitMessage} />
             <LobbyList user={userData} users={usersData} onButtonClick={handleButtonClick} />

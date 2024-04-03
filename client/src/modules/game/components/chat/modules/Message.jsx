@@ -1,24 +1,14 @@
-import React from 'react';
-import { useEffect, useState } from 'react';
-
-
-const Messages = () => {
-
-
+// import React from 'react';
+// import { useEffect, useState } from 'react';
+function Messages(sms, index) {
 
    return (
-      <div className="messagerecipient">
-         <div className="message">
-            <h1>Nickname</h1>
-            {/* <h1>{message.sender[0]}</h1>
-            <h1>{message.sender[1]}</h1> */}
-         </div>
-         {/* <p>{message.message}</p>
-         <h3>{message.time}</h3> */}
-         <p>
-            Lorem ipsum dolor sit amet, consectetur
-         </p>
+      // <div className="messagerecipient">
+      <div className='message' key={index}>
+         <h1>{sms.userName}</h1>
+         <p>{sms.message}</p>
       </div>
+      // </div>
    );
 }
 

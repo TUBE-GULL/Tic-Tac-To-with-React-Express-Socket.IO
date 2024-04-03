@@ -1,8 +1,10 @@
 import React, { useContext, useRef, useState } from 'react';
+// import { StartGame } from '../../controller';
 
 function LobbyChat({ newMessages, handleSubmit }) {
    const contentChatRef = useRef(null);
    const [messageInput, setMessageInput] = useState('');
+   // const { newMessages } = useContext(StartGame)
 
    const scrollToBottom = () => {
       contentChatRef.current.scrollTop = contentChatRef.current.scrollHeight;
@@ -14,7 +16,6 @@ function LobbyChat({ newMessages, handleSubmit }) {
       setMessageInput('');
    };
 
-
    const handleChange = (e) => {
       setMessageInput(e.target.value);
    };
@@ -25,13 +26,10 @@ function LobbyChat({ newMessages, handleSubmit }) {
 
          <div className="contentChat" ref={contentChatRef}>
             {newMessages.map((sms, index) => (
-               <div className='message' key={index}>
-                  <h2>{sms.userName}</h2>
-                  <p>{sms.message}</p>
-               </div>
+               console.log(sms)
+               // <Messages key={index} sms={sms} index={index} />
             ))}
          </div>
-
          <form className="FormChat" onSubmit={handleFormSubmit}>
             <input
                className="InputChat"
@@ -48,22 +46,3 @@ function LobbyChat({ newMessages, handleSubmit }) {
 }
 
 export default LobbyChat;
-
-
-
-// const handleChange = (e) => {
-//    const { value } = e.target;
-//    setMessageInput(value);
-// };
-
-// const handleSubmit = (e) => {
-//    e.preventDefault();
-//    // console.log(messageInput)
-
-//    setMessage(messageInput)
-//    // const message = {
-//    //    sender: [userData.Nickname, userData.time],
-//    //    message: messageInput
-//    // };
-//    setMessageInput('');
-// };
