@@ -6,6 +6,7 @@ import MyLogo from './loggers/My-Logo.js';
 import SocketServer from './common/services/SocketServer.js';
 import logger from './loggers/logger.service.js';
 import Authenticated from './common/services/authenticated.js';
+import checkWin from './common/modules/gameFun.js';
 
 class App {
    app: Express;
@@ -19,7 +20,7 @@ class App {
       this.server = http.createServer(this.app);
       this.PORT = process.env.PORT || 8080;
       this.Logger = new logger();
-      this.socketServer = new SocketServer(this.server, this.Logger);
+      this.socketServer = new SocketServer(this.server, this.Logger, checkWin);
    };
 
    Routes() {

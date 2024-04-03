@@ -37,6 +37,14 @@ export interface RoomTimers {
       miniSeconds: number;
    };
 }
+
+
+export interface sendMessage {
+   message: string,
+   userName: string,
+   userTime: string
+};
+
 //export Types !!! =====================================================
 
 export type CheckWinFunction = (cells: string[]) => boolean;

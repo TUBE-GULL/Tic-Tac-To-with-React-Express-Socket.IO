@@ -1,11 +1,22 @@
 import React, { useContext, useRef, useState } from 'react';
 
-function LobbyChat({ newMessages, handleSubmit, handleMessageInputChange }) {
+function LobbyChat({ newMessages, handleSubmit }) {
    const contentChatRef = useRef(null);
-   const [MessageInputChat, setMessageInputChat] = useState('')
+   const [messageInput, setMessageInput] = useState('');
 
    const scrollToBottom = () => {
       contentChatRef.current.scrollTop = contentChatRef.current.scrollHeight;
+   };
+
+   const handleFormSubmit = (e) => {
+      e.preventDefault();
+      handleSubmit(messageInput);
+      setMessageInput('');
+   };
+
+
+   const handleChange = (e) => {
+      setMessageInput(e.target.value);
    };
 
    return (
@@ -13,19 +24,21 @@ function LobbyChat({ newMessages, handleSubmit, handleMessageInputChange }) {
          <h1>Chat Lobby</h1>
 
          <div className="contentChat" ref={contentChatRef}>
-            <div className='message'>
-               <h2></h2>
-               <p></p>
-            </div>
-
+            {newMessages.map((sms, index) => (
+               <div className='message' key={index}>
+                  <h2>{sms.userName}</h2>
+                  <p>{sms.message}</p>
+               </div>
+            ))}
          </div>
 
-         <form className="FormChat" onSubmit={handleSubmit}>
+         <form className="FormChat" onSubmit={handleFormSubmit}>
             <input
                className="InputChat"
                type='text'
                name='textMessage'
-               onChange={handleMessageInputChange}
+               value={messageInput}
+               onChange={handleChange}
                placeholder='write !'
             ></input>
             <button className="buttonChat">Send</button>
