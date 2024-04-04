@@ -83,6 +83,8 @@
       }
 
       .contentChat {
+         display: flex;
+         flex-direction: column;
          flex-shrink: 0;
          width: 95%;
          height: 80%;
@@ -95,28 +97,31 @@
          scroll-behavior: smooth;
 
 
-         .messagerecipient {
+         .messageSender,
+         .messageGet {
             max-width: 80%;
-            // background: rgba(0, 0, 0, 0.4);
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
             backdrop-filter: blur(4.5px);
             border-radius: 30px;
             border: 1px solid rgba(255, 255, 255, 0.18);
             font-size: 15px;
             font-family: 'Press Start 2P', system-ui;
+            word-wrap: break-word;
 
             h1 {
                font-size: 20px;
-               color: #fff;
             }
 
-            .messagesender {
-               align-self: flex-start;
-            }
+            p {}
+         }
 
-            .messagerecipient {
-               align-self: flex-end;
-            }
+
+         .messageSender {
+            align-self: flex-start;
+         }
+
+         .messageGet {
+            align-self: flex-end;
          }
       }
 
