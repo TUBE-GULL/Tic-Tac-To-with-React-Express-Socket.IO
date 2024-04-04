@@ -4,23 +4,25 @@ import io from 'socket.io-client';
 import { EntranceLobby } from '../../App';
 
 //modules
-import LobbyChat from './components/chat/LobbyChat';
-import LobbyList from './components/list/LobbyList';
-import GameFiled from './components/game/GameFiled';
+import LobbyChat from './controller/chat/LobbyChat';
+import LobbyList from './controller/list/LobbyList';
+import GameFiled from './controller/game/GameFiled';
 
 export const StartGame = React.createContext()
 function Lobby() {
-   const { showAuthorization, setShowAuthorization, } = useContext(EntranceLobby);
+   const { showAuthorization, setShowAuthorization } = useContext(EntranceLobby);
    const [inGame, setInGame] = useState(false);
    const [socket, setSocket] = useState(null);
    const [userData, setUserData] = useState('');
    const [usersData, setUsersData] = useState('');
    const [messages, setMessages] = useState([]);
+   const [messageInput, setMessageInput] = useState('');
    const [data, setData] = useState('');
    const [stepGame, setStepGame] = useState(false);
    const [cells, setCells] = useState(Array(9).fill(''));
    const [symbol, setSymbol] = useState('');
    const [buttonClick, setButtonClick] = useState(true);
+   const [gameRoom, setGameRoom] = useState('');
 
    useEffect(() => {
       const Socket = io('');
@@ -32,6 +34,7 @@ function Lobby() {
       };
 
       const updateUserData = (user) => {
+         // console.log(user)
          Socket.emit('userData', user);
          setUserData(user);
       };
@@ -39,10 +42,8 @@ function Lobby() {
       const updateListUsers = (users) => {
          setUsersData(users);
       };
-      const updateMessages = (message) => {
-         // setMessages(messages.push(message));
-         setMessages((prevMessages) => [...prevMessages, message]);
-         // console.log(messages)
+      const updateMessages = (exportMessage) => {
+         setMessages((prevMessages) => [...prevMessages, exportMessage]);
       };
 
       const noticeGoGame = (usersData) => {
@@ -51,40 +52,45 @@ function Lobby() {
             : Socket.emit('resultInvitationToGame', { result: false, usersData })
       };
 
-      const startGame = ({ stepGame, Symbol, data }) => {
+      // тут менять страницу 
+      const startGame = ({ room, stepGame, Symbol, data }) => {
+         console.log('start');
+         console.log(stepGame);
          setStepGame(stepGame)
          setData(data);
          setSymbol(Symbol);
          setInGame(true);
-      };
+         setGameRoom(room)
+      }
 
+      //отказ
       const rejected = (message) => {
          console.log('rejected')
          alert(message)
-      };
+         // setButtonClick(true);
+      }
 
-      const gameResult = ({ cells, isWinner }) => {
-         setInGame(false);
-         setCells(cells)
+      const gameResult = ({ isWinner }) => {
          alert(isWinner)
-         window.location.reload();
+         setInGame(false);
+         // setButtonClick(true);
+         console.log(isWinner)
       };
 
       const opponentRanAway = ({ message }) => {
          alert(message)
          setInGame(false);
-         window.location.reload();
-      };
-
-      const invitationUser = () => {
-         alert('he/she is busy')
-         setInGame(true)
-      };
+      }
 
       // const invitationGame = (data) => {
       //    console.log('Получено приглашение:', data);
       // }
-      Socket.on('invitationUser', invitationUser);
+      // const sendMessage = (message) => {
+      //    console.log('смс отправлено ');
+      // }
+
+      // socket.on('sendMessage', sendMessage);
+      // socket.on('invitationGame', invitationGame);
       Socket.on('gameCancelled', rejected)//?
       Socket.on('opponentRanAway', opponentRanAway);
       Socket.on('leaveGame', leaveGame);
@@ -98,7 +104,8 @@ function Lobby() {
       Socket.on('usersOnline', updateListUsers);
       Socket.on('sendEveryoneMessage', updateMessages);
       return () => {
-         Socket.off('invitationUser', invitationUser);
+         // socket.off('sendMessage');
+         // socket.off('invitationGame');
          Socket.off('gameCancelled', rejected)//?
          Socket.off('opponentRanAway', opponentRanAway);
          Socket.off('leaveGame', leaveGame);
@@ -118,28 +125,30 @@ function Lobby() {
    // Game choice user 
    const clickCell = (index) => {
       if (stepGame) {
-         if (cells[index] == '') {
-            const updatedCells = [...cells];
-            updatedCells[index] = symbol;
-            setCells(updatedCells);
-            socket.emit('stepGame', { sender: { Nickname: userData.Nickname, symbol: symbol }, data, updatedCells });
-         }
+         const updatedCells = [...cells];
+         updatedCells[index] = symbol;
+         setCells(updatedCells);
+         socket.emit('stepGame', { room: gameRoom, sender: { Nickname: userData.Nickname, symbol: symbol }, data, updatedCells });
       }
    };
 
    const updateCells = ({ Cells, stepGame, data }) => {
+      console.log('updateCells')
       setCells(Cells)
       setData(data);
       setStepGame(stepGame)
    }
 
-   const handleSubmitMessage = (message) => {
+   const handleSubmit = (e) => {
+      e.preventDefault();
+      console.log(messages)
 
-      socket.emit('sendMessage', {
-         message: message,
+      sendMessage({
+         message: messageInput,
          userName: userData.Nickname,
          userTime: userData.time
       });
+      setMessageInput('');
    };
 
    const handleButtonClick = (userId, userNickname, userTime) => {
@@ -163,10 +172,22 @@ function Lobby() {
       setInGame(false);
    };
 
+   //в процессе !
+   const sendMessage = (message) => {
+      if (message !== '') {
+
+         socket.emit('sendMessage', { message });
+      }
+   };
+
+   const handleMessageInputChange = (e) => {
+      setMessageInput(e.target.value);
+   };
+
    return (
-      <StartGame.Provider value={{ inGame, setInGame, cells, setCells, messages }}>
+      <StartGame.Provider value={{ inGame, setInGame, cells, setCells }}>
          {!inGame && < div className='lobby'>
-            <LobbyChat Nickname={userData.Nickname} newMessages={messages} handleSubmit={handleSubmitMessage} />
+            <LobbyChat newMessages={messages} handleSubmit={handleSubmit} handleMessageInputChange={handleMessageInputChange} />
             <LobbyList user={userData} users={usersData} onButtonClick={handleButtonClick} />
          </div >}
          {inGame && < GameFiled clickCell={clickCell} data={data} />}

@@ -1,43 +1,31 @@
 import React, { useContext, useRef, useState } from 'react';
-import Messages from './modules/Message';
-import { StartGame } from '../../controller';
 
-function LobbyChat({ Nickname, newMessages, handleSubmit }) {
+function LobbyChat({ newMessages, handleSubmit, handleMessageInputChange }) {
    const contentChatRef = useRef(null);
-   const [messageInput, setMessageInput] = useState('');
-   const { messages } = useContext(StartGame);
+   const [MessageInputChat, setMessageInputChat] = useState('')
 
    const scrollToBottom = () => {
       contentChatRef.current.scrollTop = contentChatRef.current.scrollHeight;
    };
-
-   const handleFormSubmit = (e) => {
-      e.preventDefault();
-      handleSubmit(messageInput);
-      setMessageInput('');
-   };
-
-   const handleChange = (e) => {
-      setMessageInput(e.target.value);
-   };
-   // console.log(newMessages)
 
    return (
       <div className="lobbyChat">
          <h1>Chat Lobby</h1>
 
          <div className="contentChat" ref={contentChatRef}>
-            {newMessages.map((sms, index) => (
-               < Messages key={index} Nickname={Nickname} sms={sms} index={index} />
-            ))}
+            <div className='message'>
+               <h2></h2>
+               <p></p>
+            </div>
+
          </div>
-         <form className="FormChat" onSubmit={handleFormSubmit}>
+
+         <form className="FormChat" onSubmit={handleSubmit}>
             <input
                className="InputChat"
                type='text'
                name='textMessage'
-               value={messageInput}
-               onChange={handleChange}
+               onChange={handleMessageInputChange}
                placeholder='write !'
             ></input>
             <button className="buttonChat">Send</button>
@@ -66,8 +54,3 @@ export default LobbyChat;
 //    // };
 //    setMessageInput('');
 // };
-
-{/* {newMessages.map((sms, index) => ( */ }
-// console.log(sms)
-// < Messages key={index} sms={sms} index={index} />
-// ))}
