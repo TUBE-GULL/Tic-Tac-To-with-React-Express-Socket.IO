@@ -40,9 +40,7 @@ function Lobby() {
          setUsersData(users);
       };
       const updateMessages = (message) => {
-         // setMessages(messages.push(message));
          setMessages((prevMessages) => [...prevMessages, message]);
-         // console.log(messages)
       };
 
       const noticeGoGame = (usersData) => {
@@ -81,9 +79,6 @@ function Lobby() {
          setInGame(true)
       };
 
-      // const invitationGame = (data) => {
-      //    console.log('Получено приглашение:', data);
-      // }
       Socket.on('invitationUser', invitationUser);
       Socket.on('gameCancelled', rejected)//?
       Socket.on('opponentRanAway', opponentRanAway);

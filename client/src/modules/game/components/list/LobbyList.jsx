@@ -38,24 +38,3 @@ function LobbyList({ user, users, onButtonClick }) {
 }
 
 export default LobbyList;
-
-
-{/* <form onSubmit={handleSubmit} className="loginForm">
-               <div className="formInside">
-                  <h1>{registering ? textSignIn[1] : textSignUp[1]}</h1>
-
-                  {registering
-                     ? inputArraySignIn(loginFormData, handleChange).map((el, index) => <ComponentAuthorization key={index} {...el} />)
-                     : inputArraySignUp(registeringFormData, handleChange, passwordsDoNot).map((el, index) => <ComponentAuthorization key={index} {...el} />)
-                  }
-                  <button type="submit">{registering ? textSignIn[3] : textSignUp[3]}</button>
-               </div>
-
-               <h2>
-                  {registering ? textSignIn[2] : textSignUp[2]}
-                  <a onClick={handleToggleForm}>
-                     {registering ? textSignIn[0] : textSignUp[0]}
-                  </a>
-               </h2>
-
-            </form> */}
