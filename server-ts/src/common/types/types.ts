@@ -8,6 +8,7 @@ export interface socketId {
    socketId: string;
    Nickname: string;
    Time: string;
+   invitation?: boolean;
 }
 
 export interface UserData {

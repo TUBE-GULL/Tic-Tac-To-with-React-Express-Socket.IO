@@ -50,6 +50,10 @@ $ npm run start:dev
 
 project development
 
+0.0.55
+
+added a function so that it would not be possible to invite a user after he has invited someone until the answer is announced
+
 0.0.49
 
 functionality is ready left to polish the project
