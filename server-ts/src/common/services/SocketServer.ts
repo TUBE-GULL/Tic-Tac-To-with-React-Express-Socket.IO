@@ -109,7 +109,7 @@ class SocketServer {
                if (data.result) {
 
                   this.io.to(userRival.socketId).emit('startGame', { stepGame: true, Symbol: 'X', data: { userRival, userSender } });
-                  this.io.to(userSender.socketId).emit('startGame', { stepGame: false, Symbol: 'O', users: { userRival, userSender } });
+                  this.io.to(userSender.socketId).emit('startGame', { stepGame: false, Symbol: 'O', data: { userRival, userSender } });
 
                   //delete list users online
                   this.Logger.log(`join the game ${userRival.socketId} and ${userSender.socketId} `)//room:${room} ???
@@ -196,6 +196,9 @@ class SocketServer {
       return false;
    };
 
+
+   //------------------------------------------------------------------------------------------------------------
+
    flipInvitation(userRival: socketId, userSender: socketId): boolean {
       const rival: socketId | undefined = this.searchUser(userRival);
       const sender: socketId | undefined = this.searchUser(userSender);
@@ -224,6 +227,9 @@ class SocketServer {
    //       return false;
    //    }
    // }
+
+
+   //------------------------------------------------------------------------------------------------------------
 
    returnUserList = (userRival: socketId, userSender: socketId): void => {
       this.usersOnline[userRival.socketId] = userRival;

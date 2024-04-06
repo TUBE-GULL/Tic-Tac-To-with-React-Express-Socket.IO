@@ -80,6 +80,7 @@ function Lobby() {
       const startGame = ({ stepGame, Symbol, data }) => {
          setStepGame(stepGame)
          setData(data);
+         console.log(data)
          setSymbol(Symbol);
          setInGame(true);
       };
