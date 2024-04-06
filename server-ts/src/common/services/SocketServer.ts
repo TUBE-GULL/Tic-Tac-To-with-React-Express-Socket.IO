@@ -67,25 +67,28 @@ class SocketServer {
          socket.on('invitationGame', (data): void => {
             // this.Logger.log(this.usersOnline);
             // remove the user from invitation access
-            const userSender: socketId = this.searchUser(data.userSender);
-            const userRival: socketId = this.searchUser(data.userRival);
-
-            if (userRival === undefined && userSender === undefined) {
-
+            if (!this.searchUser(data.userRival) && !this.searchUser(data.userSender)) {
                this.io.to(data.userSender.socketId).emit('invitationUser', false);
                return;
             }
 
-            if (userRival.invitation) {
-               this.io.to((userRival as socketId).socketId).emit('goToGame', { userRival, userSender: this.searchUser(data.userSender) });
+            const userSender: socketId | undefined = this.searchUser(data.userSender) as socketId | undefined;
+            const userRival: socketId | undefined = this.searchUser(data.userRival) as socketId | undefined;
+
+
+
+            if (userSender && userRival && userRival.invitation) {
+               this.io.to(userRival.socketId).emit('goToGame', { userRival, userSender });
 
                //remove custom invitation
-               //ТУТ ПЕРЕВЕСТИ В ФУНКЦИЮ 
-               this.usersOnline[userRival.socketId].invitation = false;
-               this.usersOnline[userSender.socketId].invitation = false;
-
+               if (userRival.socketId && userSender.socketId) {
+                  this.usersOnline[userRival.socketId].invitation = false;
+                  this.usersOnline[userSender.socketId].invitation = false;
+               }
             } else {
-               this.io.to(userSender.socketId).emit('invitationUser', false);
+               if (userSender) {
+                  this.io.to(userSender.socketId).emit('invitationUser', false);
+               }
             }
          });
 
@@ -193,10 +196,21 @@ class SocketServer {
       return false;
    };
 
-   // flipInvitation(userRival: UserData, userSender: UserData): boolean {
-   //    this.usersOnline.[userRival.socketId].invitation = false;
-   //    this.usersOnline.[userSender.socketId].invitation = false;
-   // }
+   flipInvitation(userRival: socketId, userSender: socketId): boolean {
+      const rival: socketId | undefined = this.searchUser(userRival);
+      const sender: socketId | undefined = this.searchUser(userSender);
+
+      if (!rival || !sender || !rival.invitation) {
+         return false;
+      }
+
+      this.io.to(rival.socketId).emit('goToGame', { userRival: rival, userSender: sender });
+
+      this.usersOnline[rival.socketId].invitation = !this.usersOnline[rival.socketId].invitation;
+      this.usersOnline[sender.socketId].invitation = !this.usersOnline[sender.socketId].invitation;
+
+      return true;
+   }
 
    // flipInvitation(userRival: UserData, userSender: UserData): boolean {
    //    // Check if both users are online
