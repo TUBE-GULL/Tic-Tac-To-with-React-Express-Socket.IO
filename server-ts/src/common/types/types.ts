@@ -7,6 +7,7 @@ export interface UsersOnline {
 export interface GameRoom {
    userSender: string;
    userRival: string;
+   timerInterval: NodeJS.Timeout | null;
 }
 
 export interface socketId {

@@ -100,7 +100,8 @@ class SocketServer {
 
                const newGameRoom: GameRoom = {
                   userSender: userSender.socketId,
-                  userRival: userRival.socketId
+                  userRival: userRival.socketId,
+                  timerInterval: null,
                };
 
                this.gameRooms[userSender.socketId + userRival.socketId] = newGameRoom;
@@ -111,6 +112,7 @@ class SocketServer {
                   this.io.to(userRival.socketId).emit('startGame', { stepGame: true, Symbol: 'X', data: { userRival, userSender } });
                   this.io.to(userSender.socketId).emit('startGame', { stepGame: false, Symbol: 'O', data: { userRival, userSender } });
 
+                  this.sendTimeRoom(userSender.socketId + userRival.socketId)
                   //delete list users online
                   this.Logger.log(`join the game ${userRival.socketId} and ${userSender.socketId} `)//room:${room} ???
 
@@ -143,6 +145,7 @@ class SocketServer {
 
             const sendGameResultAndDeleteRoom = (socketId: string, cells: string[], isWinner: string | boolean) => {
                this.io.to(socketId).emit('gameResult', { Cells: cells, isWinner });
+               this.stopTimeRoom(data.userSender.socketId + data.userRival.socketId)
                delete this.gameRooms[data.userSender.socketId + data.userRival.socketId];
                this.returnUserList(data.userRival, data.userSender);
             };
@@ -167,14 +170,26 @@ class SocketServer {
       });
    };
 
-   // sendTimeRoom(rivalSocketId: string, senderSocketId: string): void {
-   //    const timeString = timerForGame(roomTimers, roomName);
+   sendTimeRoom(gameRoom: string): void {
+      if (this.gameRooms[gameRoom] && this.gameRooms[gameRoom].timerInterval) {
+         clearInterval(this.gameRooms[gameRoom].timerInterval);
+      }
+      this.gameRooms[gameRoom].timerInterval = setInterval(() => {
+         const timeString = timerForGame();
+         this.Logger.log(timeString);
+         this.io.to(this.gameRooms[gameRoom].userRival).emit('timerUpdate', timeString);
+         this.io.to(this.gameRooms[gameRoom].userSender).emit('timerUpdate', timeString);
+      }, 1000);
+   }
 
-   //    setInterval(() => {
-   //       this.io.to(rivalSocketId).emit('timerUpdate', timeString);
-   //       this.io.to(senderSocketId).emit('timerUpdate', timeString);
-   //    }, 1000);
-   // }
+   stopTimeRoom(gameRoom: string): void {
+      this.Logger.log('timer stop');
+      if (this.gameRooms[gameRoom] && this.gameRooms[gameRoom].timerInterval) {
+         clearInterval(this.gameRooms[gameRoom].timerInterval);
+         this.gameRooms[gameRoom].timerInterval = null;
+      }
+   }
+
 
    SendingListUsersEveryone(): void {
       this.io.emit('usersOnline', this.usersOnline); // all users
@@ -243,10 +258,12 @@ class SocketServer {
          for (const room of Object.values(gameRooms)) {
             if (room.userRival === socketId) {
                this.io.to(room.userSender).emit('opponentRanAway', { message: 'Opponent Ran Away' });
+               this.stopTimeRoom(room.userSender + room.userRival)
                delete this.gameRooms[room.userSender + room.userRival];
                this.SendingListUsersEveryone();
             } else if (room.userSender === socketId) {
                this.io.to(room.userRival).emit('opponentRanAway', { message: 'Opponent Ran Away' });
+               this.stopTimeRoom(room.userSender + room.userRival)
                delete this.gameRooms[room.userSender + room.userRival];
                this.SendingListUsersEveryone();
             }
