@@ -4,6 +4,9 @@ import { UserData, socketId, GameRoom, sendMessage, CheckWinFunction } from '../
 import checkWin from '../modules/gameFun.js';
 import logger from '../../loggers/logger.service.js'
 import timerForGame from '../modules/timerForGame.js';
+import writeFileData from '../modules/writeFileJson.js';
+import readFileJson from '../modules/readFileJson.js'
+
 
 class SocketServer {
    io: SocketIOServer;
@@ -143,12 +146,44 @@ class SocketServer {
             let newUserRival = { ...data.userRival, stepGame: newStepGameRival };
             let newUserSender = { ...data.userSender, stepGame: newStepGameSender };
 
-            const sendGameResultAndDeleteRoom = (socketId: string, cells: string[], isWinner: string | boolean) => {
+            const sendGameResultAndDeleteRoom = async (socketId: string, cells: string[], isWinner: string | boolean) => {
                this.io.to(socketId).emit('gameResult', { Cells: cells, isWinner });
+
                this.stopTimeRoom(data.userSender.socketId + data.userRival.socketId)
                delete this.gameRooms[data.userSender.socketId + data.userRival.socketId];
+
                this.returnUserList(data.userRival, data.userSender);
-            };
+
+               //best recording time
+               if (isWinner) {
+                  this.writeBestTime(data.userSender.socketId + data.userRival.socketId, socketId)
+
+               }
+            }
+            // const sendGameResultAndDeleteRoom = async (socketId: string, cells: string[], isWinner: string | boolean) => {
+            //    this.io.to(socketId).emit('gameResult', { Cells: cells, isWinner });
+
+            //    // Stopping the timer
+            //    const roomId = data.userSender.socketId + data.userRival.socketId;
+            //    this.stopTimeRoom(roomId);
+
+            //    // Accessing the best recording time (if necessary)
+            //    const bestTime = this.gameRooms[roomId]?.timerInterval;
+
+            //    // Deleting the game room
+            //    delete this.gameRooms[roomId];
+            //    this.returnUserList(data.userRival, data.userSender);
+
+            //    // Update user data with best time (if necessary)
+            //    if (bestTime) {
+            //       const userData = await readFileJson('../data/data.json');
+            //       const userIndex = userData.findIndex((user: UserData) => user.Nickname === socketId);
+            //       if (userIndex !== -1 && userData[userIndex].time < bestTime) {
+            //          userData[userIndex].time = bestTime;
+            //          await writeFileData(userData);
+            //       }
+            //    }
+            // };
 
             //check uses on victory
             if (checkWin(updatedCells)) {
@@ -245,6 +280,46 @@ class SocketServer {
 
 
    //------------------------------------------------------------------------------------------------------------
+
+   // writeBestTime = async (roomId: string, Nickname: string): void => {
+
+   //    const bestTime = this.gameRooms[roomId].timerInterval
+
+   //    const userData = await readFileJson('../data/data.json');
+
+   //    const newUserData = userData.find((user: UserData) => {
+   //       if (user.Nickname === Nickname) {
+   //          if (user.time < bestTime) {
+   //             user.time = bestTime
+   //          }
+   //       };
+   //    })
+   //    await writeFileData(newUserData, '../data/data.json')
+   // };
+
+
+   writeBestTime = async (roomId: string, Nickname: string): Promise<void> => {
+      const bestTime = this.gameRooms[roomId]?.timerInterval;
+
+      if (!bestTime) {
+         return;
+      }
+
+      const userData = await readFileJson('../data/data.json');
+
+      const updatedUserData = userData.map((user: UserData) => {
+         if (user.Nickname === Nickname) {
+            if (!user.time || user.time < bestTime) {
+               user.time = bestTime;
+            }
+         }
+         return user;
+      });
+
+      await writeFileData(updatedUserData, '../data/data.json');
+   };
+
+
 
    returnUserList = (userRival: socketId, userSender: socketId): void => {
       this.usersOnline[userRival.socketId] = userRival;
