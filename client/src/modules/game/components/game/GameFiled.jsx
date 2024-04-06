@@ -2,7 +2,7 @@ import './gameFiled.module.scss'
 import { useContext, useState } from 'react';
 import { StartGame } from '../../controller';
 
-function GameFiled({ clickCell, data }) {
+function GameFiled({ clickCell, data, time }) {
    const { cells } = useContext(StartGame);
    // const [leftUserTime, setLeftUserTime] = useState('00:00:00');
    // const [rightUserTime, setRightUserTime] = useState('00:00:00');
@@ -16,7 +16,7 @@ function GameFiled({ clickCell, data }) {
             </div>
             <div className="informTimers">
                <h2>Timer</h2>
-               <p className="timer">'00:00:00'</p>
+               <p className="timer">{time}</p>
             </div>
             <div className="informRight">
                <h3 className="userRightUserName">{data.userRival.Nickname} symbol:{data.userRival.Symbol}</h3>

@@ -20,6 +20,7 @@ function Lobby() {
    const [stepGame, setStepGame] = useState(false);
    const [cells, setCells] = useState(Array(9).fill(''));
    const [symbol, setSymbol] = useState('');
+   const [timer, setTimer] = useState('00:00:00')
    const [buttonClick, setButtonClick] = useState(true);
 
    useEffect(() => {
@@ -108,6 +109,11 @@ function Lobby() {
          setInGame(answer)
       };
 
+      const timerUpdate = (time) => {
+         setTimer(time)
+      }
+
+      Socket.on('timerUpdate', timerUpdate)
       Socket.on('invitationUser', invitationUser);
       Socket.on('gameCancelled', rejected)//?
       Socket.on('opponentRanAway', opponentRanAway);
@@ -122,6 +128,7 @@ function Lobby() {
       Socket.on('usersOnline', updateListUsers);
       Socket.on('sendEveryoneMessage', updateMessages);
       return () => {
+         Socket.off('timerUpdate', timerUpdate)
          Socket.off('invitationUser', invitationUser);
          Socket.off('gameCancelled', rejected)//?
          Socket.off('opponentRanAway', opponentRanAway);
@@ -193,7 +200,7 @@ function Lobby() {
             <LobbyChat Nickname={userData.Nickname} newMessages={messages} handleSubmit={handleSubmitMessage} />
             <LobbyList user={userData} users={usersData} onButtonClick={handleButtonClick} />
          </div >}
-         {inGame && < GameFiled clickCell={clickCell} data={data} />}
+         {inGame && < GameFiled clickCell={clickCell} data={data} time={timer} />}
       </StartGame.Provider >
    )
 }

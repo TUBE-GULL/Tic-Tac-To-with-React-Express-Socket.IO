@@ -179,7 +179,7 @@ class SocketServer {
          this.Logger.log(timeString);
          this.io.to(this.gameRooms[gameRoom].userRival).emit('timerUpdate', timeString);
          this.io.to(this.gameRooms[gameRoom].userSender).emit('timerUpdate', timeString);
-      }, 1000);
+      }, 100);
    }
 
    stopTimeRoom(gameRoom: string): void {
