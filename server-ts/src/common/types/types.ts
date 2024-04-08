@@ -45,7 +45,6 @@ export interface RoomTimers {
    };
 }
 
-
 export interface sendMessage {
    message: string,
    userName: string,
