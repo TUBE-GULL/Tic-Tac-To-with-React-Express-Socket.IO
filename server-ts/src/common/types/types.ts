@@ -1,20 +1,26 @@
 //export Interfaces !!! ================================================
 
 export interface UsersOnline {
-   [socketId: string]: socketId;
+   [socketId: string]: SocketUser;
 }
 
 export interface GameRoom {
    userSender: string;
    userRival: string;
    timerInterval: NodeJS.Timeout | null;
+   timerValue: string;
 }
 
-export interface socketId {
+export interface UserCommon {
+   id?: string;
+   Nickname?: string;
+}
+
+export interface SocketUser {
    socketId: string;
    Nickname: string;
    Time: string;
-   invitation?: boolean;
+   invitation: boolean;
 }
 
 export interface UserData {

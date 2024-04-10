@@ -1,20 +1,14 @@
 [
   {
-    "id": "003ce4484cb1b9a7e337",
-    "Nickname": "Oleg",
-    "password": "$2b$10$3VFMePLwe8xR.30NMf/guOgWiIsL3HOkCZnEBqZVq2VouTM/l6EoW",
+    "id": "50bd6a7733c6860a2d96",
+    "Nickname": "Piter",
+    "password": "$2b$10$zAgZOaMMaXRzRW2tadfGbumiH6V.eW7oa44hHrovS1cbOMcuXz2mm",
     "time": ""
   },
   {
-    "id": "666d243bf23fd5dbdf01",
+    "id": "5e2be6c8cc7daba3bbd3",
     "Nickname": "Fox",
-    "password": "$2b$10$1UDE1ShY5tF5A0rWfNMUH.Y2rP4jREcZ4sSvDbXOW.ZVIG1AvOVYa",
-    "time": ""
-  },
-  {
-    "id": "c6212f33a2c30f333cae",
-    "Nickname": "Test",
-    "password": "$2b$10$/kuVgo1oiv96neHpua99S./lzGGSuumkCSEZrf5xo.DY4N28yfRVO",
+    "password": "$2b$10$CzMhf5VPDS5L9kL5shu/sOiFxV.hL1BA7glKrdUG/UWmq3Hb2C6TO",
     "time": ""
   }
 ]

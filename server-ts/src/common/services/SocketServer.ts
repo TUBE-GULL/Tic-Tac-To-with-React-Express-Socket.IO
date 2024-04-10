@@ -1,6 +1,6 @@
 import { Server as SocketIOServer, Socket } from 'socket.io';
 import { Server as HttpServer } from 'http';
-import { UserData, socketId, GameRoom, sendMessage, CheckWinFunction } from '../types/types.js';
+import { UserData, SocketUser, GameRoom, sendMessage, CheckWinFunction } from '../types/types.js';
 import checkWin from '../modules/gameFun.js';
 import logger from '../../loggers/logger.service.js'
 import timerForGame from '../modules/timerForGame.js';
@@ -9,8 +9,8 @@ import readFileJson from '../modules/readFileJson.js'
 
 class SocketServer {
    io: SocketIOServer;
-   usersOnline: Record<string, object>;
-   gameRooms: Record<string, object>;
+   usersOnline: Record<string, SocketUser>;
+   gameRooms: Record<string, GameRoom>;
    Logger: logger;
    checkWin: CheckWinFunction;
 
@@ -25,23 +25,18 @@ class SocketServer {
 
    formDataUser(user: UserData): void {
       this.io.on('connection', (socket: Socket) => {
-         // this.Logger.log(user.push(invitation:true))
          this.io.to(socket.id).emit('userFormData', user);
       });
    };
 
    initializeSocketEvents(): void {
-
       this.io.on('connection', (socket: Socket) => {
-         this.Logger.log('connection: ' + socket.id);
+         // this.Logger.log('connection: ' + socket.id);
 
          // send all users list users online
          socket.on('userData', (user: UserData): void => {
-
             if (!this.isUserOnline(user.id.toString())) {
-               // const newUser = { socketId: socket.id, Nickname: user.Nickname, Time: user.time, invitation: true };
-               // this.io.to(socket.id).emit('userData', newUser);
-               this.usersOnline[socket.id] = { socketId: socket.id, Nickname: user.Nickname, Time: user.time, invitation: true };
+               this.usersOnline[socket.id] = { socketId: socket.id, Nickname: user.Nickname, Time: user.time, invitation: true } as SocketUser;
             };
 
             this.SendingListUsersEveryone();
@@ -67,24 +62,25 @@ class SocketServer {
          //V2 ============================================================================================
 
          socket.on('invitationGame', (data): void => {
-            // this.Logger.log(this.usersOnline);
+
             // remove the user from invitation access
             if (!this.searchUser(data.userRival) && !this.searchUser(data.userSender)) {
                this.io.to(data.userSender.socketId).emit('invitationUser', false);
                return;
             };
 
-            const userSender: socketId | undefined = this.searchUser(data.userSender) as socketId | undefined;
-            const userRival: socketId | undefined = this.searchUser(data.userRival) as socketId | undefined;
+            const userSender: SocketUser | undefined = this.searchUser(data.userSender) as SocketUser | undefined;
+            const userRival: SocketUser | undefined = this.searchUser(data.userRival) as SocketUser | undefined;
 
             if (userSender && userRival && userRival.invitation) {
-               this.io.to(userRival.socketId).emit('goToGame', { userRival, userSender });
-
                //remove custom invitation
                if (userRival.socketId && userSender.socketId) {
                   this.usersOnline[userRival.socketId].invitation = false;
                   this.usersOnline[userSender.socketId].invitation = false;
                }
+
+               this.io.to(userRival.socketId).emit('goToGame', { userRival, userSender });
+
             } else {
                if (userSender) {
                   this.io.to(userSender.socketId).emit('invitationUser', false);
@@ -98,20 +94,19 @@ class SocketServer {
 
             if (userSender != undefined && userRival != undefined) {
 
-               const newGameRoom: GameRoom = {
-                  userSender: userSender.socketId,
-                  userRival: userRival.socketId,
-                  timerInterval: null,
-               };
-
-               this.gameRooms[userSender.socketId + userRival.socketId] = newGameRoom;
-               // this.Logger.log(this.gameRooms)
                //result TRUE
                if (data.result) {
 
+                  const newGameRoom: GameRoom = {
+                     userSender: userSender.socketId,
+                     userRival: userRival.socketId,
+                     timerInterval: null,
+                     timerValue: '',
+                  };
+
+                  this.gameRooms[userSender.socketId + userRival.socketId] = newGameRoom;
                   this.io.to(userRival.socketId).emit('startGame', { stepGame: true, Symbol: 'X', data: { userRival, userSender } });
                   this.io.to(userSender.socketId).emit('startGame', { stepGame: false, Symbol: 'O', data: { userRival, userSender } });
-
                   this.sendTimeRoom(userSender.socketId + userRival.socketId);
                   this.Logger.log(`join the game ${userRival.socketId} and ${userSender.socketId} `);//room:${room} ???
 
@@ -122,7 +117,8 @@ class SocketServer {
 
                   //result False
                } else {
-                  this.io.to((userSender as socketId).socketId).emit('rejected', { result: false });
+                  // this.flipInvitation(userRival, userSender)
+                  this.io.to(userSender.socketId).emit('rejected', { result: false });
                }
             } else {
                this.Logger.error('userRival or userSearch undefined');
@@ -143,10 +139,11 @@ class SocketServer {
             let newUserRival = { ...data.userRival, stepGame: newStepGameRival };
             let newUserSender = { ...data.userSender, stepGame: newStepGameSender };
 
-            const sendGameResultAndDeleteRoom = async (nickName: string, socketId: string, cells: string[], isWinner: string | boolean) => {
+            const sendGameResultAndDeleteRoom = (nickName: string, socketId: string, cells: string[], isWinner: string | boolean) => {
                this.io.to(socketId).emit('gameResult', { Cells: cells, isWinner });
                this.stopTimeRoom(data.userSender.socketId + data.userRival.socketId);
                this.returnUserList(data.userRival, data.userSender);
+
 
                //best recording time
                if (isWinner && isWinner != 'nobody') {
@@ -201,62 +198,102 @@ class SocketServer {
       });
    };
 
+
    sendTimeRoom(gameRoom: string): void {
-      if (this.gameRooms[gameRoom] && this.gameRooms[gameRoom].timerInterval) {
-         clearInterval(this.gameRooms[gameRoom].timerInterval);
-      };
-      this.gameRooms[gameRoom].timerInterval = setInterval(() => {
-         const timeString = timerForGame();
-         // this.Logger.log(timeString);
-         this.io.to(this.gameRooms[gameRoom].userRival).emit('timerUpdate', timeString);
-         this.io.to(this.gameRooms[gameRoom].userSender).emit('timerUpdate', timeString);
-      }, 100);
-   };
+      const room = this.gameRooms[gameRoom];
+      if (room && room.timerInterval) {
+         clearInterval(room.timerInterval);
+      }
+      if (room) {
+         room.timerInterval = setInterval(() => {
+            const timeString = timerForGame();
+            // Сохраняем значение времени в объекте gameRoom
+            room.timerValue = timeString;
+            this.io.to(room.userRival).emit('timerUpdate', timeString);
+            this.io.to(room.userSender).emit('timerUpdate', timeString);
+         }, 100);
+      }
+   }
+
+   // sendTimeRoom(gameRoom: string): void {
+   //    const room = this.gameRooms[gameRoom];
+   //    if (room && room.timerInterval) {
+   //       clearInterval(room.timerInterval);
+   //    }
+   //    if (room) {
+   //       room.timerInterval = setInterval(() => {
+   //          const timeString = timerForGame();
+   //          // this.Logger.log(timeString);
+   //          this.gameRooms[gameRoom].timerInterval = timeString
+   //          this.io.to(room.userRival).emit('timerUpdate', timeString);
+   //          this.io.to(room.userSender).emit('timerUpdate', timeString);
+   //       }, 100);
+   //    }
+   // }
 
    stopTimeRoom(gameRoom: string): void {
       this.Logger.log('timer stop');
-      if (this.gameRooms[gameRoom] && this.gameRooms[gameRoom].timerInterval) {
-         clearInterval(this.gameRooms[gameRoom].timerInterval);
-         this.gameRooms[gameRoom].timerInterval = null;
+      const room = this.gameRooms[gameRoom];
+      if (room && room.timerInterval) {
+         clearInterval(room.timerInterval);
+         // return room.timerInterval
+         room.timerInterval = null;
       }
-   };
+   }
+
 
    SendingListUsersEveryone(): void {
       this.io.emit('usersOnline', this.usersOnline); // all users
    };
 
-   searchUser(user: UserData): object | undefined {
-      return Object.values(this.usersOnline).find(userObj =>
-         (userObj as UserData).id === user.id || (userObj as UserData).Nickname === user.Nickname
+   searchUser(user: any): object | undefined {
+      return Object.values(this.usersOnline).find((userObj: any) =>
+         userObj.id === user.id || userObj.Nickname === user.Nickname
       );
-   };
+   }
+
 
    isUserOnline(userId: string): boolean {
-      const value = Object.values(this.usersOnline);
-      for (const userObj of value) {
-         if ((userObj as UserData).id == userId) {
+      const users = Object.values(this.usersOnline);
+
+      for (const userObj of users) {
+         if ('id' in userObj && userObj.id === userId) {
             return true;
          }
-      };
-      return false;
-   };
-
-   //------------------------------------------------------------------------------------------------------------
-
-   flipInvitation(userRival: socketId, userSender: socketId): boolean {
-      const rival: socketId | undefined = this.searchUser(userRival);
-      const sender: socketId | undefined = this.searchUser(userSender);
-
-      if (!rival || !sender || !rival.invitation) {
-         return false;
       }
 
-      this.io.to(rival.socketId).emit('goToGame', { userRival: rival, userSender: sender });
+      return false;
+   }
 
-      this.usersOnline[rival.socketId].invitation = !this.usersOnline[rival.socketId].invitation;
-      this.usersOnline[sender.socketId].invitation = !this.usersOnline[sender.socketId].invitation;
 
-      return true;
+   //------------------------------------------------------------------------------------------------------------
+   // flipInvitation(userRival: SocketUser, userSender: SocketUser): boolean {
+   //    const rival: any = this.searchUser(userRival);
+   //    const sender: any = this.searchUser(userSender);
+
+   //    if (!rival || !sender || !rival.invitation) {
+   //       return false;
+   //    }
+
+   //    this.io.to(rival.socketId).emit('goToGame', { userRival: rival, userSender: sender });
+
+   //    this.usersOnline[rival.socketId].invitation = !this.usersOnline[rival.socketId].invitation;
+   //    this.usersOnline[sender.socketId].invitation = !this.usersOnline[sender.socketId].invitation;
+
+   //    return true;
+   // }
+
+
+   flipInvitation(userRival: SocketUser | undefined = undefined, userSender: SocketUser): void {
+      const rival: any = this.searchUser(userRival);
+      const sender: any = this.searchUser(userSender);
+
+      if (userRival == undefined) {
+         this.usersOnline[sender.socketId].invitation = !this.usersOnline[sender.socketId].invitation;
+      } else {
+         this.usersOnline[sender.socketId].invitation = !this.usersOnline[sender.socketId].invitation;
+         this.usersOnline[rival.socketId].invitation = !this.usersOnline[rival.socketId].invitation;
+      }
    }
 
    // flipInvitation(userRival: UserData, userSender: UserData): boolean {
@@ -290,13 +327,16 @@ class SocketServer {
    //    await writeFileData(newUserData, '../data/data.json')
    // };
 
-   writeBestTime = async (roomId: string, Nickname: string): Promise<void> => {
-      this.Logger.log(this.gameRooms);
-      const bestTime = this.gameRooms[roomId]?.timerInterval;
+   writeBestTime = async (gameRoom: any, Nickname: string): Promise<void> => {
+      const room = this.gameRooms[gameRoom];
+      this.Logger.log(room);
+      const bestTime = room.timerValue;
+      this.Logger.log('writeBestTime');
+      this.Logger.log(bestTime);
 
-      if (!bestTime) {
-         return;
-      };
+      // if (!bestTime) {
+      //    return;
+      // };
 
       const userData = await readFileJson('../data/data.json');
 
@@ -307,13 +347,13 @@ class SocketServer {
                user.time = bestTime;
             }
          }
-         return user;
       });
+      this.Logger.log(userData);
 
-      await writeFileData(updatedUserData, '../data/data.json');
+      // await writeFileData(updatedUserData, '../data/data.json');
    };
 
-   returnUserList = (userRival: socketId, userSender: socketId): void => {
+   returnUserList = (userRival: SocketUser, userSender: SocketUser): void => {
       this.usersOnline[userRival.socketId] = userRival;
       this.usersOnline[userSender.socketId] = userSender;
 
