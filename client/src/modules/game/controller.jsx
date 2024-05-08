@@ -152,6 +152,7 @@ function Lobby() {
          if (cells[index] == '') {
             const updatedCells = [...cells];
             updatedCells[index] = symbol;
+
             setCells(updatedCells);
             socket.emit('stepGame', { sender: { Nickname: userData.Nickname, symbol: symbol }, data, updatedCells });
          }

@@ -10,5 +10,17 @@
     "Nickname": "Fox",
     "password": "$2b$10$CzMhf5VPDS5L9kL5shu/sOiFxV.hL1BA7glKrdUG/UWmq3Hb2C6TO",
     "time": ""
+  },
+  {
+    "id": "6f813fb77f78a5235bd8",
+    "Nickname": "Oleg",
+    "password": "$2b$10$hn6yoyHP5NEKGreO2rr0muoO1oQ/spOlKmfY6MuKCxZUsMSxplG3K",
+    "time": ""
+  },
+  {
+    "id": "f4f411bfbe28db041548",
+    "Nickname": "VALLY",
+    "password": "$2b$10$CxgGiURyGTG7UAjHYZbFMOHr5/iTFcb5o6crf7ktDUUNDm/GI/Z.a",
+    "time": ""
   }
 ]

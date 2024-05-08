@@ -10,7 +10,7 @@ async function sendFormToServer(post, formData, cookies, setCookie) {
       });
       const result = await response.json();
 
-      if (post === '/api/submit_singIn') {
+      if (post === '/submit_singIn') {
 
          return result.error
             ? { result: false, errorMessage: 'Wrong login or password !' }
@@ -25,6 +25,6 @@ async function sendFormToServer(post, formData, cookies, setCookie) {
       console.log(error.message);
       return { result: false, errorMessage: 'An error occurred while sending data' }
    }
-};
+}
 
 export default sendFormToServer

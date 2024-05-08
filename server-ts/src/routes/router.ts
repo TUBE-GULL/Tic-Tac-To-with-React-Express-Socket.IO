@@ -10,7 +10,7 @@ router.use(express.static(getAbsolutePath('../client/dist')));
 router.use(cookieParser());
 
 router.get('/', (req: Request, res: Response) => {
-   res.sendFile(getAbsolutePath('../App/dist/index.html'));
+   res.sendFile(getAbsolutePath('../client/dist/index.html'));
 });
 
 router.post('/submit_singUp', (req: Request, res: Response) => {

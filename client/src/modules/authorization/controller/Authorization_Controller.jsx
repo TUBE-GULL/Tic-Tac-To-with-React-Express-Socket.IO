@@ -29,7 +29,6 @@ function AuthorizationController() {
                   setShowAuthorization(!showAuthorization);
                } else {
                   console.log('The token has expired or there is no token');
-                  // обработать если куки истек !  дать команду на стерении куки 
                   document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
                }
             } catch (error) {
@@ -81,7 +80,7 @@ function AuthorizationController() {
       e.preventDefault();
       // check form 
       if (registering) {//sing in
-         const result = await sendFormToServer('/api/submit_singIn', loginFormData, cookies, setCookie)
+         const result = await sendFormToServer('/submit_singIn', loginFormData, cookies, setCookie)
          if (result.result) {
             setSocketFormData(loginFormData);
             setShowAuthorization(!showAuthorization);
@@ -95,7 +94,7 @@ function AuthorizationController() {
                password: registeringFormData.registerPassword
             };
             // newSocket.emit('sendMessage', formData)
-            const result = await sendFormToServer('/api/submit_singUp', formData, cookies, setCookie);
+            const result = await sendFormToServer('/submit_singUp', formData, cookies, setCookie);
 
             console.log(result)
             if (result.result) {
@@ -143,7 +142,7 @@ function AuthorizationController() {
             <h2>
                {registering ? textSignIn[2] : textSignUp[2]}
                <a onClick={handleToggleForm}>
-                  {registering ? textSignIn[0] : textSignUp[0]}
+                  {registering ? textSignUp[0] : textSignIn[0]}
                </a>
             </h2>
 

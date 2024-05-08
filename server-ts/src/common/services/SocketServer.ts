@@ -48,19 +48,6 @@ class SocketServer {
          });
 
          // invitation the Game
-         //V1 ============================================================================================
-
-         // socket.on('invitationGame', (data): void => {
-
-         //    // this.Logger.log(data);
-         //    // remove the user from invitation access
-         //    const userRival = this.searchUser(data.userRival);
-
-         //    this.io.to((userRival as socketId).socketId).emit('goToGame', { userRival, userSender: this.searchUser(data.userSender) });
-         // });
-
-         //V2 ============================================================================================
-
          socket.on('invitationGame', (data): void => {
 
             // remove the user from invitation access
@@ -105,10 +92,10 @@ class SocketServer {
                   };
 
                   this.gameRooms[userSender.socketId + userRival.socketId] = newGameRoom;
-                  this.io.to(userRival.socketId).emit('startGame', { stepGame: true, Symbol: 'X', data: { userRival, userSender } });
-                  this.io.to(userSender.socketId).emit('startGame', { stepGame: false, Symbol: 'O', data: { userRival, userSender } });
+                  this.io.to(userRival.socketId).emit('startGame', { stepGame: true, Symbol: 'X', data: { userRival, userSender, roomId: (userSender.socketId + userRival.socketId) } });
+                  this.io.to(userSender.socketId).emit('startGame', { stepGame: false, Symbol: 'O', data: { userRival, userSender, roomId: (userSender.socketId + userRival.socketId) } });
                   this.sendTimeRoom(userSender.socketId + userRival.socketId);
-                  this.Logger.log(`join the game ${userRival.socketId} and ${userSender.socketId} `);//room:${room} ???
+                  // this.Logger.log(`join the game ${userRival.socketId} and ${userSender.socketId} `);//room:${room} ???
 
                   //delete list users online
                   delete this.usersOnline[userRival.socketId];
@@ -145,11 +132,31 @@ class SocketServer {
                this.returnUserList(data.userRival, data.userSender);
 
 
+               // this.Logger.log(this.gameRooms);
+               const room: GameRoom = this.gameRooms[data.roomId];
+               // this.Logger.log(room);
+               if (room !== undefined) {
+                  // this.Logger.log(room.timerValue);
+                  this.writeBestTime(room.timerValue, nickName);
+
+               }
+
                //best recording time
                if (isWinner && isWinner != 'nobody') {
-                  this.writeBestTime(data.userSender.socketId + data.userRival.socketId, nickName);
-               };
 
+
+                  // this.writeBestTime(this.gameRooms[data.userSender.socketId + data.userRival.socketId].timerValue, nickName);
+                  // {"_HOJ3K5j6x4LGLJ3AAAP345FMQFEy7XC-05tAAAM":{"userSender":"_HOJ3K5j6x4LGLJ3AAAP","userRival":"345FMQFEy7XC-05tAAAM","timerInterval":null,"timerValue":"00:01:40"}}
+
+
+                  // for (const roomId in this.gameRooms) {
+                  //    const room = this.gameRooms[roomId];
+                  //    if (room.userRival == socketId || room.userSender == socketId) {
+                  //       this.Logger.log(room.timerValue);
+                  //    }
+                  // }
+
+               }
                delete this.gameRooms[data.userSender.socketId + data.userRival.socketId];
             };
 
@@ -167,37 +174,11 @@ class SocketServer {
             }
          });
 
-         // const sendGameResultAndDeleteRoom = async (socketId: string, cells: string[], isWinner: string | boolean) => {
-         //    this.io.to(socketId).emit('gameResult', { Cells: cells, isWinner });
-
-         //    // Stopping the timer
-         //    const roomId = data.userSender.socketId + data.userRival.socketId;
-         //    this.stopTimeRoom(roomId);
-
-         //    // Accessing the best recording time (if necessary)
-         //    const bestTime = this.gameRooms[roomId]?.timerInterval;
-
-         //    // Deleting the game room
-         //    delete this.gameRooms[roomId];
-         //    this.returnUserList(data.userRival, data.userSender);
-
-         //    // Update user data with best time (if necessary)
-         //    if (bestTime) {
-         //       const userData = await readFileJson('../data/data.json');
-         //       const userIndex = userData.findIndex((user: UserData) => user.Nickname === socketId);
-         //       if (userIndex !== -1 && userData[userIndex].time < bestTime) {
-         //          userData[userIndex].time = bestTime;
-         //          await writeFileData(userData);
-         //       }
-         //    }
-         // };
-
          socket.on('disconnect', () => {
             this.disconnect(socket);
          });
       });
    };
-
 
    sendTimeRoom(gameRoom: string): void {
       const room = this.gameRooms[gameRoom];
@@ -207,7 +188,7 @@ class SocketServer {
       if (room) {
          room.timerInterval = setInterval(() => {
             const timeString = timerForGame();
-            // Сохраняем значение времени в объекте gameRoom
+
             room.timerValue = timeString;
             this.io.to(room.userRival).emit('timerUpdate', timeString);
             this.io.to(room.userSender).emit('timerUpdate', timeString);
@@ -215,24 +196,8 @@ class SocketServer {
       }
    }
 
-   // sendTimeRoom(gameRoom: string): void {
-   //    const room = this.gameRooms[gameRoom];
-   //    if (room && room.timerInterval) {
-   //       clearInterval(room.timerInterval);
-   //    }
-   //    if (room) {
-   //       room.timerInterval = setInterval(() => {
-   //          const timeString = timerForGame();
-   //          // this.Logger.log(timeString);
-   //          this.gameRooms[gameRoom].timerInterval = timeString
-   //          this.io.to(room.userRival).emit('timerUpdate', timeString);
-   //          this.io.to(room.userSender).emit('timerUpdate', timeString);
-   //       }, 100);
-   //    }
-   // }
-
    stopTimeRoom(gameRoom: string): void {
-      this.Logger.log('timer stop');
+      // this.Logger.log('timer stop');
       const room = this.gameRooms[gameRoom];
       if (room && room.timerInterval) {
          clearInterval(room.timerInterval);
@@ -250,8 +215,7 @@ class SocketServer {
       return Object.values(this.usersOnline).find((userObj: any) =>
          userObj.id === user.id || userObj.Nickname === user.Nickname
       );
-   }
-
+   };
 
    isUserOnline(userId: string): boolean {
       const users = Object.values(this.usersOnline);
@@ -263,7 +227,7 @@ class SocketServer {
       }
 
       return false;
-   }
+   };
 
 
    //------------------------------------------------------------------------------------------------------------
@@ -327,12 +291,10 @@ class SocketServer {
    //    await writeFileData(newUserData, '../data/data.json')
    // };
 
-   writeBestTime = async (gameRoom: any, Nickname: string): Promise<void> => {
-      const room = this.gameRooms[gameRoom];
-      this.Logger.log(room);
-      const bestTime = room.timerValue;
-      this.Logger.log('writeBestTime');
-      this.Logger.log(bestTime);
+   writeBestTime = async (bestTime: string, Nickname: string): Promise<void> => {
+
+      this.Logger.log('writeBestTime')
+      this.Logger.log(bestTime)
 
       // if (!bestTime) {
       //    return;
@@ -341,16 +303,20 @@ class SocketServer {
       const userData = await readFileJson('../data/data.json');
 
       this.Logger.log(userData);
-      const updatedUserData = userData.map((user: UserData) => {
-         if (user.Nickname === Nickname) {
-            if (!user.time || user.time < bestTime) {
-               user.time = bestTime;
-            }
+      const index = userData.findIndex((user: UserData) => user.Nickname === Nickname);
+      this.Logger.log(index);
+
+      if (index !== -1) {
+         const user = userData[index];
+         if (!user.time || user.time < bestTime) {
+            user.time = bestTime;
+            userData[index] = user;
          }
-      });
+      }
+
       this.Logger.log(userData);
 
-      // await writeFileData(updatedUserData, '../data/data.json');
+      await writeFileData(userData, '../data/data.json');
    };
 
    returnUserList = (userRival: SocketUser, userSender: SocketUser): void => {
@@ -379,7 +345,7 @@ class SocketServer {
    };
 
    disconnect(socket: Socket): void {
-      this.Logger.log('User disconnected: ' + socket.id);
+      // this.Logger.log('User disconnected: ' + socket.id);
       delete this.usersOnline[socket.id];
       this.SendingListUsersEveryone();
       this.leaveRoomGame(socket.id, this.gameRooms)
