@@ -113,6 +113,7 @@ function Lobby() {
          setTimer(time)
       }
 
+      socket.on('resetSingIn', switchOff);
       Socket.on('timerUpdate', timerUpdate)
       Socket.on('invitationUser', invitationUser);
       Socket.on('gameCancelled', rejected)//?
@@ -123,11 +124,11 @@ function Lobby() {
       Socket.on('rejected', rejected);
       Socket.on('startGame', startGame);
       Socket.on('goToGame', noticeGoGame);
-      Socket.on('undefined', switchOff);
       Socket.on('userFormData', updateUserData);
       Socket.on('usersOnline', updateListUsers);
       Socket.on('sendEveryoneMessage', updateMessages);
       return () => {
+         socket.off('resetSingIn', switchOff);
          Socket.off('timerUpdate', timerUpdate)
          Socket.off('invitationUser', invitationUser);
          Socket.off('gameCancelled', rejected)//?
@@ -138,7 +139,6 @@ function Lobby() {
          Socket.off('rejected', rejected);
          Socket.off('startGame', noticeGoGame);
          Socket.off('goToGame', noticeGoGame);
-         Socket.off('undefined', switchOff);
          Socket.off('userFormData', updateUserData);
          Socket.off('usersOnline', updateListUsers);
          Socket.off('sendEveryoneMessage', updateMessages);

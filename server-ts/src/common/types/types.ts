@@ -1,9 +1,5 @@
 //export Interfaces !!! ================================================
 
-export interface UsersOnline {
-   [socketId: string]: SocketUser;
-}
-
 export interface GameRoom {
    userSender: string;
    userRival: string;
@@ -11,12 +7,11 @@ export interface GameRoom {
    timerValue: string;
 }
 
-export interface UserCommon {
-   id?: string;
-   Nickname?: string;
+export interface UsersOnline {
+   [socketId: string]: UserOnline;
 }
 
-export interface SocketUser {
+export interface UserOnline {
    socketId: string;
    Nickname: string;
    Time: string;

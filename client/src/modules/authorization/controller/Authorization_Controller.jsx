@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { useCookies } from 'react-cookie';
 
 //modules
@@ -149,6 +149,6 @@ function AuthorizationController() {
          </form>
       </div>
    )
-};
+}
 
 export default AuthorizationController
