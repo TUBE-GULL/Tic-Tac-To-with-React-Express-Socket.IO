@@ -24,7 +24,7 @@ function LobbyList({ user, users, onButtonClick }) {
             </div>
             {userList.map(us => (
                us.Nickname !== user.Nickname ? (
-                  <button className='ProfileButton' key={us.id} onClick={() => onButtonClick(us.id, us.Nickname, us.Time)}>
+                  <button className='ProfileButton' key={us.id} onClick={() => onButtonClick(us.socketId, us.id, us.Nickname, us.Time)}>
                      <div className='Profile'>
                         <h2>{`${us.Nickname}, ${searchTime(us.Time)}`}</h2>
                      </div>

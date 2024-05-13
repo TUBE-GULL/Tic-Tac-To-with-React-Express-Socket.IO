@@ -2,6 +2,7 @@ import './Lobby.scss'
 import React, { useContext, useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import { EntranceLobby } from '../../App';
+// import { useCookies } from 'react-cookie'; 
 
 //modules
 import LobbyChat from './components/chat/LobbyChat';
@@ -11,6 +12,7 @@ import GameFiled from './components/game/GameFiled';
 export const StartGame = React.createContext()
 function Lobby() {
    const { showAuthorization, setShowAuthorization, } = useContext(EntranceLobby);
+   // const [cookies, setCookie, removeCookie] = useCookies(['authToken']);
    const [inGame, setInGame] = useState(false);
    const [socket, setSocket] = useState(null);
    const [userData, setUserData] = useState('');
@@ -30,11 +32,17 @@ function Lobby() {
       const switchOff = () => {
          console.log('undefined')
          setShowAuthorization(!showAuthorization);
+         // removeCookie('authToken');
+         // document.cookie = authToken + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
       };
 
       const updateUserData = (user) => {
-         Socket.emit('userData', user);
-         setUserData(user);
+         if (typeof user == 'object') {
+            Socket.emit('userData', user);
+            setUserData(user);
+         } else {
+            switchOff();
+         }
       };
 
       const updateListUsers = (users) => {
@@ -113,10 +121,10 @@ function Lobby() {
          setTimer(time)
       }
 
-      socket.on('resetSingIn', switchOff);
-      Socket.on('timerUpdate', timerUpdate)
+      // socket.on('resetSingIn', switchOff);
+      Socket.on('timerUpdate', timerUpdate);
       Socket.on('invitationUser', invitationUser);
-      Socket.on('gameCancelled', rejected)//?
+      Socket.on('gameCancelled', rejected);//?
       Socket.on('opponentRanAway', opponentRanAway);
       Socket.on('leaveGame', leaveGame);
       Socket.on('gameResult', gameResult);
@@ -128,7 +136,7 @@ function Lobby() {
       Socket.on('usersOnline', updateListUsers);
       Socket.on('sendEveryoneMessage', updateMessages);
       return () => {
-         socket.off('resetSingIn', switchOff);
+         // socket.off('resetSingIn', switchOff);
          Socket.off('timerUpdate', timerUpdate)
          Socket.off('invitationUser', invitationUser);
          Socket.off('gameCancelled', rejected)//?
@@ -174,8 +182,9 @@ function Lobby() {
       });
    };
 
-   const handleButtonClick = (userId, userNickname, userTime) => {
+   const handleButtonClick = (socketId, userId, userNickname, userTime) => {
       const userRival = {
+         socketId,
          id: userId,
          Nickname: userNickname,
          time: userTime,

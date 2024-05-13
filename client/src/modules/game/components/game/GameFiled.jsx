@@ -11,16 +11,16 @@ function GameFiled({ clickCell, data, time }) {
       <div className="gameFiled">
          <div className="inform">
             <div className="informLeft">
-               <h3 className="userLeftUserName">{data.userSender.Nickname} symbol:{data.userSender.Symbol}</h3>
-               <p className="userLeftUserTime">{`Best time: ${data.userSender.Time === '' ? '00:00' : data.userSender.Time}`}</p>
+               <h3 className="userLeftUserName">{data.Sender.Nickname} symbol:{data.Sender.Symbol}</h3>
+               <p className="userLeftUserTime">{`Best time: ${data.Sender.Time === '' ? '00:00' : data.userSender.Time}`}</p>
             </div>
             <div className="informTimers">
                <h2>Timer</h2>
                <p className="timer">{time}</p>
             </div>
             <div className="informRight">
-               <h3 className="userRightUserName">{data.userRival.Nickname} symbol:{data.userRival.Symbol}</h3>
-               <p className="userRightUserTime">{`Best time: ${data.userRival.Time === '' ? '00:00' : data.userRival.Time}`}</p>
+               <h3 className="userRightUserName">{data.Rival.Nickname} symbol:{data.Rival.Symbol}</h3>
+               <p className="userRightUserTime">{`Best time: ${data.Rival.Time === '' ? '00:00' : data.userRival.Time}`}</p>
             </div>
          </div>
          <table className="gameTable">

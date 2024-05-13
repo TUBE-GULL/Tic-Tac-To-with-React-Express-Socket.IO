@@ -1,8 +1,8 @@
 //export Interfaces !!! ================================================
 
 export interface GameRoom {
-   userSender: string;
-   userRival: string;
+   Sender: string;
+   Rival: string;
    timerInterval: NodeJS.Timeout | null;
    timerValue: string;
 }
@@ -13,17 +13,20 @@ export interface UsersOnline {
 
 export interface UserOnline {
    socketId: string;
+   id: string | number;
    Nickname: string;
    Time: string;
    invitation: boolean;
 }
 
-export interface UserData {
-   id: string | number;
-   Nickname: string;
-   password?: string | number;
-   time: string;
-   invitation?: boolean;
+export interface UserGame extends UserOnline {
+   Symbol: string;
+   stepGame: boolean;
+}
+
+export interface UsersData {
+   Rival: UserOnline;
+   Sender: UserOnline;
 }
 
 export interface FormData {

@@ -1,6 +1,6 @@
 async function sendFormToServer(post, formData, cookies, setCookie) {
    try {
-      const response = await fetch(`${post}`, {
+      const response = await fetch(`http://localhost:8080${post}`, {
          method: 'POST',
          headers: {
             'Content-Type': 'application/json',
