@@ -30,7 +30,6 @@ function Lobby() {
       setSocket(Socket);
 
       const switchOff = () => {
-         console.log('undefined')
          setShowAuthorization(!showAuthorization);
          // removeCookie('authToken');
          // document.cookie = authToken + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
@@ -53,34 +52,6 @@ function Lobby() {
       };
 
       const noticeGoGame = (usersData) => {
-         // const handleInvitationResult = (result) => {
-         // Socket.emit('resultInvitationToGame', { result, usersData })
-         // setUserBusy(result);
-         // }
-         // 
-         // if (userBusy) {
-         // const confirmation = window.confirm('Want to jump into the game?')
-         // handleInvitationResult(confirmation)
-         // } else {
-         // console.log('userBusy')
-         // Socket.emit('userBusy', { usersData })
-         // }
-
-         // if (!userBusy) {
-         //    if (window.confirm('Want to jump into the game?')) {
-         //       Socket.emit('resultInvitationToGame', { result: true, usersData })
-         //       setUserBusy(true);
-         //    }
-         //    else {
-         //       Socket.emit('resultInvitationToGame', { result: false, usersData })
-         //       setUserBusy(false);
-         //    }
-         // } else {
-         //    console.log('user Busy')
-         //    Socket.emit('userBusy', { usersData })
-         // }
-
-
          window.confirm('Want to jump into the game?')
             ? Socket.emit('resultInvitationToGame', { result: true, usersData })
             : Socket.emit('resultInvitationToGame', { result: false, usersData })
@@ -89,7 +60,6 @@ function Lobby() {
       const startGame = ({ stepGame, Symbol, data }) => {
          setStepGame(stepGame)
          setData(data);
-         console.log(data)
          setSymbol(Symbol);
          setInGame(true);
       };
@@ -145,7 +115,7 @@ function Lobby() {
          Socket.off('victory', gameResult);
          Socket.off('updateCells', updateCells);
          Socket.off('rejected', rejected);
-         Socket.off('startGame', noticeGoGame);
+         Socket.off('startGame', startGame);
          Socket.off('goToGame', noticeGoGame);
          Socket.off('userFormData', updateUserData);
          Socket.off('usersOnline', updateListUsers);
@@ -157,10 +127,10 @@ function Lobby() {
    // Game choice user 
    const clickCell = (index) => {
       if (stepGame) {
+         console.log('click');
          if (cells[index] == '') {
             const updatedCells = [...cells];
             updatedCells[index] = symbol;
-
             setCells(updatedCells);
             socket.emit('stepGame', { sender: { Nickname: userData.Nickname, symbol: symbol }, data, updatedCells });
          }
@@ -178,29 +148,28 @@ function Lobby() {
       socket.emit('sendMessage', {
          message: message,
          userName: userData.Nickname,
-         userTime: userData.time
+         userTime: userData.Time
       });
    };
 
    const handleButtonClick = (socketId, userId, userNickname, userTime) => {
-      const userRival = {
+      const Rival = {
          socketId,
          id: userId,
          Nickname: userNickname,
-         time: userTime,
+         Time: userTime,
       }
 
       if (buttonClick) {
-         socket.emit('invitationGame', { userSender: userData, userRival: userRival });
+         socket.emit('invitationGame', { userSender: userData, userRival: Rival });
          // setButtonClick(!buttonClick);/////!!!!!!!
       } else {
          alert('Ждем ответа !!!')
       }
    };
 
-   //in process !
    const leaveGame = () => {
-      socket.emit('leaveGame', { userRival: data.userRival, userSender: data.userSender });
+      socket.emit('leaveGame', { Rival: data.userRival, Sender: data.userSender });
       setInGame(false);
    };
 
@@ -216,3 +185,31 @@ function Lobby() {
 }
 
 export default Lobby;
+
+
+// const handleInvitationResult = (result) => {
+// Socket.emit('resultInvitationToGame', { result, usersData })
+// setUserBusy(result);
+// }
+//
+// if (userBusy) {
+// const confirmation = window.confirm('Want to jump into the game?')
+// handleInvitationResult(confirmation)
+// } else {
+// console.log('userBusy')
+// Socket.emit('userBusy', { usersData })
+// }
+
+// if (!userBusy) {
+//    if (window.confirm('Want to jump into the game?')) {
+//       Socket.emit('resultInvitationToGame', { result: true, usersData })
+//       setUserBusy(true);
+//    }
+//    else {
+//       Socket.emit('resultInvitationToGame', { result: false, usersData })
+//       setUserBusy(false);
+//    }
+// } else {
+//    console.log('user Busy')
+//    Socket.emit('userBusy', { usersData })
+// }

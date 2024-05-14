@@ -11,11 +11,14 @@ export interface UsersOnline {
    [socketId: string]: UserOnline;
 }
 
-export interface UserOnline {
-   socketId: string;
+export interface UserData {
    id: string | number;
    Nickname: string;
    Time: string;
+}
+
+export interface UserOnline extends UserData {
+   socketId: string;
    invitation: boolean;
 }
 

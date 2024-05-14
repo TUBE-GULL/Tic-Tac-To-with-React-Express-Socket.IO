@@ -1,18 +1,15 @@
 import './gameFiled.module.scss'
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { StartGame } from '../../controller';
 
 function GameFiled({ clickCell, data, time }) {
    const { cells } = useContext(StartGame);
-   // const [leftUserTime, setLeftUserTime] = useState('00:00:00');
-   // const [rightUserTime, setRightUserTime] = useState('00:00:00');
-
    return (
       <div className="gameFiled">
          <div className="inform">
             <div className="informLeft">
                <h3 className="userLeftUserName">{data.Sender.Nickname} symbol:{data.Sender.Symbol}</h3>
-               <p className="userLeftUserTime">{`Best time: ${data.Sender.Time === '' ? '00:00' : data.userSender.Time}`}</p>
+               <p className="userLeftUserTime">{`Best time: ${data.Sender.Time === '' ? '00:00' : data.Sender.Time}`}</p>
             </div>
             <div className="informTimers">
                <h2>Timer</h2>
@@ -20,7 +17,7 @@ function GameFiled({ clickCell, data, time }) {
             </div>
             <div className="informRight">
                <h3 className="userRightUserName">{data.Rival.Nickname} symbol:{data.Rival.Symbol}</h3>
-               <p className="userRightUserTime">{`Best time: ${data.Rival.Time === '' ? '00:00' : data.userRival.Time}`}</p>
+               <p className="userRightUserTime">{`Best time: ${data.Rival.Time === '' ? '00:00' : data.Rival.Time}`}</p>
             </div>
          </div>
          <table className="gameTable">

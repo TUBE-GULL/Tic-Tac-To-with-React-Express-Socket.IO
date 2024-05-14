@@ -20,7 +20,7 @@ function LobbyList({ user, users, onButtonClick }) {
          <h1 className="listLobbyH1">Users Online</h1>
          <div className="UsersList">
             <div className='Profile'>
-               <h2>{`${user.Nickname},${searchTime(user.time)}`}</h2>
+               <h2>{`${user.Nickname},${searchTime(user.Time)}`}</h2>
             </div>
             {userList.map(us => (
                us.Nickname !== user.Nickname ? (

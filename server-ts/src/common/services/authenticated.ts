@@ -28,7 +28,7 @@ class Authenticated {
       return {
          id: dataUs.id,
          Nickname: dataUs.Nickname,
-         time: dataUs.time,
+         Time: dataUs.Time,
       }
    };
 
@@ -107,7 +107,7 @@ class Authenticated {
             id: await tokenGeneration(10),
             Nickname: formData.Nickname,
             password: hashedPassword,
-            time: ''
+            Time: ''
          };
          userData.push(newUser);
          await writeFileJson(userData, '../data/data.json');

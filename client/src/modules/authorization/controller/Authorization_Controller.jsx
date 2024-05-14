@@ -24,7 +24,7 @@ function AuthorizationController() {
          const authToken = cookies.authToken;
          if (authToken) {
             try {
-               const result = await sendCookieToServer('/api/submit_singIn', authToken, cookies, setCookie);
+               const result = await sendCookieToServer('/submit_singIn', authToken, cookies, setCookie);
                if (result) {
                   setShowAuthorization(!showAuthorization);
                } else {
