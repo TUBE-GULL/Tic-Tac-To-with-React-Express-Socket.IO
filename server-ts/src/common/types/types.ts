@@ -1,10 +1,15 @@
 //export Interfaces !!! ================================================
 
 export interface GameRoom {
-   Sender: string;
-   Rival: string;
+   Sender: gameUser;
+   Rival: gameUser;
    timerInterval: NodeJS.Timeout | null;
    timerValue: string;
+}
+
+interface gameUser extends UserOnline {
+   stepGame: boolean,
+   Symbol: string,
 }
 
 export interface UsersOnline {

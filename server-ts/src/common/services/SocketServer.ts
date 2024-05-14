@@ -23,21 +23,18 @@ class SocketServer {
       this.initializeSocketEvents();
    };
 
-   // my crutch function for send in socket data from express 🫠
-   formDataUser(user: UserData): void {
-      // this.Logger.log('formDataUser');
-      this.io.on('connection', (socket: Socket) => {
-         this.io.to(socket.id).emit('userFormData', user);
-      });
-   };
-
    //main function
    initializeSocketEvents(): void {
-      // this.Logger.log('connection: ' + socket.id);
       this.io.on('connection', (socket: Socket) => {
+         // this.Logger.log('connection: ' + socket.id);S
+         socket.emit('connectUser');
 
          //send in client data 
          socket.on('userData', (user: UserData): void => {
+            this.Logger.log(user)
+            this.Logger.log(this.usersOnline)
+            // this.Logger.log(this.gameRooms)  
+
             const userId = user.id;
             if (!this.checkUserOnline(userId)) {
                const userOnline: UserOnline = {
@@ -47,11 +44,11 @@ class SocketServer {
                   Time: user.Time,
                   invitation: true
                }
+
                this.usersOnline[userId] = userOnline;
                this.sendAllModifiedListUserOnline();
             } else {
                // add function send sing in 
-               // this.Logger.log('connection: undefined');
                this.io.to(socket.id).emit('resetSingIn');
             }
          });
@@ -61,42 +58,26 @@ class SocketServer {
             this.io.emit('sendEveryoneMessage', message);
          });
 
-         //V1  first part functions for game
          socket.on('invitationGame', ({ userSender, userRival }): void => {
-
-            // remove the user from invitation access
-            if (!this.searchUser(userRival) && !this.searchUser(userSender)) {
-               this.io.to(userSender.socketId).emit('invitationUser', false);
-               return
-            };
-
             const Sender: UserOnline | undefined = this.searchUser(userSender);
             const Rival: UserOnline | undefined = this.searchUser(userRival);
 
-            // if (Sender !== undefined && Rival === undefined) {
-            //    /// ADD
-            //    this.io.to(Sender.socketId).emit('invitationUser', true);
-            // };
-            // if (Sender === undefined && Rival !== undefined) {
-            //    /// ADD
-            //    this.io.to(Rival.socketId).emit('invitationUser', true);
-            // };
 
-            if (Sender && Rival) {
-               if (userSender.invitation) {
-                  this.Logger.log(this.usersOnline[Sender.socketId].invitation)
-                  this.usersOnline[Sender.socketId].invitation = false;
-                  this.usersOnline[Rival.socketId].invitation = false;
-               }
+            if (Sender != undefined && Rival != undefined) {
+               this.usersOnline[Sender.id].invitation = false;
+               this.usersOnline[Rival.id].invitation = false;
+
+               //locked on invitation and invite
+               this.waitInvitation(Rival.socketId, Sender.socketId, false)
+               // this.io.to(Rival.socketId).emit('waitInvitation', false);
+               // this.io.to(Sender.socketId).emit('waitInvitation', false);
                this.io.to(Rival.socketId).emit('goToGame', { Rival, Sender })
-            } else {
-               if (Sender) {
-                  this.io.to(Sender.socketId).emit('invitationUser', false);
-               };
-            };
+            }
+            if (Rival == undefined) {
+               this.io.to(userSender.socketId).emit('invitationUser', { answer: false, sms: 'he/she is not online' });
+            }
          });
 
-         //V2 second part function for game 
          socket.on('resultInvitationToGame', ({ result, usersData }): void => {
             // this.Logger.log(usersData);
 
@@ -117,15 +98,23 @@ class SocketServer {
                if (result) {
                   const roomId = Sender.socketId + Rival.socketId;
                   const newGameRoom: GameRoom = {
-                     Sender: Sender.socketId,
-                     Rival: Rival.socketId,
+                     Sender: { ...Sender, stepGame: true, Symbol: 'X' },
+                     Rival: { ...Rival, stepGame: false, Symbol: 'O' },
                      timerInterval: null,
                      timerValue: '',
                   };
 
                   this.gameRooms[roomId] = newGameRoom;
-                  this.io.to(Rival.socketId).emit('startGame', { stepGame: true, Symbol: 'X', data: { Sender, Rival, roomId } })
-                  this.io.to(Sender.socketId).emit('startGame', { stepGame: false, Symbol: 'O', data: { Sender, Rival, roomId } })
+                  this.io.to(Rival.socketId).emit('startGame', {
+                     stepGame: newGameRoom.Sender.stepGame,
+                     Symbol: newGameRoom.Sender.Symbol,
+                     data: { Sender, Rival, roomId }
+                  });
+                  this.io.to(Sender.socketId).emit('startGame', {
+                     stepGame: newGameRoom.Rival.stepGame,
+                     Symbol: newGameRoom.Rival.Symbol,
+                     data: { Sender, Rival, roomId }
+                  });
                   this.sendTimeRoom(roomId);
 
                   //delete list users online
@@ -134,6 +123,9 @@ class SocketServer {
                   this.sendAllModifiedListUserOnline();
 
                   //result false
+               } else {
+                  this.waitInvitation(Rival.socketId, Sender.socketId, true)
+                  this.io.to(Sender.socketId).emit('invitationUser', { answer: false, sms: 'he/she is busy' });
                }
             } else {
                this.Logger.error('userRival or userSearch undefined');
@@ -189,15 +181,20 @@ class SocketServer {
          });
       });
    };
+
    // mailing to everyone  about adding/removing  a new user
    private sendAllModifiedListUserOnline(): void {
       this.io.emit('usersOnline', this.usersOnline); // all users
    };
 
-   private returnUserList = (userRival: UserOnline, userSender: UserOnline): void => {
-      this.usersOnline[userRival.socketId] = userRival;
-      this.usersOnline[userSender.socketId] = userSender;
+   private waitInvitation(socketIdR: string, socketIdS: string, answer: boolean): void {
+      this.io.to(socketIdR).emit('waitInvitation', answer);
+      this.io.to(socketIdS).emit('waitInvitation', answer);
+   };
 
+   private returnUserList = (userRival: UserOnline, userSender: UserOnline): void => {
+      // this.usersOnline[userRival.socketId] = userRival;
+      // this.usersOnline[userSender.socketId] = userSender;
       this.sendAllModifiedListUserOnline();
    };
 
@@ -238,8 +235,8 @@ class SocketServer {
             const timeString = timerForGame();
 
             room.timerValue = timeString;
-            this.io.to(room.Rival).emit('timerUpdate', timeString);
-            this.io.to(room.Sender).emit('timerUpdate', timeString);
+            this.io.to(room.Rival.socketId).emit('timerUpdate', timeString);
+            this.io.to(room.Sender.socketId).emit('timerUpdate', timeString);
          }, 100);
       }
    };
@@ -278,8 +275,8 @@ class SocketServer {
 
       if (disconnectUser) {
          delete this.usersOnline[disconnectUser.id];
-         this.sendAllModifiedListUserOnline();
       };
+      this.sendAllModifiedListUserOnline();
       this.leaveRoomGame(socket.id, this.gameRooms)
    };
 };

@@ -19,7 +19,7 @@ class Authenticated {
    constructor(SocketServer: SocketServer, Logger: Logger) {
       this.logger = Logger;
       this.SocketServer = SocketServer;
-   }
+   };
 
    exportUserData(user: JwtPayload): UserData {
 
@@ -29,7 +29,7 @@ class Authenticated {
          id: dataUs.id,
          Nickname: dataUs.Nickname,
          Time: dataUs.Time,
-      }
+      };
    };
 
    checkUserFirstsName(formData: FormData): boolean {
@@ -57,9 +57,9 @@ class Authenticated {
             const token = tokenService.generateCookieToken({ id: user.id });
             tokenService.writeCookieData(token.accessToken);//     ?
 
-            this.SocketServer.formDataUser(user);
+            // this.SocketServer.formDataUser(user);
             res.cookie('authToken', token);
-            res.json({ success: true });
+            res.json({ success: true, userData: user });
          } else {
             res.status(401).json({ success: false, error: 'Wrong login or password !' });
          }
@@ -73,8 +73,8 @@ class Authenticated {
       try {
          const user = tokenService.validateAccessToken(authToken);
          if (user != null) {
-            this.SocketServer.formDataUser(this.exportUserData(user as JwtPayload));
-            res.json({ success: true });
+            // this.SocketServer.formDataUser(this.exportUserData(user as JwtPayload));
+            res.json({ success: true, userData: this.exportUserData(user as JwtPayload) });
          } else {
             this.logger.log('token null')
             res.json({ success: false });
