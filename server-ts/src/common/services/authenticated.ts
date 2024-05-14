@@ -9,7 +9,6 @@ import writeFileJson from '../modules/writeFileJson.js';
 import tokenGeneration from '../modules/tokenGeneration.js';
 import SocketServer from './SocketServer.js';
 
-
 const userData = await readFileJson('../data/data.json');
 
 class Authenticated {
