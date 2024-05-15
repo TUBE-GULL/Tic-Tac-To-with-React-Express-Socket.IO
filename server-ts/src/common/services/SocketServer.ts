@@ -169,6 +169,7 @@ class SocketServer {
                const isSenderWinner = sender.symbol === data.Sender.Symbol;
                sendGameResultAndDeleteRoom(data.Sender.Nickname, data.Sender.socketId, updatedCells, !isSenderWinner);
                sendGameResultAndDeleteRoom(data.Rival.Nickname, data.Rival.socketId, updatedCells, isSenderWinner);
+               this.waitInvitation(data.Rival.socketId, data.Sender.socketId, true)
 
                if (!isSenderWinner) {
                   this.writeBestTime(room, data.Sender.Nickname)
@@ -178,6 +179,7 @@ class SocketServer {
             } else if (updatedCells.every((el: string) => el !== '')) {
                sendGameResultAndDeleteRoom('nobody', data.Sender.socketId, updatedCells, 'nobody');
                sendGameResultAndDeleteRoom('nobody', data.Rival.socketId, updatedCells, 'nobody');
+               this.waitInvitation(data.Rival.socketId, data.Sender.socketId, true)
                // this.returnUserList(data.userSender.socketId, data.userRival.socketId);
             }
          });

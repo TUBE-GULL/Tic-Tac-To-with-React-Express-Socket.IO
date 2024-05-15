@@ -2,20 +2,17 @@ import './Lobby.scss'
 import React, { useContext, useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import { EntranceLobby } from '../../App';
-// import { useCookies } from 'react-cookie'; 
 
 //modules
 import LobbyChat from './components/chat/LobbyChat';
 import LobbyList from './components/list/LobbyList';
 import GameFiled from './components/game/GameFiled';
+export const StartGame = React.createContext();
 
-export const StartGame = React.createContext()
 function Lobby() {
    const { userData } = useContext(EntranceLobby);
-   // const [cookies, setCookie, removeCookie] = useCookies(['authToken']);
    const [inGame, setInGame] = useState(false);
    const [socket, setSocket] = useState(null);
-   // const [userData, setUserData] = useState('');
    const [usersData, setUsersData] = useState('');
    const [messages, setMessages] = useState([]);
    const [data, setData] = useState('');
@@ -32,16 +29,6 @@ function Lobby() {
       Socket.on('connectUser', () => {
          Socket.emit('userData', userData);
       });
-
-      // Socket.on('disconnect', () => {
-      //    console.log('Socket disconnected');
-      // });
-
-      // const switchOff = () => {
-      //    setShowAuthorization(!showAuthorization);
-      //    // removeCookie('authToken');
-      //    // document.cookie = authToken + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-      // };
 
       const updateListUsers = (users) => {
          setUsersData(users);
@@ -116,7 +103,6 @@ function Lobby() {
       Socket.on('rejected', rejected);
       Socket.on('startGame', startGame);
       Socket.on('goToGame', noticeGoGame);
-      // Socket.on('userFormData', updateUserData);
       Socket.on('usersOnline', updateListUsers);
       Socket.on('sendEveryoneMessage', updateMessages);
       return () => {
@@ -131,7 +117,6 @@ function Lobby() {
          Socket.off('rejected', rejected);
          Socket.off('startGame', startGame);
          Socket.off('goToGame', noticeGoGame);
-         // Socket.off('userFormData', updateUserData);
          Socket.off('usersOnline', updateListUsers);
          Socket.off('sendEveryoneMessage', updateMessages);
          Socket.close();
@@ -196,31 +181,3 @@ function Lobby() {
 }
 
 export default Lobby;
-
-
-// const handleInvitationResult = (result) => {
-// Socket.emit('resultInvitationToGame', { result, usersData })
-// setUserBusy(result);
-// }
-//
-// if (userBusy) {
-// const confirmation = window.confirm('Want to jump into the game?')
-// handleInvitationResult(confirmation)
-// } else {
-// console.log('userBusy')
-// Socket.emit('userBusy', { usersData })
-// }
-
-// if (!userBusy) {
-//    if (window.confirm('Want to jump into the game?')) {
-//       Socket.emit('resultInvitationToGame', { result: true, usersData })
-//       setUserBusy(true);
-//    }
-//    else {
-//       Socket.emit('resultInvitationToGame', { result: false, usersData })
-//       setUserBusy(false);
-//    }
-// } else {
-//    console.log('user Busy')
-//    Socket.emit('userBusy', { usersData })
-// }

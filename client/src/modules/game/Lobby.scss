@@ -128,6 +128,11 @@
          text-align: center;
          font-family: 'Press Start 2P', system-ui;
 
+
+         .contentChat {
+            padding: 10px;
+         }
+
          .buttonSmaile {
             width: 4%;
             height: 34px;
@@ -140,7 +145,7 @@
          }
 
          .InputChat {
-            width: 80%;
+            width: 70%;
             height: 30px;
             background: rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.5);
@@ -151,7 +156,7 @@
 
          .buttonChat,
          .ProfileButton {
-            width: 10%;
+            width: 20%;
             height: 34px;
             background: rgba(255, 255, 255, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -196,11 +201,11 @@
 .gameFiled {
    width: 100%;
    height: 100%;
+   overflow: hidden;
    padding: 0;
    margin: 0;
    display: flex;
    flex-direction: column;
-
    color: #fff;
    font-family: 'Press Start 2P', system-ui;
 
@@ -211,7 +216,7 @@
       justify-content: space-between;
 
       .timers {
-         font-size: 20px;
+         font-size: 16px;
          text-align: center;
          background: rgba(255, 255, 255, 0.2);
          box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
@@ -236,7 +241,7 @@
 
          h3 {
             margin: 0;
-            font-size: 20px;
+            font-size: 16px;
          }
       }
    }
@@ -259,4 +264,101 @@
 
 .ProfileButton:active {
    background: rgba(255, 255, 255, 0.2);
+}
+
+@media (max-width: 560px) {
+   .gameFiled {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      color: #fff;
+      font-family: 'Press Start 2P', system-ui;
+
+      .inform {
+         width: 100%;
+         height: 15%;
+         margin: 0 auto;
+         display: flex;
+         justify-content: space-between;
+
+         .timers {
+            font-size: 15px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+         }
+
+         .informRight,
+         .informLeft,
+         .informTimers {
+            width: 30%;
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            margin: 0;
+            padding: 0;
+         }
+
+         .informTimers {
+            width: 25%;
+
+
+            h2 {
+               font-size: 17px;
+            }
+
+            .timer {
+               font-size: 12px;
+            }
+         }
+
+         .informRight {
+            margin-right: 1%;
+         }
+
+         ;
+
+         .informLeft {
+            margin-left: 1%;
+         }
+
+         .informRight,
+         .informLeft {
+            padding: 5px;
+            max-width: 25%;
+
+            h3 {
+               font-size: 13px;
+
+            }
+
+            .userRightUserTime,
+            .userLeftUserTime {
+               font-size: 12px;
+            }
+         }
+
+         .inform_user {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+
+            h3 {
+               margin: 0;
+               font-size: 14px;
+            }
+         }
+      }
+
+      .gameTable {
+         margin-top: 10%;
+         margin: 0 auto;
+      }
+   }
 }
