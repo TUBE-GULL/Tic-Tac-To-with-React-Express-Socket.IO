@@ -11,11 +11,11 @@ import GameFiled from './components/game/GameFiled';
 
 export const StartGame = React.createContext()
 function Lobby() {
-   const { showAuthorization, setShowAuthorization, } = useContext(EntranceLobby);
+   const { userData } = useContext(EntranceLobby);
    // const [cookies, setCookie, removeCookie] = useCookies(['authToken']);
    const [inGame, setInGame] = useState(false);
    const [socket, setSocket] = useState(null);
-   const [userData, setUserData] = useState('');
+   // const [userData, setUserData] = useState('');
    const [usersData, setUsersData] = useState('');
    const [messages, setMessages] = useState([]);
    const [data, setData] = useState('');
@@ -29,20 +29,19 @@ function Lobby() {
       const Socket = io('');
       setSocket(Socket);
 
-      const switchOff = () => {
-         setShowAuthorization(!showAuthorization);
-         // removeCookie('authToken');
-         // document.cookie = authToken + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-      };
+      Socket.on('connectUser', () => {
+         Socket.emit('userData', userData);
+      });
 
-      const updateUserData = (user) => {
-         if (typeof user == 'object') {
-            Socket.emit('userData', user);
-            setUserData(user);
-         } else {
-            switchOff();
-         }
-      };
+      // Socket.on('disconnect', () => {
+      //    console.log('Socket disconnected');
+      // });
+
+      // const switchOff = () => {
+      //    setShowAuthorization(!showAuthorization);
+      //    // removeCookie('authToken');
+      //    // document.cookie = authToken + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+      // };
 
       const updateListUsers = (users) => {
          setUsersData(users);
@@ -72,7 +71,17 @@ function Lobby() {
       const gameResult = ({ cells, isWinner }) => {
          setInGame(false);
          setCells(cells)
-         alert(isWinner)
+         switch (isWinner) {
+            case true:
+               alert('you win! 🙂');
+               break;
+            case false:
+               alert('You lose! 😞');
+               break;
+            case 'nobody':
+               alert('no one win! 😕');
+               break;
+         }
          window.location.reload();
       };
 
@@ -82,8 +91,8 @@ function Lobby() {
          window.location.reload();
       };
 
-      const invitationUser = (answer) => {
-         alert('he/she is busy')
+      const invitationUser = ({ answer, sms }) => {
+         alert(sms)
          setInGame(answer)
       };
 
@@ -91,7 +100,12 @@ function Lobby() {
          setTimer(time)
       }
 
-      // socket.on('resetSingIn', switchOff);
+      const waitInvitation = (res) => {
+         console.log(res)
+         setButtonClick(res)
+      };
+
+      Socket.on('waitInvitation', waitInvitation);
       Socket.on('timerUpdate', timerUpdate);
       Socket.on('invitationUser', invitationUser);
       Socket.on('gameCancelled', rejected);//?
@@ -102,11 +116,11 @@ function Lobby() {
       Socket.on('rejected', rejected);
       Socket.on('startGame', startGame);
       Socket.on('goToGame', noticeGoGame);
-      Socket.on('userFormData', updateUserData);
+      // Socket.on('userFormData', updateUserData);
       Socket.on('usersOnline', updateListUsers);
       Socket.on('sendEveryoneMessage', updateMessages);
       return () => {
-         // socket.off('resetSingIn', switchOff);
+         Socket.off('waitInvitation', waitInvitation);
          Socket.off('timerUpdate', timerUpdate)
          Socket.off('invitationUser', invitationUser);
          Socket.off('gameCancelled', rejected)//?
@@ -117,7 +131,7 @@ function Lobby() {
          Socket.off('rejected', rejected);
          Socket.off('startGame', startGame);
          Socket.off('goToGame', noticeGoGame);
-         Socket.off('userFormData', updateUserData);
+         // Socket.off('userFormData', updateUserData);
          Socket.off('usersOnline', updateListUsers);
          Socket.off('sendEveryoneMessage', updateMessages);
          Socket.close();
@@ -127,7 +141,6 @@ function Lobby() {
    // Game choice user 
    const clickCell = (index) => {
       if (stepGame) {
-         console.log('click');
          if (cells[index] == '') {
             const updatedCells = [...cells];
             updatedCells[index] = symbol;
@@ -144,7 +157,6 @@ function Lobby() {
    }
 
    const handleSubmitMessage = (message) => {
-
       socket.emit('sendMessage', {
          message: message,
          userName: userData.Nickname,
@@ -158,13 +170,12 @@ function Lobby() {
          id: userId,
          Nickname: userNickname,
          Time: userTime,
-      }
-
+      };
       if (buttonClick) {
          socket.emit('invitationGame', { userSender: userData, userRival: Rival });
-         // setButtonClick(!buttonClick);/////!!!!!!!
+         setButtonClick(!buttonClick);
       } else {
-         alert('Ждем ответа !!!')
+         alert('waiting for an answer !')
       }
    };
 

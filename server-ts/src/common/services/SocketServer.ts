@@ -26,18 +26,15 @@ class SocketServer {
    //main function
    initializeSocketEvents(): void {
       this.io.on('connection', (socket: Socket) => {
-         // this.Logger.log('connection: ' + socket.id);S
+         this.Logger.log('connection: ' + socket.id);
          socket.emit('connectUser');
 
          //send in client data 
          socket.on('userData', (user: UserData): void => {
-            this.Logger.log(user)
-            this.Logger.log(this.usersOnline)
             // this.Logger.log(this.gameRooms)  
 
             const userId = user.id;
             if (!this.checkUserOnline(userId)) {
-               console.log(user)
                const userOnline: UserOnline = {
                   socketId: socket.id,
                   id: user.id,
@@ -197,7 +194,8 @@ class SocketServer {
       const newUserData = userData.map((user: UserOnline) => {
          if (user.Nickname === Nickname) {
             if (user.Time < room.timerValue) {
-               user.Time = room.timerValue
+               // user.Time = editTime(room.timerValue);
+               user.Time = room.timerValue;
             }
          };
       });

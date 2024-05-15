@@ -1,6 +1,6 @@
 async function sendCookieToServer(post, authToken, cookies, setCookie) {
    try {
-      const response = await fetch(`http://localhost:8080${post}`, {
+      const response = await fetch(`${post}`, {
          method: 'POST',
          headers: {
             'Content-Type': 'application/json',
@@ -11,7 +11,7 @@ async function sendCookieToServer(post, authToken, cookies, setCookie) {
       });
 
       const result = await response.json();
-      return result.success
+      return result
    } catch (error) {
       console.log(error.message);
       return { result: false, errorMessage: 'An error occurred while sending data' }

@@ -10,7 +10,7 @@ import Notice from '../components/notice/Notice';
 import { EntranceLobby } from '../../../App';
 
 function AuthorizationController() {
-   const { showAuthorization, setShowAuthorization, setSocketFormData } = useContext(EntranceLobby);
+   const { setUserData, showAuthorization, setShowAuthorization, setSocketFormData } = useContext(EntranceLobby);
    const [passwordsDoNot, setPasswordsDoNot] = useState(false);
    const [NoticeMessage, setNoticeMessage] = useState('');
    const [registering, setRegistering] = useState(true);
@@ -25,7 +25,8 @@ function AuthorizationController() {
          if (authToken) {
             try {
                const result = await sendCookieToServer('/submit_singIn', authToken, cookies, setCookie);
-               if (result) {
+               if (result.success) {
+                  setUserData(result.userData);
                   setShowAuthorization(!showAuthorization);
                } else {
                   console.log('The token has expired or there is no token');
@@ -39,7 +40,6 @@ function AuthorizationController() {
 
       fetchData();
    }, []);
-
 
    const [loginFormData, setLoginFormData] = useState({
       Nickname: '',
@@ -81,6 +81,10 @@ function AuthorizationController() {
       // check form 
       if (registering) {//sing in
          const result = await sendFormToServer('/submit_singIn', loginFormData, cookies, setCookie)
+         console.log(result)
+         if (result.userData != undefined) {
+            setUserData(result.userData)
+         }
          if (result.result) {
             setSocketFormData(loginFormData);
             setShowAuthorization(!showAuthorization);

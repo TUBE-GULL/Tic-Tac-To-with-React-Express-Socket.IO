@@ -1,5 +1,4 @@
 import './Authorization.scss';
-import React from "react"
 import AuthorizationController from './controller/Authorization_Controller';
 
 function Authorization() {
@@ -9,6 +8,6 @@ function Authorization() {
          <AuthorizationController />
       </div>
    )
-};
+}
 
 export default Authorization

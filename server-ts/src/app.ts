@@ -18,7 +18,7 @@ class App {
    constructor(Logger: logger) {
       this.app = express();
       this.server = http.createServer(this.app);
-      this.PORT = process.env.PORT || 8081;
+      this.PORT = process.env.PORT || 8080;
       this.Logger = new logger();
       this.socketServer = new SocketServer(this.server, this.Logger, checkWin);
    };

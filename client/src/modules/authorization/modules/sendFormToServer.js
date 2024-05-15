@@ -1,6 +1,6 @@
 async function sendFormToServer(post, formData, cookies, setCookie) {
    try {
-      const response = await fetch(`http://localhost:8080${post}`, {
+      const response = await fetch(`${post}`, {
          method: 'POST',
          headers: {
             'Content-Type': 'application/json',
@@ -14,7 +14,7 @@ async function sendFormToServer(post, formData, cookies, setCookie) {
 
          return result.error
             ? { result: false, errorMessage: 'Wrong login or password !' }
-            : { result: true, errorMessage: 'Successful authentication' }
+            : { result: true, errorMessage: 'Successful authentication', userData: result.userData }
 
       } else {
          return result.error

@@ -1,15 +1,8 @@
-import React, { useContext, useEffect, useState } from 'react';
-import User from './modules/User';
-
 const searchTime = (time) => {
    return time === '' ? '0:00' : time;
 };
 
 function LobbyList({ user, users, onButtonClick }) {
-
-   // console.log(user)
-   // console.log(users)
-
    const userList = Object.entries(users).map(([userId, userData]) => ({
       id: userId,
       ...userData
@@ -34,7 +27,6 @@ function LobbyList({ user, users, onButtonClick }) {
          </div>
       </div >
    );
-
 }
 
 export default LobbyList;
